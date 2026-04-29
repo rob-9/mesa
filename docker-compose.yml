@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: summer-postgres
+    environment:
+      POSTGRES_USER: summer
+      POSTGRES_PASSWORD: summer
+      POSTGRES_DB: summer
+    ports:
+      - "5432:5432"
+    volumes:
+      - summer-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U summer"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  summer-pgdata:
