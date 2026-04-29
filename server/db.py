@@ -1,3 +1,8 @@
+"""sqlalchemy engine and session factory.
+exposes `get_session` as a generator-style fastapi dependency. tests override
+this dependency to inject a transactional rollback session (see tests/conftest.py).
+"""
+
 from collections.abc import Iterator
 
 from sqlalchemy import create_engine

@@ -1,4 +1,8 @@
-"""principals routes: register, get, list."""
+"""principals routes: register, get, list.
+registration is currently public and unauthenticated. validates that
+public_key is a real 32-byte ed25519 key at the boundary so downstream
+signature checks fail fast and clearly.
+"""
 
 from datetime import datetime
 

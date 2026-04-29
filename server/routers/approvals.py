@@ -1,4 +1,4 @@
-"""approval routes for human principals. populated alongside issue #18."""
+"""approval routes for human principals."""
 
 from fastapi import APIRouter
 

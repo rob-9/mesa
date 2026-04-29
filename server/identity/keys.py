@@ -1,4 +1,7 @@
-"""ed25519 keypair generation, sign, verify."""
+"""ed25519 primitives: keypair generation, sign, verify.
+pure-bytes api with no encoding opinions; callers (jwt issuer, event envelope)
+choose hex/base64 at their own boundaries. wraps pynacl/libsodium.
+"""
 
 from nacl.exceptions import BadSignatureError
 from nacl.signing import SigningKey, VerifyKey

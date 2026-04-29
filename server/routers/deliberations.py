@@ -1,6 +1,4 @@
-"""deliberations routes: open, get, list, append event, query events.
-populated in issue #14.
-"""
+"""deliberations routes: open, get, list, append event, query events."""
 
 from fastapi import APIRouter
 

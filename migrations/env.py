@@ -1,3 +1,8 @@
+"""alembic migration runtime.
+reads database_url from server.config (so dev, ci, and prod all honor the same .env)
+and points autogenerate at server.models.Base.metadata.
+"""
+
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config, pool

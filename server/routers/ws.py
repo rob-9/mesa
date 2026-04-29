@@ -1,5 +1,5 @@
 """websocket route. authenticates connection with a signed jwt, subscribes to a
-deliberation's event stream. deferred (issue #5 closed); placeholder for now.
+deliberation's event stream.
 """
 
 from fastapi import APIRouter

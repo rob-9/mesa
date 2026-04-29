@@ -1,3 +1,8 @@
+"""http tests for the /principals router.
+covers create (happy path, invalid hex, wrong length, duplicate), get (found
+and not found), and list. uses the transactional rollback fixture from conftest.
+"""
+
 from server.identity.keys import generate_keypair
 
 

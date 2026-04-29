@@ -1,3 +1,7 @@
+"""fastapi app entrypoint. wires every router into a single application instance.
+imported by uvicorn (`uvicorn server.main:app`) and by the test client.
+"""
+
 from fastapi import FastAPI
 
 from server.routers import approvals, deliberations, health, principals, ws

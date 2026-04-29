@@ -1,3 +1,8 @@
+"""unit tests for ed25519 primitives in server.identity.keys.
+covers key/signature lengths, sign+verify roundtrip, and both verification
+failure modes (tampered message, wrong key).
+"""
+
 from server.identity.keys import generate_keypair, sign, verify
 
 
