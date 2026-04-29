@@ -7,35 +7,48 @@ every interaction is structured into an agent-friendly knowledge graph, capturin
 ## layout
 
 ```
-server/         platform core (8 layers)
-  identity/       layer 1: principals, keypairs, capability tokens
-  transport/      layer 2: message routing
-  schema/         layer 3: registry and validation
-  store/          layer 4: postgres + queries
-  engine/         layer 5: deliberation state machine
-  policy/         layer 6: rule evaluation
-  audit/          layer 7: hash-chained signed log
-  api/            layer 8: rest endpoints
+server/
+  main.py             fastapi app
+  config.py           settings
+  db.py               sqlalchemy session
+  deps.py             fastapi dependencies
+  errors.py           shared exceptions
+  models.py           all sqlalchemy entities
+  schema.py           json schema registry + validator
+  policy.py           rule evaluator
+  audit.py            hash-chained log
+  identity/           keys, capability tokens
+  events/             envelope, signing, hash chain
+  deliberations/      core domain
+    state.py          PURE state machine (no fastapi/sqlalchemy)
+    service.py        use cases
+    pipeline.py       event handler pipeline
+  routers/            fastapi routers (flat)
 
 sdk/
-  python/         python sdk
-  typescript/     typescript sdk
+  python/             python sdk
+  typescript/         typescript sdk
 
 schemas/
-  core/           core event types
-  procurement/    procurement vertical pack
+  core/               core event types
+  procurement/        procurement vertical pack
 
 apps/
-  approval-ui/    next.js human approval ui
-  demo/           buyer + seller demo agents
+  approval-ui/        next.js human approval ui
+  demo/               buyer + seller demo agents
 
 tools/
-  audit-replay/   cli to verify event logs
+  audit-replay/       cli to verify event logs
 
-migrations/       alembic migrations
-docs/             architecture and quickstart
-tests/            integration tests
+migrations/           alembic migrations
+docs/                 architecture and quickstart
+tests/                integration tests
 ```
+
+architecture is conceptually 8 layers; the code consolidates thin layers into single
+files (policy.py, audit.py, schema.py) and groups substantive domains into folders.
+the one purity rule: `server/deliberations/state.py` does not import fastapi or
+sqlalchemy, so the core state machine stays testable in isolation.
 
 ## quickstart
 
@@ -43,7 +56,7 @@ tests/            integration tests
 docker compose up -d
 pip install -e ".[dev]"
 alembic upgrade head
-uvicorn server.api.main:app --reload
+uvicorn server.main:app --reload
 ```
 
 ## status
