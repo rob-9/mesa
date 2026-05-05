@@ -21,7 +21,7 @@ export default async function OverviewPage() {
             color: "var(--fg-0)"
           }}
         >
-          Overview <span style={{ color: "var(--fg-3)", fontWeight: 400 }}>· acme corp</span>
+          Overview <span style={{ color: "var(--fg-3)", fontWeight: 400 }}>· X</span>
         </h1>
         <div style={{ marginTop: 6, fontSize: 13, color: "var(--fg-4)" }}>
           What your agents have been doing today.

@@ -1,8 +1,7 @@
 import type { Deliberation } from "@/lib/types";
 import { DeliberationRow } from "./DeliberationRow";
 
-const GRID =
-  "minmax(0, 1.6fr) 130px 110px 150px 70px 70px";
+const GRID = "minmax(0, 1.6fr) 130px 160px 130px 60px";
 
 export function DeliberationsTable({ deliberations }: { deliberations: Deliberation[] }) {
   return (
@@ -29,9 +28,8 @@ export function DeliberationsTable({ deliberations }: { deliberations: Deliberat
       >
         <span>DELIBERATION</span>
         <span>COUNTERPARTY</span>
-        <span>STAGE</span>
+        <span>PROGRESS</span>
         <span>WAITING ON</span>
-        <span style={{ textAlign: "right" }}>COMMITS</span>
         <span style={{ textAlign: "right" }}>LAST</span>
       </div>
       {deliberations.map((d, i) => (

@@ -50,6 +50,9 @@ export interface Deliberation {
   waitingOn: WaitingOn;
   commitmentCount: number;
   lastActivity: string; // ISO-8601
+  // One-line summary of the latest meaningful commitment. Renders as the
+  // second line in the deliberations table rows.
+  latestSummary: string;
 }
 
 export interface Action {

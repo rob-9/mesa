@@ -61,7 +61,7 @@ export function Sidebar() {
         <span style={{ fontWeight: 600, fontSize: 14, color: "var(--fg-0)", letterSpacing: "-0.01em" }}>
           summer
         </span>
-        <span style={{ color: "var(--fg-5)", fontSize: 12, marginLeft: "auto" }}>acme</span>
+        <span style={{ color: "var(--fg-5)", fontSize: 12, marginLeft: "auto" }}>X</span>
       </Link>
 
       <Link
@@ -158,7 +158,7 @@ export function Sidebar() {
         </span>
         <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.2 }}>
           <span style={{ color: "var(--fg-1)", fontSize: 13, fontWeight: 500 }}>Robert Ji</span>
-          <span style={{ color: "var(--fg-5)", fontSize: 11 }}>Ops · acme corp</span>
+          <span style={{ color: "var(--fg-5)", fontSize: 11 }}>Ops · X</span>
         </div>
       </div>
     </aside>

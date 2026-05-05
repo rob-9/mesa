@@ -78,7 +78,8 @@ const deliberations: Deliberation[] = [
     flagged: false,
     waitingOn: { party: "counterparty" },
     commitmentCount: 4,
-    lastActivity: ago(2)
+    lastActivity: ago(2),
+    latestSummary: "Articles from 2018 onwards, English only, no opinion. 2-year non-exclusive license."
   },
   {
     id: "web-archive-opt-in",
@@ -88,7 +89,8 @@ const deliberations: Deliberation[] = [
     flagged: false,
     waitingOn: { party: "agent", agent: "legal-bot" },
     commitmentCount: 12,
-    lastActivity: ago(11)
+    lastActivity: ago(11),
+    latestSummary: "Crawl-delay 5s, robots.txt-respecting opt-in. 18-month renewable term."
   },
   {
     id: "image-corpus-rev-share",
@@ -98,7 +100,8 @@ const deliberations: Deliberation[] = [
     flagged: false,
     waitingOn: { party: "you" },
     commitmentCount: 5,
-    lastActivity: ago(61)
+    lastActivity: ago(61),
+    latestSummary: "12% gross revenue share on derivative model output, capped at $200k/yr."
   },
   {
     id: "code-corpus-license",
@@ -108,7 +111,8 @@ const deliberations: Deliberation[] = [
     flagged: false,
     waitingOn: { party: "agent", agent: "policy-agent" },
     commitmentCount: 3,
-    lastActivity: ago(181)
+    lastActivity: ago(181),
+    latestSummary: "Public github repos only, MIT/Apache/BSD licensed code, 3-year term."
   },
   {
     id: "video-transcripts",
@@ -118,7 +122,8 @@ const deliberations: Deliberation[] = [
     flagged: true,
     waitingOn: { party: "you" },
     commitmentCount: 4,
-    lastActivity: ago(300)
+    lastActivity: ago(300),
+    latestSummary: "Speaker-attribution dispute: counterparty claims rights extend to interviewees. Flagged for legal."
   },
   {
     id: "medical-journals-license",
@@ -128,7 +133,8 @@ const deliberations: Deliberation[] = [
     flagged: false,
     waitingOn: { party: "counterparty" },
     commitmentCount: 9,
-    lastActivity: ago(60 * 24 + 1)
+    lastActivity: ago(60 * 24 + 1),
+    latestSummary: "Amendment §3: extend coverage to 2024 issues; counterparty reviewing pricing impact."
   }
 ];
 

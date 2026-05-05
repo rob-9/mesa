@@ -1,5 +1,4 @@
 import type { DashboardData } from "@/lib/types";
-import { StatLine } from "./StatLine";
 
 export function PageHeader({ counts }: { counts: DashboardData["counts"] }) {
   return (
@@ -8,7 +7,7 @@ export function PageHeader({ counts }: { counts: DashboardData["counts"] }) {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "flex-end",
-        marginBottom: 24
+        marginBottom: 18
       }}
     >
       <div>
@@ -22,9 +21,21 @@ export function PageHeader({ counts }: { counts: DashboardData["counts"] }) {
             color: "var(--fg-0)"
           }}
         >
-          Deliberations <span style={{ color: "var(--fg-3)", fontWeight: 400 }}>today</span>
+          Deliberations
         </h1>
-        <StatLine counts={counts} />
+        <div
+          className="mono"
+          style={{ marginTop: 6, fontSize: 13, color: "var(--fg-4)" }}
+        >
+          <span style={{ color: "var(--fg-1)" }}>{counts.active}</span> active
+          <Sep />
+          <span style={{ color: "var(--accent)" }}>{counts.awaitingAction}</span> awaiting action
+          <Sep />
+          <span style={{ color: counts.flagged > 0 ? "var(--amber)" : "var(--fg-1)" }}>
+            {counts.flagged}
+          </span>{" "}
+          flagged
+        </div>
       </div>
       <div style={{ display: "flex", gap: 8 }}>
         <button
@@ -33,10 +44,11 @@ export function PageHeader({ counts }: { counts: DashboardData["counts"] }) {
             borderRadius: "var(--r-pill)",
             background: "var(--surface-1)",
             color: "var(--fg-3)",
-            fontSize: 12
+            fontSize: 12,
+            border: "1px solid var(--surface-2)"
           }}
         >
-          Filter
+          Sort
         </button>
         <button
           style={{
@@ -48,9 +60,13 @@ export function PageHeader({ counts }: { counts: DashboardData["counts"] }) {
             fontWeight: 500
           }}
         >
-          + New
+          + New deliberation
         </button>
       </div>
     </div>
   );
+}
+
+function Sep() {
+  return <span style={{ color: "var(--fg-6)", margin: "0 10px" }}>·</span>;
 }
