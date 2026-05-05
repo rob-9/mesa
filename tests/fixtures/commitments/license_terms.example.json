@@ -1,0 +1,6 @@
+{
+  "dataset_id": "eu_news_2020_2025",
+  "fee_model": { "kind": "flat", "amount_usd": 250000 },
+  "term_months": 12,
+  "renewal": "manual"
+}

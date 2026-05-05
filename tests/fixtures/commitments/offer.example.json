@@ -1,0 +1,8 @@
+{
+  "summary": "License of EU news corpus for evaluation use",
+  "terms": {
+    "dataset": "eu_news_2020_2025",
+    "exclusivity": false
+  },
+  "expires_at": "2026-06-01T00:00:00Z"
+}

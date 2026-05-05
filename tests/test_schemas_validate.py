@@ -22,3 +22,18 @@ def test_schema_is_valid_json_schema(schema_path: Path) -> None:
 
 def test_schemas_directory_is_not_empty() -> None:
     assert _schema_files(), "no schemas found under schemas/commitments/"
+
+
+FIXTURES_ROOT = Path(__file__).resolve().parent / "fixtures" / "commitments"
+
+EXAMPLE_TO_SCHEMA = {
+    "offer.example.json": SCHEMAS_ROOT / "core" / "offer.schema.json",
+    "license_terms.example.json": SCHEMAS_ROOT / "datasharing" / "license_terms.schema.json",
+}
+
+
+@pytest.mark.parametrize("example_name,schema_path", list(EXAMPLE_TO_SCHEMA.items()))
+def test_example_conforms_to_schema(example_name: str, schema_path: Path) -> None:
+    example = json.loads((FIXTURES_ROOT / example_name).read_text())
+    schema = json.loads(schema_path.read_text())
+    Draft202012Validator(schema).validate(example)
