@@ -35,3 +35,6 @@ Thumbs.db
 
 # local
 *.log
+
+# superpowers workflow artifacts
+docs/superpowers/
