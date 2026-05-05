@@ -1,0 +1,53 @@
+import type { Turn } from "@/lib/types";
+import { TranscriptTurn } from "./TranscriptTurn";
+
+interface TranscriptPaneProps {
+  turns: Turn[];
+  highlightedTurnIds: Set<number>;
+  registerTurnRef: (id: number, el: HTMLDivElement | null) => void;
+}
+
+export function TranscriptPane({ turns, highlightedTurnIds, registerTurnRef }: TranscriptPaneProps) {
+  return (
+    <div
+      style={{
+        borderRight: "1px solid var(--surface-2)",
+        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column"
+      }}
+    >
+      <div
+        className="mono"
+        style={{
+          padding: "12px 22px",
+          borderBottom: "1px solid var(--surface-2)",
+          fontSize: 11,
+          color: "var(--fg-5)",
+          letterSpacing: "0.08em",
+          position: "sticky",
+          top: 0,
+          background: "#0f0d0c",
+          zIndex: 1
+        }}
+      >
+        TRANSCRIPT
+      </div>
+      <div style={{ padding: "16px 22px" }}>
+        {turns.length === 0 && (
+          <div style={{ color: "var(--fg-4)", fontSize: 13 }}>
+            No transcript turns recorded yet.
+          </div>
+        )}
+        {turns.map((turn) => (
+          <TranscriptTurn
+            key={turn.id}
+            turn={turn}
+            highlighted={highlightedTurnIds.has(turn.id)}
+            registerRef={registerTurnRef}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
