@@ -78,3 +78,46 @@ export interface DeliberationDetail {
   turns: Turn[];
   commitments: Commitment[];
 }
+
+// ─── Overview screen ───────────────────────────────────────────────────────
+
+export interface AgentStatus {
+  id: string;
+  name: string;        // 'lab-buyer-agent', 'legal-bot', ...
+  role: string;        // 'data buyer', 'legal review', ...
+  state: "negotiating" | "idle" | "blocked";
+  deliberationId?: string;
+  deliberationTitle?: string;
+  lastActivity: string; // ISO-8601
+}
+
+export interface RecentActivity {
+  id: string;
+  commitmentType: CommitmentType;
+  summary: string;
+  deliberationId: string;
+  deliberationTitle: string;
+  counterparty: string;
+  timestamp: string; // ISO-8601
+}
+
+export interface IntegrationStatus {
+  id: string;
+  name: string;       // 'Salesforce', 'Slack', ...
+  description: string;
+  connected: boolean;
+}
+
+export interface OverviewData {
+  stats: {
+    activeDeliberations: number;
+    deployedAgents: number;
+    avgTimeToSignoff: string; // pre-formatted, e.g. "4.2h"
+    awaitingAction: number;
+  };
+  agents: AgentStatus[];
+  recent: RecentActivity[];
+  actions: Action[];
+  totalActions: number;
+  integrations: IntegrationStatus[];
+}
