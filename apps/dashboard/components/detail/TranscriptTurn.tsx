@@ -20,10 +20,10 @@ export function TranscriptTurn({ turn, highlighted, registerRef }: TranscriptTur
     <div
       ref={setRef}
       style={{
-        margin: highlighted ? "0 -12px 14px" : "0 0 14px",
+        margin: highlighted ? "0 -12px 16px" : "0 0 16px",
         padding: highlighted ? "10px 12px" : 0,
         borderLeft: highlighted ? "2px solid var(--accent)" : "none",
-        borderRadius: highlighted ? 6 : 0,
+        borderRadius: highlighted ? "var(--r-inner)" : 0,
         background: highlighted ? "var(--accent-strong-bg)" : "transparent",
         transition: "background 0.15s, padding 0.15s"
       }}

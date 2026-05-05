@@ -8,7 +8,7 @@ export function DeliberationsTable({ deliberations }: { deliberations: Deliberat
   return (
     <div
       style={{
-        background: "#0f0d0c",
+        background: "var(--surface-0)",
         border: "1px solid var(--surface-2)",
         borderRadius: "var(--r-card)",
         overflow: "hidden"

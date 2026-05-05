@@ -1,3 +1,4 @@
+import { DEMO_NOW_ISO } from "./format";
 import type {
   Action,
   Commitment,
@@ -7,12 +8,9 @@ import type {
   Turn
 } from "./types";
 
-// Demo "now" — must match lib/format.ts DEMO_NOW.
-const NOW = "2026-05-05T16:30:00Z";
-
-// Helper to make iso strings relative to NOW.
+// Helper to make iso strings relative to the shared demo "now".
 function ago(minutes: number): string {
-  return new Date(new Date(NOW).getTime() - minutes * 60_000).toISOString();
+  return new Date(new Date(DEMO_NOW_ISO).getTime() - minutes * 60_000).toISOString();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -100,7 +98,7 @@ const deliberations: Deliberation[] = [
     flagged: false,
     waitingOn: { party: "you" },
     commitmentCount: 5,
-    lastActivity: ago(60)
+    lastActivity: ago(61)
   },
   {
     id: "code-corpus-license",
@@ -110,7 +108,7 @@ const deliberations: Deliberation[] = [
     flagged: false,
     waitingOn: { party: "agent", agent: "policy-agent" },
     commitmentCount: 3,
-    lastActivity: ago(180)
+    lastActivity: ago(181)
   },
   {
     id: "video-transcripts",
@@ -130,7 +128,7 @@ const deliberations: Deliberation[] = [
     flagged: false,
     waitingOn: { party: "counterparty" },
     commitmentCount: 9,
-    lastActivity: ago(60 * 24)
+    lastActivity: ago(60 * 24 + 1)
   }
 ];
 

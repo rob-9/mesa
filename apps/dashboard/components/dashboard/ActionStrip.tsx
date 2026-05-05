@@ -32,7 +32,7 @@ export function ActionStrip({ actions }: { actions: Action[] }) {
           style={{
             width: 28,
             height: 28,
-            borderRadius: 8,
+            borderRadius: "var(--r-inner)",
             background: "var(--accent-soft)",
             color: "var(--accent)",
             display: "flex",

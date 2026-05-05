@@ -1,9 +1,11 @@
 :root {
   /* surfaces */
   --bg: #1a1715;
+  --surface-0: #0f0d0c;          /* deeper than bg — table/split-view backplate */
   --surface-1: #211d1a;
   --surface-2: #2a2522;
   --surface-3: #332d29;
+  --border-row: #1d1916;         /* hairline between table rows / between turns */
 
   /* foreground ramp */
   --fg-0: #ffffff;
@@ -67,4 +69,10 @@ button {
 .mono {
   font-family: var(--font-mono);
   font-feature-settings: "tnum";
+}
+
+@keyframes summer-pulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.015); }
+  100% { transform: scale(1); }
 }

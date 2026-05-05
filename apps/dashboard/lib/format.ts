@@ -1,6 +1,7 @@
 // Returns short relative-time strings: "2m", "1h", "3d", "<1m", "5w".
 // Anchored to a fixed "now" so screenshots are deterministic in the demo build.
-const DEMO_NOW = new Date("2026-05-05T16:30:00Z").getTime();
+export const DEMO_NOW_ISO = "2026-05-05T16:30:00Z";
+const DEMO_NOW = new Date(DEMO_NOW_ISO).getTime();
 
 export function formatRelative(iso: string, now: number = DEMO_NOW): string {
   const then = new Date(iso).getTime();

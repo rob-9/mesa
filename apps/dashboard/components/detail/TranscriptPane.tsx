@@ -27,7 +27,7 @@ export function TranscriptPane({ turns, highlightedTurnIds, registerTurnRef }: T
           letterSpacing: "0.08em",
           position: "sticky",
           top: 0,
-          background: "#0f0d0c",
+          background: "var(--surface-0)",
           zIndex: 1
         }}
       >

@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef } from "react";
 import { TypeLabel } from "@/components/primitives/TypeLabel";
 import type { Commitment } from "@/lib/types";
@@ -84,7 +82,7 @@ export function CommitmentCard({ commitment, selected, onSelect }: CommitmentCar
             display: "flex",
             alignItems: "center",
             gap: 6,
-            paddingTop: 7,
+            paddingTop: 8,
             borderTop: selected ? "1px solid var(--accent-strong-border)" : "1px solid var(--surface-2)",
             fontSize: 11,
             color: selected ? "var(--accent)" : "var(--fg-5)"
@@ -96,14 +94,6 @@ export function CommitmentCard({ commitment, selected, onSelect }: CommitmentCar
           ))}
         </div>
       )}
-
-      <style jsx>{`
-        @keyframes summer-pulse {
-          0% { transform: scale(1); }
-          50% { transform: scale(1.015); }
-          100% { transform: scale(1); }
-        }
-      `}</style>
     </button>
   );
 }

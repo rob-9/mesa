@@ -25,8 +25,8 @@ export function TopBar() {
           style={{
             width: 24,
             height: 24,
-            borderRadius: 8,
-            background: "linear-gradient(135deg, #d97757, #b25a3f)"
+            borderRadius: "var(--r-inner)",
+            background: "linear-gradient(135deg, var(--accent), #b25a3f)"
           }}
         />
         <span style={{ fontWeight: 600, fontSize: 15, letterSpacing: "-0.01em", color: "var(--fg-0)" }}>

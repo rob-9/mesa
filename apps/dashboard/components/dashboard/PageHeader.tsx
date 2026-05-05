@@ -8,7 +8,7 @@ export function PageHeader({ counts }: { counts: DashboardData["counts"] }) {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "flex-end",
-        marginBottom: 22
+        marginBottom: 24
       }}
     >
       <div>

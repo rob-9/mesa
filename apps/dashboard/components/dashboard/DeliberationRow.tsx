@@ -13,14 +13,13 @@ export function DeliberationRow({ deliberation, isLast, gridTemplate }: RowProps
   const d = deliberation;
   const waitingOnLabel =
     d.waitingOn.party === "agent" ? d.waitingOn.agent ?? "agent" : d.waitingOn.party;
-  const waitingColor =
-    d.waitingOn.party === "you" || d.flagged
-      ? d.flagged
-        ? "var(--amber)"
-        : "var(--accent)"
-      : d.waitingOn.party === "agent"
-      ? "var(--accent)"
-      : "var(--fg-4)";
+  // Accent only for "you" — that's the action affordance per the spec.
+  // Agent waits and counterparty waits are neutral; flagged rows get amber.
+  const waitingColor = d.flagged
+    ? "var(--amber)"
+    : d.waitingOn.party === "you"
+    ? "var(--accent)"
+    : "var(--fg-4)";
 
   return (
     <Link
@@ -30,7 +29,7 @@ export function DeliberationRow({ deliberation, isLast, gridTemplate }: RowProps
         gridTemplateColumns: gridTemplate,
         gap: 14,
         padding: "14px 20px",
-        borderBottom: isLast ? "none" : "1px solid #1d1916",
+        borderBottom: isLast ? "none" : "1px solid var(--border-row)",
         alignItems: "center",
         fontSize: 13,
         color: "var(--fg-1)",
@@ -38,7 +37,7 @@ export function DeliberationRow({ deliberation, isLast, gridTemplate }: RowProps
       }}
     >
       <span style={{ color: "var(--fg-0)" }}>{d.title}</span>
-      <span className="mono" style={{ color: "var(--fg-3)", fontSize: 12 }}>{d.counterparty}</span>
+      <span style={{ color: "var(--fg-3)", fontSize: 13 }}>{d.counterparty}</span>
       <span><StagePill stage={d.stage} flagged={d.flagged} /></span>
       <span className="mono" style={{ fontSize: 12, color: waitingColor }}>{waitingOnLabel}</span>
       <span className="mono" style={{ textAlign: "right" }}>{d.commitmentCount}</span>
