@@ -3,7 +3,7 @@ import { StatTile } from "./StatTile";
 
 export function StatTileRow({ stats }: { stats: OverviewData["stats"] }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
       <StatTile icon="briefcase" value={stats.activeDeliberations} label="Active deliberations" />
       <StatTile icon="agent" value={stats.deployedAgents} label="Deployed agents" />
       <StatTile icon="clock" value={stats.avgTimeToSignoff} label="Avg time to signoff" />

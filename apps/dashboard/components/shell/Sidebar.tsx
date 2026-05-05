@@ -26,16 +26,17 @@ export function Sidebar() {
   return (
     <aside
       style={{
-        width: 240,
+        width: 216,
         flexShrink: 0,
         background: "var(--surface-1)",
         borderRight: "1px solid var(--surface-2)",
         display: "flex",
         flexDirection: "column",
-        padding: "20px 14px",
+        padding: "16px 12px",
         position: "sticky",
         top: 0,
-        height: "100vh"
+        maxHeight: "100vh",
+        overflowY: "auto"
       }}
     >
       <Link
@@ -43,49 +44,52 @@ export function Sidebar() {
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 10,
-          padding: "4px 8px",
-          marginBottom: 18,
+          gap: 8,
+          padding: "4px 6px",
+          marginBottom: 14,
           textDecoration: "none"
         }}
       >
         <span
           aria-hidden
           style={{
-            width: 24,
-            height: 24,
-            borderRadius: "var(--r-inner)",
-            background: "linear-gradient(135deg, var(--accent), #b25a3f)"
+            width: 20,
+            height: 20,
+            borderRadius: 6,
+            background: "linear-gradient(135deg, var(--accent), #b25a3f)",
+            flexShrink: 0
           }}
         />
-        <span style={{ fontWeight: 600, fontSize: 14, color: "var(--fg-0)", letterSpacing: "-0.01em" }}>
+        <span style={{ fontWeight: 600, fontSize: 13, color: "var(--fg-0)", letterSpacing: "-0.01em" }}>
           summer
         </span>
-        <span style={{ color: "var(--fg-5)", fontSize: 12, marginLeft: "auto" }}>X</span>
+        <span style={{ color: "var(--fg-5)", fontSize: 11, marginLeft: "auto" }}>X</span>
       </Link>
 
       <Link
         href="/agents"
+        className="deploy-cta"
         style={{
+          position: "relative",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          gap: 8,
-          height: 36,
-          marginBottom: 18,
+          height: 32,
+          marginBottom: 14,
+          padding: "0 14px 0 28px", // reserve gutter for the absolute '+' icon
           background: "var(--accent)",
           color: "var(--bg)",
           borderRadius: "var(--r-pill)",
-          fontSize: 13,
+          fontSize: 12,
           fontWeight: 500,
           textDecoration: "none"
         }}
       >
-        <Icon name="plus" size={14} />
-        Deploy Agent
+        <Icon name="plus" size={13} className="deploy-cta-icon" />
+        <span>Deploy Agent</span>
       </Link>
 
-      <nav style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+      <nav style={{ display: "flex", flexDirection: "column", gap: 1 }}>
         {items.map((item) => {
           const active = isActive(pathname, item.href);
           return (
@@ -96,13 +100,13 @@ export function Sidebar() {
                 position: "relative",
                 display: "flex",
                 alignItems: "center",
-                gap: 10,
-                height: 34,
-                padding: "0 12px",
-                borderRadius: "var(--r-inner)",
+                gap: 9,
+                height: 30,
+                padding: "0 10px",
+                borderRadius: 8,
                 background: active ? "var(--surface-2)" : "transparent",
                 color: active ? "var(--fg-0)" : "var(--fg-3)",
-                fontSize: 13,
+                fontSize: 12,
                 textDecoration: "none"
               }}
             >
@@ -115,13 +119,13 @@ export function Sidebar() {
                     top: "50%",
                     transform: "translateY(-50%)",
                     width: 2,
-                    height: 16,
+                    height: 14,
                     background: "var(--accent)",
                     borderRadius: 2
                   }}
                 />
               )}
-              <Icon name={item.icon} size={16} />
+              <Icon name={item.icon} size={14} />
               {item.label}
             </Link>
           );
@@ -134,31 +138,32 @@ export function Sidebar() {
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 10,
-          padding: "12px 6px 0",
+          gap: 9,
+          padding: "10px 4px 0",
           borderTop: "1px solid var(--surface-2)"
         }}
       >
         <span
           aria-hidden
           style={{
-            width: 28,
-            height: 28,
+            width: 26,
+            height: 26,
             borderRadius: "var(--r-pill)",
             background: "linear-gradient(135deg, var(--surface-3), var(--surface-2))",
             color: "var(--fg-1)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontSize: 11,
-            fontWeight: 600
+            fontSize: 10,
+            fontWeight: 600,
+            flexShrink: 0
           }}
         >
           RJ
         </span>
-        <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.2 }}>
-          <span style={{ color: "var(--fg-1)", fontSize: 13, fontWeight: 500 }}>Robert Ji</span>
-          <span style={{ color: "var(--fg-5)", fontSize: 11 }}>Ops · X</span>
+        <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.2, minWidth: 0 }}>
+          <span style={{ color: "var(--fg-1)", fontSize: 12, fontWeight: 500 }}>Robert Ji</span>
+          <span style={{ color: "var(--fg-5)", fontSize: 10 }}>Ops · X</span>
         </div>
       </div>
     </aside>

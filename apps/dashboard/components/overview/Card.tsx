@@ -24,7 +24,7 @@ export function Card({ title, eyebrow, trailing, children, noPadBody = false }: 
       {(title || eyebrow || trailing) && (
         <div
           style={{
-            padding: "16px 20px",
+            padding: "12px 16px",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
@@ -35,7 +35,7 @@ export function Card({ title, eyebrow, trailing, children, noPadBody = false }: 
             {eyebrow && (
               <div
                 className="mono"
-                style={{ fontSize: 11, color: "var(--fg-5)", letterSpacing: "0.06em", marginBottom: 2 }}
+                style={{ fontSize: 10, color: "var(--fg-5)", letterSpacing: "0.06em", marginBottom: 2 }}
               >
                 {eyebrow}
               </div>
@@ -47,7 +47,7 @@ export function Card({ title, eyebrow, trailing, children, noPadBody = false }: 
           {trailing}
         </div>
       )}
-      <div style={{ padding: noPadBody ? 0 : 20, flex: 1, minWidth: 0 }}>{children}</div>
+      <div style={{ padding: noPadBody ? 0 : 16, flex: 1, minWidth: 0 }}>{children}</div>
     </div>
   );
 }

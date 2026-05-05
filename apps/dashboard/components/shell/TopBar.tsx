@@ -8,7 +8,7 @@ export function TopBar() {
         display: "flex",
         alignItems: "center",
         gap: 18,
-        padding: "16px 32px",
+        padding: "12px 28px",
         borderBottom: "1px solid var(--surface-2)"
       }}
     >
@@ -21,23 +21,24 @@ export function TopBar() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          width: 36,
-          height: 36,
+          width: 32,
+          height: 32,
           borderRadius: "var(--r-pill)",
           background: "var(--surface-1)",
           color: "var(--fg-3)",
-          position: "relative"
+          position: "relative",
+          flexShrink: 0
         }}
       >
-        <Icon name="bell" size={16} />
+        <Icon name="bell" size={14} />
         <span
           aria-hidden
           style={{
             position: "absolute",
-            top: 8,
-            right: 9,
-            width: 7,
-            height: 7,
+            top: 7,
+            right: 8,
+            width: 6,
+            height: 6,
             borderRadius: "var(--r-pill)",
             background: "var(--accent)",
             border: "1.5px solid var(--bg)"

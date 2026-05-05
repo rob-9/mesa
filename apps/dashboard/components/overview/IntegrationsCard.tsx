@@ -15,7 +15,7 @@ export function IntegrationsCard({ integrations }: { integrations: IntegrationSt
               gridTemplateColumns: "20px minmax(0, 1fr) auto",
               gap: 12,
               alignItems: "center",
-              padding: "12px 20px",
+              padding: "10px 16px",
               borderBottom: i === integrations.length - 1 ? "none" : "1px solid var(--border-row)"
             }}
           >

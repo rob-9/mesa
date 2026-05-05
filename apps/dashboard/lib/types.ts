@@ -34,6 +34,9 @@ export interface Commitment {
   derivedFromTurns: number[];
   status: CommitmentStatus;
   createdAt: string; // ISO-8601
+  // Other commitments this one relates to (amends, counters, finalizes).
+  // Drives the edges in the commitment graph view.
+  references?: string[];
 }
 
 export interface WaitingOn {

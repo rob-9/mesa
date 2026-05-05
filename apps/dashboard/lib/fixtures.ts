@@ -18,16 +18,28 @@ function ago(minutes: number): string {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const trainingDataQ4Turns: Turn[] = [
-  { id: 1, speaker: "lab", content: "We're interested in licensing your news archive for training a foundation model.", timestamp: "2026-05-05T14:02:00Z" },
-  { id: 2, speaker: "publisher", content: "Open to it. What scope and term are you thinking?", timestamp: "2026-05-05T14:03:00Z" },
-  { id: 3, speaker: "lab", content: "Articles from 2018 onwards, English only, exclude opinion pieces.", timestamp: "2026-05-05T14:04:00Z" },
-  { id: 4, speaker: "publisher", content: "Acceptable. Two-year non-exclusive.", timestamp: "2026-05-05T14:05:00Z" },
-  { id: 5, speaker: "lab", content: "What about translated articles?", timestamp: "2026-05-05T14:07:00Z" },
-  { id: 6, speaker: "publisher", content: "Original-language only. Translations are licensed separately by the rights-holders.", timestamp: "2026-05-05T14:08:00Z" },
-  { id: 7, speaker: "lab", content: "Understood. Excluding translations from scope.", timestamp: "2026-05-05T14:09:00Z" },
-  { id: 8, speaker: "publisher", content: "Confirmed.", timestamp: "2026-05-05T14:10:00Z" },
-  { id: 9, speaker: "lab", content: "We'll send the agreement for sign-off shortly.", timestamp: "2026-05-05T14:12:00Z" },
-  { id: 10, speaker: "publisher", content: "Standing by.", timestamp: "2026-05-05T14:13:00Z" }
+  { id: 1,  speaker: "lab",       content: "We're interested in licensing your news archive for training a foundation model.", timestamp: "2026-05-05T14:02:00Z" },
+  { id: 2,  speaker: "publisher", content: "Open to it. What scope, term, and price are you thinking?", timestamp: "2026-05-05T14:03:00Z" },
+  { id: 3,  speaker: "lab",       content: "Articles from 2018 onwards, English only, exclude opinion pieces and editorials.", timestamp: "2026-05-05T14:04:00Z" },
+  { id: 4,  speaker: "publisher", content: "Acceptable. Two-year non-exclusive license, renewable.", timestamp: "2026-05-05T14:05:00Z" },
+  { id: 5,  speaker: "lab",       content: "What about translated articles? Some of our target languages depend on those.", timestamp: "2026-05-05T14:07:00Z" },
+  { id: 6,  speaker: "publisher", content: "Original-language only. Translations are licensed separately by the rights-holders, we can't bundle.", timestamp: "2026-05-05T14:08:00Z" },
+  { id: 7,  speaker: "lab",       content: "Understood. Excluding translations from scope.", timestamp: "2026-05-05T14:09:00Z" },
+  { id: 8,  speaker: "publisher", content: "Confirmed.", timestamp: "2026-05-05T14:10:00Z" },
+  { id: 9,  speaker: "lab",       content: "Pricing — what's the structure?", timestamp: "2026-05-05T14:12:00Z" },
+  { id: 10, speaker: "publisher", content: "$0.0008 per article, billed monthly. Roughly 1.4M articles in scope at signing, growing 3-5% per quarter.", timestamp: "2026-05-05T14:13:00Z" },
+  { id: 11, speaker: "lab",       content: "That's about $1,120/month at signing. We'd propose $750/month flat for the term, plus quarterly true-up audit rights.", timestamp: "2026-05-05T14:15:00Z" },
+  { id: 12, speaker: "publisher", content: "Counter: $900/month flat, audit allowed with 24-hour notice, scope of audit limited to article-count reconciliation.", timestamp: "2026-05-05T14:17:00Z" },
+  { id: 13, speaker: "lab",       content: "Agreed: $900/month flat, 24-hour audit notice, count reconciliation only.", timestamp: "2026-05-05T14:18:00Z" },
+  { id: 14, speaker: "lab",       content: "Opt-out — we'll honor robots.txt and per-URL X-NoArchive headers at the time of fetch.", timestamp: "2026-05-05T14:21:00Z" },
+  { id: 15, speaker: "publisher", content: "Add a kill-switch: if we issue a retraction or legal removal request, you must purge from training data within 7 days.", timestamp: "2026-05-05T14:22:00Z" },
+  { id: 16, speaker: "lab",       content: "Confirmed. 7-day retraction SLA, audit-logged.", timestamp: "2026-05-05T14:23:00Z" },
+  { id: 17, speaker: "publisher", content: "Usage restrictions — no resale of derivative model weights, no public attribution claims naming us as a training source.", timestamp: "2026-05-05T14:25:00Z" },
+  { id: 18, speaker: "lab",       content: "Agreed: no resale of weights, no model-card naming of publisher-co as a source.", timestamp: "2026-05-05T14:26:00Z" },
+  { id: 19, speaker: "publisher", content: "Data processing — we'll reference our standard DPA, GDPR-compliant. Linking the latest version.", timestamp: "2026-05-05T14:28:00Z" },
+  { id: 20, speaker: "lab",       content: "DPA reviewed and attached. No deviations from standard.", timestamp: "2026-05-05T14:30:00Z" },
+  { id: 21, speaker: "lab",       content: "Compiling all terms. Sending for sign-off.", timestamp: "2026-05-05T14:32:00Z" },
+  { id: 22, speaker: "publisher", content: "Standing by.", timestamp: "2026-05-05T14:33:00Z" }
 ];
 
 const trainingDataQ4Commitments: Commitment[] = [
@@ -42,26 +54,74 @@ const trainingDataQ4Commitments: Commitment[] = [
   {
     id: "c-tdq4-2",
     type: "scope_clause",
-    summary: "Articles from 2018 onwards, English only, no opinion. Two-year non-exclusive license.",
+    summary: "Articles 2018+, English only, no opinion or editorials. 2-year non-exclusive renewable.",
     derivedFromTurns: [3, 4],
     status: "accepted",
-    createdAt: "2026-05-05T14:05:30Z"
+    createdAt: "2026-05-05T14:05:30Z",
+    references: ["c-tdq4-1"]
   },
   {
     id: "c-tdq4-3",
     type: "amendment",
-    summary: "Translated articles excluded from scope.",
-    derivedFromTurns: [7, 8],
+    summary: "Translated articles excluded from scope (rights-holder bundling restriction).",
+    derivedFromTurns: [5, 6, 7, 8],
     status: "accepted",
-    createdAt: "2026-05-05T14:10:30Z"
+    createdAt: "2026-05-05T14:10:30Z",
+    references: ["c-tdq4-2"]
   },
   {
     id: "c-tdq4-4",
+    type: "counter",
+    summary: "Publisher counters lab's $750/mo flat with $900/mo + 24-hour audit notice.",
+    derivedFromTurns: [11, 12],
+    status: "accepted",
+    createdAt: "2026-05-05T14:17:30Z",
+    references: ["c-tdq4-1"]
+  },
+  {
+    id: "c-tdq4-5",
+    type: "license_terms",
+    summary: "$900/month flat fee, 24-hour audit notice, count-reconciliation only.",
+    derivedFromTurns: [12, 13],
+    status: "accepted",
+    createdAt: "2026-05-05T14:18:30Z",
+    references: ["c-tdq4-4"]
+  },
+  {
+    id: "c-tdq4-6",
+    type: "opt_out_delta",
+    summary: "Honors robots.txt and X-NoArchive at fetch; 7-day purge SLA on retraction request.",
+    derivedFromTurns: [14, 15, 16],
+    status: "accepted",
+    createdAt: "2026-05-05T14:23:30Z",
+    references: ["c-tdq4-2"]
+  },
+  {
+    id: "c-tdq4-7",
+    type: "usage_restriction",
+    summary: "No resale of derivative model weights; no model-card attribution naming publisher-co.",
+    derivedFromTurns: [17, 18],
+    status: "accepted",
+    createdAt: "2026-05-05T14:26:30Z",
+    references: ["c-tdq4-2", "c-tdq4-5"]
+  },
+  {
+    id: "c-tdq4-8",
+    type: "dpa_reference",
+    summary: "Standard publisher-co GDPR-compliant DPA attached without modification.",
+    derivedFromTurns: [19, 20],
+    status: "accepted",
+    createdAt: "2026-05-05T14:30:30Z",
+    references: ["c-tdq4-5"]
+  },
+  {
+    id: "c-tdq4-9",
     type: "signoff",
-    summary: "Final agreement, ready for human sign-off.",
-    derivedFromTurns: [9, 10],
+    summary: "Final agreement compiled, awaiting human sign-off.",
+    derivedFromTurns: [21, 22],
     status: "pending",
-    createdAt: "2026-05-05T14:13:30Z"
+    createdAt: "2026-05-05T14:33:30Z",
+    references: ["c-tdq4-2", "c-tdq4-3", "c-tdq4-5", "c-tdq4-6", "c-tdq4-7", "c-tdq4-8"]
   }
 ];
 
@@ -77,7 +137,7 @@ const deliberations: Deliberation[] = [
     stage: "scope",
     flagged: false,
     waitingOn: { party: "counterparty" },
-    commitmentCount: 4,
+    commitmentCount: 9,
     lastActivity: ago(2),
     latestSummary: "Articles from 2018 onwards, English only, no opinion. 2-year non-exclusive license."
   },

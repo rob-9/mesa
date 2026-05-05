@@ -14,7 +14,9 @@ export default async function DeliberationDetailPage({
   return (
     <AppShell>
       <DetailHeader deliberation={detail.deliberation} />
-      <SplitView turns={detail.turns} commitments={detail.commitments} />
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: 0 }}>
+        <SplitView turns={detail.turns} commitments={detail.commitments} />
+      </div>
     </AppShell>
   );
 }

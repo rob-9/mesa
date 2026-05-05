@@ -26,9 +26,10 @@ export function ActionQueueCard({ actions, total }: { actions: Action[]; total: 
           <Link
             key={action.id}
             href={`/deliberations/${action.deliberationId}`}
+            className="row-link"
             style={{
               display: "block",
-              padding: "12px 20px",
+              padding: "10px 16px",
               borderBottom: i === top.length - 1 ? "none" : "1px solid var(--border-row)",
               textDecoration: "none"
             }}

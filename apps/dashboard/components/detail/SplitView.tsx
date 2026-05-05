@@ -5,6 +5,8 @@ import type { Commitment, Turn } from "@/lib/types";
 import { CommitmentsPane } from "./CommitmentsPane";
 import { TranscriptPane } from "./TranscriptPane";
 
+type ViewMode = "list" | "graph";
+
 interface SplitViewProps {
   turns: Turn[];
   commitments: Commitment[];
@@ -12,6 +14,7 @@ interface SplitViewProps {
 
 export function SplitView({ turns, commitments }: SplitViewProps) {
   const [selectedCommitmentId, setSelectedCommitmentId] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>("list");
 
   const turnRefs = useRef<Map<number, HTMLDivElement | null>>(new Map());
   // Hold the latest commitments in a ref so the scroll effect can read them
@@ -56,8 +59,8 @@ export function SplitView({ turns, commitments }: SplitViewProps) {
         border: "1px solid var(--surface-2)",
         borderRadius: "var(--r-card)",
         overflow: "hidden",
-        height: "calc(100vh - 200px)",
-        minHeight: 520
+        flex: 1,
+        minHeight: 480
       }}
     >
       <TranscriptPane
@@ -69,6 +72,8 @@ export function SplitView({ turns, commitments }: SplitViewProps) {
         commitments={commitments}
         selectedId={selectedCommitmentId}
         onSelect={handleSelect}
+        viewMode={viewMode}
+        onChangeViewMode={setViewMode}
       />
     </div>
   );

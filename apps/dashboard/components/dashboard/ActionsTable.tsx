@@ -55,7 +55,7 @@ export function ActionsTable({ actions }: { actions: Action[] }) {
               display: "grid",
               gridTemplateColumns: GRID,
               gap: 14,
-              padding: "14px 20px",
+              padding: "12px 18px",
               alignItems: "center",
               borderBottom: isLast ? "none" : "1px solid var(--border-row)",
               fontSize: 13

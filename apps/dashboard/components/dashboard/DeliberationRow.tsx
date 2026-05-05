@@ -22,6 +22,7 @@ export function DeliberationRow({ deliberation, isLast, gridTemplate }: RowProps
   return (
     <Link
       href={`/deliberations/${d.id}`}
+      className="row-link"
       style={{
         display: "block",
         padding: "16px 20px",

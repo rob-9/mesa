@@ -13,9 +13,9 @@ export function ComingSoon({ title, icon, children }: ComingSoonProps) {
       <h1
         style={{
           margin: 0,
-          fontSize: 30,
-          letterSpacing: "-0.02em",
-          lineHeight: 1.1,
+          fontSize: 22,
+          letterSpacing: "-0.015em",
+          lineHeight: 1.15,
           fontWeight: 600,
           color: "var(--fg-0)"
         }}

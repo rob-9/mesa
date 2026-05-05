@@ -46,10 +46,24 @@ html, body {
   background: var(--bg);
   color: var(--fg-1);
   font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Hover-elevate any clickable list/table row that opts in. */
+.row-link {
+  transition: background 120ms ease;
+}
+.row-link:hover {
+  background: var(--surface-1);
+}
+
+/* Pills and buttons get a subtle transition baseline. */
+button, a.row-link, [role="button"] {
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
 }
 
 a {
@@ -75,4 +89,40 @@ button {
   0%   { transform: scale(1); }
   50%  { transform: scale(1.015); }
   100% { transform: scale(1); }
+}
+
+/* Deploy Agent CTA: '+' pinned to the left, label centered in the button. */
+.deploy-cta-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Commitment-graph animations. */
+@keyframes summer-graph-node-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes summer-graph-edge-in {
+  from { stroke-dashoffset: var(--len, 200); opacity: 0; }
+  to   { stroke-dashoffset: 0; opacity: 1; }
+}
+
+@keyframes summer-graph-edge-flow {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: -20; }
+}
+
+.graph-node {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: filter 180ms ease;
+}
+.graph-node:hover {
+  filter: brightness(1.08);
+}
+.graph-node-selected {
+  filter: drop-shadow(0 0 12px rgba(217, 119, 87, 0.35));
 }

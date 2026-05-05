@@ -12,12 +12,13 @@ export function RecentActivityCard({ items }: { items: RecentActivity[] }) {
           <Link
             key={item.id}
             href={`/deliberations/${item.deliberationId}`}
+            className="row-link"
             style={{
               display: "grid",
-              gridTemplateColumns: "120px minmax(0, 1fr) 60px",
+              gridTemplateColumns: "110px minmax(0, 1fr) 56px",
               gap: 12,
               alignItems: "center",
-              padding: "12px 20px",
+              padding: "10px 16px",
               borderBottom: i === items.length - 1 ? "none" : "1px solid var(--border-row)",
               textDecoration: "none"
             }}

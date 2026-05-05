@@ -18,17 +18,16 @@ export function StatTile({ icon, value, label, accent = false }: StatTileProps) 
     <div
       style={{
         position: "relative",
-        padding: 20,
+        padding: 16,
         background: accent ? "var(--accent)" : "var(--surface-1)",
         border: accent ? "1px solid transparent" : "1px solid var(--surface-2)",
-        borderRadius: "var(--r-card)",
-        minHeight: 108
+        borderRadius: "var(--r-card)"
       }}
     >
       <div
         style={{
-          width: 28,
-          height: 28,
+          width: 26,
+          height: 26,
           borderRadius: "var(--r-inner)",
           background: chipBg,
           color: chipColor,
@@ -37,13 +36,13 @@ export function StatTile({ icon, value, label, accent = false }: StatTileProps) 
           justifyContent: "center"
         }}
       >
-        <Icon name={icon} size={16} />
+        <Icon name={icon} size={14} />
       </div>
       <div
         className="mono"
         style={{
-          marginTop: 22,
-          fontSize: 30,
+          marginTop: 16,
+          fontSize: 26,
           fontWeight: 600,
           letterSpacing: "-0.02em",
           lineHeight: 1.05,
@@ -52,7 +51,7 @@ export function StatTile({ icon, value, label, accent = false }: StatTileProps) 
       >
         {value}
       </div>
-      <div style={{ marginTop: 6, fontSize: 12, color: labelColor }}>{label}</div>
+      <div style={{ marginTop: 4, fontSize: 12, color: labelColor }}>{label}</div>
     </div>
   );
 }
