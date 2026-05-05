@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://summer.dev/schemas/commitments/datasharing/license_terms.schema.json",
+  "title": "License Terms",
+  "description": "Top-level commercial terms for a data licensing deal between a publisher and a lab.",
+  "type": "object",
+  "required": ["dataset_id", "fee_model", "term_months"],
+  "properties": {
+    "dataset_id": { "type": "string", "minLength": 1 },
+    "fee_model": {
+      "type": "object",
+      "required": ["kind", "amount_usd"],
+      "properties": {
+        "kind": { "type": "string", "enum": ["flat", "per_record", "revenue_share"] },
+        "amount_usd": { "type": "number", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "term_months": { "type": "integer", "minimum": 1, "maximum": 120 },
+    "renewal": { "type": "string", "enum": ["auto", "manual", "none"] }
+  },
+  "additionalProperties": false
+}

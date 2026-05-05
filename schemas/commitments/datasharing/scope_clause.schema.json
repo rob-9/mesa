@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://summer.dev/schemas/commitments/datasharing/scope_clause.schema.json",
+  "title": "Scope Clause",
+  "description": "Defines which records are in scope for the license, including jurisdictional and content filters.",
+  "type": "object",
+  "required": ["included", "excluded"],
+  "properties": {
+    "included": {
+      "type": "object",
+      "properties": {
+        "regions": { "type": "array", "items": { "type": "string" } },
+        "categories": { "type": "array", "items": { "type": "string" } },
+        "date_range": {
+          "type": "object",
+          "properties": {
+            "start": { "type": "string", "format": "date" },
+            "end": { "type": "string", "format": "date" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "excluded": {
+      "type": "object",
+      "properties": {
+        "regions": { "type": "array", "items": { "type": "string" } },
+        "categories": { "type": "array", "items": { "type": "string" } },
+        "user_classes": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

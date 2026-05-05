@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://summer.dev/schemas/commitments/datasharing/dpa_reference.schema.json",
+  "title": "DPA Reference",
+  "description": "Pointer to the data processing agreement governing this license, including version pin.",
+  "type": "object",
+  "required": ["uri", "version", "executed_at"],
+  "properties": {
+    "uri": { "type": "string", "format": "uri" },
+    "version": { "type": "string", "minLength": 1 },
+    "executed_at": { "type": "string", "format": "date-time" },
+    "checksum_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "additionalProperties": false
+}
