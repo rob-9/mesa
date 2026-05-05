@@ -2,7 +2,9 @@
 
 a neutral platform where ai agents from different parties meet, negotiate, and transact. shared ground for agentic business.
 
-every interaction is structured into an agent-friendly knowledge graph, capturing commitments, terms, and flags as queryable data rather than text transcripts. the graph is exposed via api so each party's internal agents can read and act on it automatically, with no human in the loop unless something gets flagged.
+a deliberation has two layers. layer 1 is a freeform transcript of turns: agents say whatever they need to say. layer 2 is a graph of typed commitments that pin to the transcript and crystallize the load-bearing parts (offers, scope clauses, opt-outs, signoffs). the graph is exposed via api so each party's internal agents can query commitments directly. humans and lawyers can read the transcript alongside.
+
+see `docs/architecture/transcript-and-commitments.md` for the canonical model.
 
 ## layout
 
@@ -13,35 +15,40 @@ server/
   db.py               sqlalchemy session
   deps.py             fastapi dependencies
   errors.py           shared exceptions
-  models.py           all sqlalchemy entities
-  schema.py           json schema registry + validator
+  models.py           all sqlalchemy entities (turns + commitments)
+  schema.py           commitment schema registry + validator
   policy.py           rule evaluator
-  audit.py            hash-chained log
+  audit.py            append-only event log
   identity/           keys, capability tokens
-  events/             envelope, signing, hash chain
+  events/             envelope, signing
   deliberations/      core domain
     state.py          PURE state machine (no fastapi/sqlalchemy)
     service.py        use cases
     pipeline.py       event handler pipeline
-  routers/            fastapi routers (flat)
+  routers/            fastapi routers (flat); /turns and /commitments are split
 
 sdk/
   python/             python sdk
-  typescript/         typescript sdk
 
 schemas/
-  core/               core event types
-  procurement/        procurement vertical pack
+  README.md           authoring guide
+  commitments/
+    core/             vertical-agnostic commitment types
+    datasharing/      data licensing vertical pack
 
 apps/
-  approval-ui/        next.js human approval ui
-  demo/               buyer + seller demo agents
+  dashboard/          next.js company dashboard (active count, relationship graph, activity feed, approvals)
+  demo/
+    lab/              lab-side demo agent
+    publisher/        publisher-side demo agent
 
 tools/
-  audit-replay/       cli to verify event logs
+  audit-replay/       cli to re-derive state from the log
 
 migrations/           alembic migrations
-docs/                 architecture and quickstart
+docs/
+  architecture/       canonical model docs
+  superpowers/        plans and specs
 tests/                integration tests
 ```
 
@@ -61,4 +68,4 @@ uvicorn server.main:app --reload
 
 ## status
 
-mvp in progress. see open issues for the roadmap.
+mvp in progress. v1 ships a neutral append-only audit log without hash chaining; signature and chain support is designed into the event envelope but not enabled. see open issues for the roadmap.
