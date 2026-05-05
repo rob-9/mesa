@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://summer.dev/schemas/commitments/core/amendment.schema.json",
+  "title": "Amendment",
+  "description": "Modifies a previously approved commitment without replacing it wholesale.",
+  "type": "object",
+  "required": ["amends", "changes", "reason"],
+  "properties": {
+    "amends": {
+      "type": "string",
+      "description": "Commitment id being amended."
+    },
+    "changes": {
+      "type": "object",
+      "description": "Field-level changes. Keys are JSON Pointer paths into the amended commitment body.",
+      "additionalProperties": true,
+      "minProperties": 1
+    },
+    "reason": { "type": "string", "minLength": 1, "maxLength": 1000 }
+  },
+  "additionalProperties": false
+}

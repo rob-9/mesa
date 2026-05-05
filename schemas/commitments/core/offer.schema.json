@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://summer.dev/schemas/commitments/core/offer.schema.json",
+  "title": "Offer",
+  "description": "A proposal of terms by one party.",
+  "type": "object",
+  "required": ["summary", "terms"],
+  "properties": {
+    "summary": { "type": "string", "minLength": 1, "maxLength": 500 },
+    "terms": {
+      "type": "object",
+      "description": "Type-loose key/value of proposed terms. Vertical packs add typed clauses via separate commitments.",
+      "additionalProperties": true
+    },
+    "expires_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false
+}

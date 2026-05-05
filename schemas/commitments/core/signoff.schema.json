@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://summer.dev/schemas/commitments/core/signoff.schema.json",
+  "title": "Signoff",
+  "description": "Final closure of a deliberation. References the set of commitments that constitute the agreed outcome.",
+  "type": "object",
+  "required": ["agreed_commitments", "outcome"],
+  "properties": {
+    "agreed_commitments": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Commitment ids that together constitute the final agreement."
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["agreement", "no_agreement", "withdrawn"]
+    }
+  },
+  "additionalProperties": false
+}

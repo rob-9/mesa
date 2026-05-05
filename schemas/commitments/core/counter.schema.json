@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://summer.dev/schemas/commitments/core/counter.schema.json",
+  "title": "Counter",
+  "description": "A counter-proposal that supersedes a prior offer or counter.",
+  "type": "object",
+  "required": ["supersedes", "summary", "terms"],
+  "properties": {
+    "supersedes": {
+      "type": "string",
+      "description": "Commitment id of the offer or counter being replaced."
+    },
+    "summary": { "type": "string", "minLength": 1, "maxLength": 500 },
+    "terms": { "type": "object", "additionalProperties": true }
+  },
+  "additionalProperties": false
+}
