@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://summer.dev/schemas/commitments/core/_common.schema.json",
+  "title": "Shared commitment sub-schemas",
+  "$defs": {
+    "principal_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{1,63}$"
+    },
+    "turn_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "iso_timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "derived_from": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/turn_id" },
+      "minItems": 1
+    }
+  }
+}
