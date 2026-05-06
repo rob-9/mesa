@@ -117,9 +117,11 @@ export interface IntegrationStatus {
 export interface OverviewData {
   stats: {
     activeDeliberations: number;
-    deployedAgents: number;
-    avgTimeToSignoff: string; // pre-formatted, e.g. "4.2h"
     awaitingAction: number;
+    medianAge: string;       // pre-formatted median age of open deliberations, e.g. "4.1h"
+    autoResolved: string;    // share resolved without human review, e.g. "89%"
+    flagged: number;
+    deployedAgents: number;
   };
   agents: AgentStatus[];
   recent: RecentActivity[];

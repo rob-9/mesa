@@ -111,9 +111,11 @@ export function fixtureOverview(): OverviewData {
   return {
     stats: {
       activeDeliberations: dashboard.counts.active,
-      deployedAgents: agents.length,
-      avgTimeToSignoff: "4.2h",
-      awaitingAction: dashboard.counts.awaitingAction
+      awaitingAction: dashboard.counts.awaitingAction,
+      medianAge: "4.1h",
+      autoResolved: "89%",
+      flagged: dashboard.counts.flagged,
+      deployedAgents: agents.length
     },
     agents,
     recent,

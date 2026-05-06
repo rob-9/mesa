@@ -1,58 +1,80 @@
 import { Icon } from "@/components/icons/Icon";
 import type { IntegrationStatus } from "@/lib/types";
-import { Card } from "./Card";
 
+// Slim horizontal strip — one row of chips. Reclaims the vertical space the
+// old card used since "is X connected" is yes/no information.
 export function IntegrationsCard({ integrations }: { integrations: IntegrationStatus[] }) {
   const connected = integrations.filter((i) => i.connected).length;
   return (
-    <Card title="Integrations" eyebrow={`${connected} OF ${integrations.length} CONNECTED`} noPadBody>
-      <div>
-        {integrations.map((int, i) => (
-          <div
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 14,
+        padding: "10px 16px",
+        background: "var(--surface-1)",
+        border: "1px solid var(--surface-2)",
+        borderRadius: "var(--r-card)",
+        minWidth: 0
+      }}
+    >
+      <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.2, flexShrink: 0 }}>
+        <span
+          className="mono"
+          style={{ fontSize: 10, color: "var(--fg-5)", letterSpacing: "0.06em" }}
+        >
+          INTEGRATIONS
+        </span>
+        <span style={{ fontSize: 12, color: "var(--fg-2)", marginTop: 2 }}>
+          {connected} of {integrations.length} connected
+        </span>
+      </div>
+      <div
+        aria-hidden
+        style={{
+          width: 1,
+          alignSelf: "stretch",
+          background: "var(--surface-2)",
+          marginLeft: 4,
+          marginRight: 4
+        }}
+      />
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6, minWidth: 0 }}>
+        {integrations.map((int) => (
+          <span
             key={int.id}
+            title={int.description}
             style={{
-              display: "grid",
-              gridTemplateColumns: "20px minmax(0, 1fr) auto",
-              gap: 12,
+              display: "inline-flex",
               alignItems: "center",
-              padding: "10px 16px",
-              borderBottom: i === integrations.length - 1 ? "none" : "1px solid var(--border-row)"
+              gap: 6,
+              padding: "4px 10px 4px 8px",
+              borderRadius: "var(--r-pill)",
+              background: int.connected ? "var(--surface-2)" : "transparent",
+              border: int.connected ? "1px solid var(--surface-3)" : "1px dashed var(--surface-3)",
+              color: int.connected ? "var(--fg-2)" : "var(--fg-5)",
+              fontSize: 11,
+              whiteSpace: "nowrap"
             }}
           >
             <span
+              aria-hidden
               style={{
-                width: 20,
-                height: 20,
+                width: 6,
+                height: 6,
                 borderRadius: "var(--r-pill)",
-                background: int.connected ? "var(--accent-soft)" : "var(--surface-2)",
-                color: int.connected ? "var(--accent)" : "var(--fg-5)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center"
+                background: int.connected ? "var(--accent)" : "var(--fg-6)"
               }}
-            >
-              <Icon name={int.connected ? "check" : "x"} size={12} />
-            </span>
-            <div style={{ minWidth: 0 }}>
-              <div style={{ fontSize: 12, color: "var(--fg-1)", fontWeight: 500 }}>{int.name}</div>
-              <div
-                style={{
-                  fontSize: 11,
-                  color: "var(--fg-5)",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  whiteSpace: "nowrap"
-                }}
-              >
-                {int.description}
-              </div>
-            </div>
-            <span style={{ fontSize: 11, color: int.connected ? "var(--fg-5)" : "var(--accent)" }}>
-              {int.connected ? "Connected" : "Connect →"}
-            </span>
-          </div>
+            />
+            {int.name}
+            {!int.connected && (
+              <span style={{ color: "var(--accent)", marginLeft: 2, display: "inline-flex", alignItems: "center" }}>
+                <Icon name="plus" size={10} />
+              </span>
+            )}
+          </span>
         ))}
       </div>
-    </Card>
+    </div>
   );
 }
