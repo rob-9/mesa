@@ -92,6 +92,7 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              className={active ? undefined : "nav-item"}
               style={{
                 position: "relative",
                 display: "flex",

@@ -89,17 +89,21 @@ export function CommitmentsPane({
 }
 
 function ViewToggle({ mode, onChange }: { mode: ViewMode; onChange: (m: ViewMode) => void }) {
+  const options = ["list", "graph"] as const;
+  const activeIdx = options.indexOf(mode);
+  // Each button is a fixed width so the sliding indicator can match it exactly.
+  const optionWidth = 52;
   return (
-    <div
-      style={{
-        display: "inline-flex",
-        background: "var(--surface-1)",
-        border: "1px solid var(--surface-2)",
-        borderRadius: "var(--r-pill)",
-        padding: 2
-      }}
-    >
-      {(["list", "graph"] as const).map((m) => {
+    <div className="toggle-track">
+      <span
+        aria-hidden
+        className="toggle-indicator"
+        style={{
+          width: optionWidth,
+          transform: `translateX(${activeIdx * optionWidth}px)`
+        }}
+      />
+      {options.map((m) => {
         const active = m === mode;
         return (
           <button
@@ -107,12 +111,14 @@ function ViewToggle({ mode, onChange }: { mode: ViewMode; onChange: (m: ViewMode
             type="button"
             onClick={() => onChange(m)}
             style={{
-              padding: "3px 11px",
+              width: optionWidth,
+              padding: "3px 0",
               borderRadius: "var(--r-pill)",
-              background: active ? "var(--surface-2)" : "transparent",
+              background: "transparent",
               color: active ? "var(--fg-0)" : "var(--fg-4)",
               fontSize: 11,
-              textTransform: "capitalize"
+              textTransform: "capitalize",
+              transition: "color 180ms ease"
             }}
           >
             {m}

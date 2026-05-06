@@ -60,18 +60,63 @@ main {
   overscroll-behavior: none;
 }
 
+/* Page-mount fade. Each route's <main> remounts on navigation, so this
+   replays — kills the "snap" between pages without being showy. */
+main {
+  animation: summer-page-in 220ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+@keyframes summer-page-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* Hover-elevate any clickable list/table row that opts in. */
 .row-link {
-  transition: background 120ms ease;
+  transition: background 140ms ease, box-shadow 140ms ease;
 }
 .row-link:hover {
   background: var(--surface-1);
 }
+.row-link:active {
+  background: var(--surface-2);
+}
 
 /* Pills and buttons get a subtle transition baseline. */
 button, a.row-link, [role="button"] {
-  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+  transition:
+    background 140ms ease,
+    color 140ms ease,
+    border-color 140ms ease,
+    transform 120ms ease,
+    box-shadow 140ms ease,
+    filter 140ms ease;
 }
+button:not(:disabled):active,
+[role="button"]:active {
+  transform: translateY(0.5px) scale(0.985);
+}
+
+/* Keyboard-only focus ring in accent. Mouse clicks stay clean. */
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--accent-ring);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Custom scrollbar — slim, dark, only on hover. */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background 140ms ease;
+}
+*:hover::-webkit-scrollbar-thumb { background: var(--surface-3); background-clip: padding-box; }
+*::-webkit-scrollbar-thumb:hover { background: var(--fg-6); background-clip: padding-box; }
+* { scrollbar-width: thin; scrollbar-color: var(--surface-3) transparent; }
 
 a {
   color: inherit;
@@ -133,4 +178,46 @@ button {
 }
 .graph-node-selected {
   filter: drop-shadow(0 0 12px rgba(217, 119, 87, 0.35));
+}
+
+/* Sidebar nav item hover (inline-styled active state stays untouched). */
+.nav-item {
+  transition: background 140ms ease, color 140ms ease;
+}
+.nav-item:hover {
+  background: var(--surface-2);
+  color: var(--fg-1);
+}
+
+/* Sliding-pill toggle: indicator is a sibling that translates between options. */
+.toggle-track {
+  position: relative;
+  display: inline-flex;
+  background: var(--surface-1);
+  border: 1px solid var(--surface-2);
+  border-radius: var(--r-pill);
+  padding: 2px;
+}
+.toggle-track .toggle-indicator {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  transition: transform 220ms cubic-bezier(0.22, 0.61, 0.36, 1), width 220ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  pointer-events: none;
+}
+.toggle-track > button {
+  position: relative;
+  z-index: 1;
+}
+
+/* Honour OS-level reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
