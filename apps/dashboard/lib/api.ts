@@ -1,6 +1,7 @@
+import { fixtureAgent, fixtureAgents } from "./agent-fixtures";
 import { fixtureDashboard, fixtureDeliberation } from "./fixtures";
 import { fixtureOverview } from "./overview-fixtures";
-import type { DashboardData, DeliberationDetail, OverviewData } from "./types";
+import type { AgentDetail, DashboardData, DeliberationDetail, OverviewData } from "./types";
 
 // v1 reads from local fixtures. The eventual fastapi swap is mechanical:
 // replace the body of each function with a `fetch()` against the real endpoint.
@@ -15,4 +16,12 @@ export async function getDashboard(): Promise<DashboardData> {
 
 export async function getDeliberation(id: string): Promise<DeliberationDetail | null> {
   return fixtureDeliberation(id);
+}
+
+export async function getAgents(): Promise<AgentDetail[]> {
+  return fixtureAgents();
+}
+
+export async function getAgent(id: string): Promise<AgentDetail | null> {
+  return fixtureAgent(id);
 }
