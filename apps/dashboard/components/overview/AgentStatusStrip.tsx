@@ -49,7 +49,8 @@ export function AgentStatusStrip({ agents }: { agents: AgentStatus[] }) {
               }}
             >
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
-                <span
+                <Link
+                  href={`/agents/${agent.id}`}
                   className="mono"
                   style={{
                     fontSize: 12,
@@ -57,11 +58,12 @@ export function AgentStatusStrip({ agents }: { agents: AgentStatus[] }) {
                     fontWeight: 500,
                     overflow: "hidden",
                     textOverflow: "ellipsis",
-                    whiteSpace: "nowrap"
+                    whiteSpace: "nowrap",
+                    textDecoration: "none"
                   }}
                 >
                   {agent.name}
-                </span>
+                </Link>
                 <Pill tone={meta.tone}>{meta.label}</Pill>
               </div>
               <span style={{ fontSize: 11, color: "var(--fg-4)" }}>{agent.role}</span>
