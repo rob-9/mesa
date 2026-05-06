@@ -127,3 +127,50 @@ export interface OverviewData {
   totalActions: number;
   integrations: IntegrationStatus[];
 }
+
+// ─── Agents detail ─────────────────────────────────────────────────────────
+
+// What internal system or tool the agent has access to.
+// `kind` drives icon + section grouping in the connections card.
+export interface AgentConnection {
+  id: string;
+  name: string;          // 'Salesforce', 'company-knowledge-graph', 'pricing-db', ...
+  kind: "data_source" | "tool" | "messaging" | "identity";
+  description: string;   // one-line: what the agent uses this for
+  status: "connected" | "degraded" | "disconnected";
+  scope?: string;        // e.g. "read: Account, Opportunity"
+}
+
+// One row in the policies card. Numeric or boolean guardrails.
+export interface AgentPolicy {
+  id: string;
+  label: string;         // 'Spend cap (per deliberation)'
+  value: string;         // pre-formatted: '$250,000', '4 hours', 'requires legal'
+  rationale?: string;    // one-line: why this exists
+}
+
+// One row in the activity card. Mirrors RecentActivity but scoped to agent.
+export interface AgentActivityItem {
+  id: string;
+  commitmentType: CommitmentType;
+  summary: string;
+  deliberationId: string;
+  deliberationTitle: string;
+  counterparty: string;
+  timestamp: string; // ISO-8601
+}
+
+export interface AgentConfig {
+  model: string;         // 'claude-opus-4-7', 'gpt-5-pro', ...
+  persona: string;       // short system-prompt synopsis
+  capabilities: CommitmentType[]; // commitment types this agent is permitted to emit
+  owner: string;         // 'rj@summer.dev'
+  deployedAt: string;    // ISO-8601
+}
+
+export interface AgentDetail extends AgentStatus {
+  config: AgentConfig;
+  connections: AgentConnection[];
+  policies: AgentPolicy[];
+  activity: AgentActivityItem[];
+}
