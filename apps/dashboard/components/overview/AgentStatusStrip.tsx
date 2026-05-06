@@ -40,11 +40,11 @@ export function AgentStatusStrip({ agents }: { agents: AgentStatus[] }) {
             <div
               key={agent.id}
               style={{
-                padding: "16px 18px",
+                padding: "12px 16px",
                 borderRight: isLast ? "none" : "1px solid var(--surface-2)",
                 display: "flex",
                 flexDirection: "column",
-                gap: 8,
+                gap: 6,
                 minWidth: 0
               }}
             >

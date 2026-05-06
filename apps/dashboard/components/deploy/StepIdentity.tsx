@@ -1,6 +1,7 @@
 "use client";
 
 import type { Dispatch, SetStateAction } from "react";
+import { Select } from "@/components/primitives/Select";
 import { Field } from "./Field";
 import type { WizardState } from "./types";
 
@@ -55,15 +56,16 @@ export function StepIdentity({ state, setState }: Props) {
           />
         </Field>
         <Field label="Model">
-          <select
+          <Select
             value={state.model}
-            onChange={(e) => setState((s) => ({ ...s, model: e.target.value }))}
-            style={monoInputStyle}
-          >
-            <option value="claude-opus-4-7">claude-opus-4-7</option>
-            <option value="claude-sonnet-4-6">claude-sonnet-4-6</option>
-            <option value="gpt-5-pro">gpt-5-pro</option>
-          </select>
+            onChange={(value) => setState((s) => ({ ...s, model: value }))}
+            options={[
+              { value: "claude-opus-4-7", label: "claude-opus-4-7" },
+              { value: "claude-sonnet-4-6", label: "claude-sonnet-4-6" },
+              { value: "gpt-5-pro", label: "gpt-5-pro" }
+            ]}
+            mono
+          />
         </Field>
         <Field label="Owner">
           <input
@@ -89,7 +91,6 @@ export function StepIdentity({ state, setState }: Props) {
                 fontSize: 12,
                 color: "var(--fg-1)",
                 outline: "none",
-                resize: "vertical",
                 fontFamily: "inherit"
               }}
             />

@@ -29,7 +29,7 @@ export function ActionQueueCard({ actions, total }: { actions: Action[]; total: 
             className="row-link"
             style={{
               display: "block",
-              padding: "10px 16px",
+              padding: "8px 16px",
               borderBottom: i === top.length - 1 ? "none" : "1px solid var(--border-row)",
               textDecoration: "none"
             }}

@@ -9,7 +9,7 @@ type Tone = "accent" | "amber" | "muted";
 // the remaining stats. Monotone — no gradients.
 export function OverviewHero({ stats }: { stats: Stats }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
         <HeroTile
           value={stats.awaitingAction}
@@ -63,7 +63,7 @@ export function HeroTile({
         gridTemplateColumns: "minmax(0, 1fr) auto",
         alignItems: "center",
         gap: 14,
-        padding: "16px 18px",
+        padding: "12px 16px",
         background: bg,
         border,
         borderRadius: "var(--r-card)"
@@ -73,7 +73,7 @@ export function HeroTile({
         <span
           className="mono"
           style={{
-            fontSize: 34,
+            fontSize: 30,
             fontWeight: 600,
             letterSpacing: "-0.025em",
             lineHeight: 1,
@@ -123,7 +123,7 @@ export function SupportingLine({ stats }: { stats: Stats }) {
   return (
     <div
       style={{
-        padding: "8px 16px",
+        padding: "6px 14px",
         background: "var(--surface-1)",
         border: "1px solid var(--surface-2)",
         borderRadius: "var(--r-card)",

@@ -10,11 +10,11 @@ export default async function OverviewPage() {
   const data = await getOverview();
   return (
     <AppShell>
-      <div style={{ marginBottom: 18 }}>
+      <div style={{ marginBottom: 12 }}>
         <h1
           style={{
             margin: 0,
-            fontSize: 22,
+            fontSize: 20,
             letterSpacing: "-0.015em",
             lineHeight: 1.15,
             fontWeight: 600,
@@ -23,11 +23,11 @@ export default async function OverviewPage() {
         >
           Overview <span style={{ color: "var(--fg-3)", fontWeight: 400 }}>· X</span>
         </h1>
-        <div style={{ marginTop: 4, fontSize: 12, color: "var(--fg-4)" }}>
+        <div style={{ marginTop: 3, fontSize: 12, color: "var(--fg-4)" }}>
           What your agents have been doing today.
         </div>
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         <OverviewHero stats={data.stats} />
         <div
           style={{

@@ -20,7 +20,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             flex: 1,
             display: "flex",
             flexDirection: "column",
-            padding: "20px 28px",
+            padding: "16px 28px",
             width: "100%",
             maxWidth: 1280,
             margin: "0 auto",

@@ -11,7 +11,7 @@ export function IntegrationsCard({ integrations }: { integrations: IntegrationSt
         display: "flex",
         alignItems: "center",
         gap: 14,
-        padding: "10px 16px",
+        padding: "8px 14px",
         background: "var(--surface-1)",
         border: "1px solid var(--surface-2)",
         borderRadius: "var(--r-card)",
@@ -43,7 +43,6 @@ export function IntegrationsCard({ integrations }: { integrations: IntegrationSt
         {integrations.map((int) => (
           <span
             key={int.id}
-            title={int.description}
             style={{
               display: "inline-flex",
               alignItems: "center",

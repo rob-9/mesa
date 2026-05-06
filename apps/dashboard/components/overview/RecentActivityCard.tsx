@@ -5,10 +5,11 @@ import type { RecentActivity } from "@/lib/types";
 import { Card } from "./Card";
 
 export function RecentActivityCard({ items }: { items: RecentActivity[] }) {
+  const shown = items.slice(0, 4);
   return (
     <Card title="Recent activity" eyebrow={`${items.length} COMMITMENTS`} noPadBody>
       <div>
-        {items.map((item, i) => (
+        {shown.map((item, i) => (
           <Link
             key={item.id}
             href={`/deliberations/${item.deliberationId}`}
@@ -18,8 +19,8 @@ export function RecentActivityCard({ items }: { items: RecentActivity[] }) {
               gridTemplateColumns: "110px minmax(0, 1fr) 56px",
               gap: 12,
               alignItems: "center",
-              padding: "10px 16px",
-              borderBottom: i === items.length - 1 ? "none" : "1px solid var(--border-row)",
+              padding: "8px 16px",
+              borderBottom: i === shown.length - 1 ? "none" : "1px solid var(--border-row)",
               textDecoration: "none"
             }}
           >

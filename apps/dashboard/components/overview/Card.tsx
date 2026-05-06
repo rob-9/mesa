@@ -24,7 +24,7 @@ export function Card({ title, eyebrow, trailing, children, noPadBody = false }: 
       {(title || eyebrow || trailing) && (
         <div
           style={{
-            padding: "12px 16px",
+            padding: "10px 16px",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
