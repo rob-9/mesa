@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Pill } from "@/components/primitives/Pill";
+import { TypeLabel } from "@/components/primitives/TypeLabel";
 import type { AgentDetail } from "@/lib/types";
 
 const stateMeta: Record<AgentDetail["state"], { label: string; tone: Parameters<typeof Pill>[0]["tone"] }> = {
@@ -84,6 +85,41 @@ export function AgentHeader({ agent }: { agent: AgentDetail }) {
         </span>
       </div>
       <div style={{ height: 1, background: "var(--surface-2)", marginTop: 16 }} />
+      {/* config strip */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 12 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
+          <span
+            className="mono"
+            style={{
+              padding: "3px 10px",
+              background: "var(--surface-2)",
+              color: "var(--fg-1)",
+              borderRadius: "var(--r-pill)",
+              fontSize: 11
+            }}
+          >
+            {agent.config.model}
+          </span>
+          <span style={{ color: "var(--fg-5)", fontSize: 11 }}>·</span>
+          {agent.config.capabilities.map((c) => (
+            <span
+              key={c}
+              style={{
+                padding: "3px 10px",
+                background: "var(--surface-1)",
+                border: "1px solid var(--surface-2)",
+                borderRadius: "var(--r-pill)",
+                fontSize: 11
+              }}
+            >
+              <TypeLabel type={c} />
+            </span>
+          ))}
+        </div>
+        <div style={{ fontSize: 12, color: "var(--fg-2)", fontStyle: "italic", lineHeight: 1.5 }}>
+          {agent.config.persona}
+        </div>
+      </div>
     </div>
   );
 }

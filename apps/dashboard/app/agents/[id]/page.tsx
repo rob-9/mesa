@@ -1,10 +1,6 @@
 import { notFound } from "next/navigation";
-import { AgentActivityCard } from "@/components/agents/AgentActivityCard";
-import { AgentConfigCard } from "@/components/agents/AgentConfigCard";
-import { AgentConnectionsCard } from "@/components/agents/AgentConnectionsCard";
-import { AgentHeader } from "@/components/agents/AgentHeader";
-import { AgentPoliciesCard } from "@/components/agents/AgentPoliciesCard";
 import { AppShell } from "@/components/shell/AppShell";
+import { AgentDetailClient } from "@/components/agents/AgentDetailClient";
 import { getAgent } from "@/lib/api";
 
 export default async function AgentDetailPage({
@@ -16,26 +12,7 @@ export default async function AgentDetailPage({
   if (!agent) notFound();
   return (
     <AppShell>
-      <AgentHeader agent={agent} />
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "minmax(0, 2fr) minmax(0, 1fr)",
-          gap: 12,
-          marginTop: 18
-        }}
-      >
-        {/* left column */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <AgentActivityCard items={agent.activity} />
-          <AgentConfigCard agent={agent} />
-        </div>
-        {/* right column */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <AgentConnectionsCard connections={agent.connections} />
-          <AgentPoliciesCard policies={agent.policies} />
-        </div>
-      </div>
+      <AgentDetailClient initialAgent={agent} />
     </AppShell>
   );
 }

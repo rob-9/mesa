@@ -1,4 +1,3 @@
-import { Card } from "@/components/overview/Card";
 import type { AgentConnection } from "@/lib/types";
 
 const KIND_ORDER: AgentConnection["kind"][] = ["data_source", "tool", "messaging", "identity"];
@@ -75,39 +74,36 @@ function ConnectionRow({ c, isLast }: { c: AgentConnection; isLast: boolean }) {
 }
 
 export function AgentConnectionsCard({ connections }: { connections: AgentConnection[] }) {
-  const connectedCount = connections.filter((c) => c.status === "connected").length;
   const grouped = KIND_ORDER.map((kind) => ({
     kind,
     items: connections.filter((c) => c.kind === kind)
   })).filter((g) => g.items.length > 0);
 
   return (
-    <Card title="Connected systems" eyebrow={`${connectedCount} CONNECTED`} noPadBody>
-      <div>
-        {grouped.map((group, gi) => (
+    <div>
+      {grouped.map((group, gi) => (
+        <div
+          key={group.kind}
+          style={{
+            borderBottom: gi === grouped.length - 1 ? "none" : "1px solid var(--surface-2)"
+          }}
+        >
           <div
-            key={group.kind}
+            className="mono"
             style={{
-              borderBottom: gi === grouped.length - 1 ? "none" : "1px solid var(--surface-2)"
+              fontSize: 10,
+              color: "var(--fg-5)",
+              letterSpacing: "0.06em",
+              padding: "10px 16px 4px"
             }}
           >
-            <div
-              className="mono"
-              style={{
-                fontSize: 10,
-                color: "var(--fg-5)",
-                letterSpacing: "0.06em",
-                padding: "10px 16px 4px"
-              }}
-            >
-              {KIND_LABEL[group.kind]}
-            </div>
-            {group.items.map((c, i) => (
-              <ConnectionRow key={c.id} c={c} isLast={i === group.items.length - 1} />
-            ))}
+            {KIND_LABEL[group.kind]}
           </div>
-        ))}
-      </div>
-    </Card>
+          {group.items.map((c, i) => (
+            <ConnectionRow key={c.id} c={c} isLast={i === group.items.length - 1} />
+          ))}
+        </div>
+      ))}
+    </div>
   );
 }

@@ -91,7 +91,7 @@ const labBuyer: AgentDetail = {
     {
       id: "a-1",
       commitmentType: "scope_clause",
-      summary: "Articles from 2018 onwards, English only, no opinion. 2-year non-exclusive.",
+      summary: "Defined scope: articles from 2018, English, no opinion, 2-year non-exclusive.",
       deliberationId: "training-data-q4",
       deliberationTitle: "training-data Q4 license",
       counterparty: "publisher-co",
@@ -100,7 +100,7 @@ const labBuyer: AgentDetail = {
     {
       id: "a-2",
       commitmentType: "amendment",
-      summary: "Translations excluded from training-data scope.",
+      summary: "Excluded translations from scope.",
       deliberationId: "training-data-q4",
       deliberationTitle: "training-data Q4 license",
       counterparty: "publisher-co",
@@ -109,7 +109,7 @@ const labBuyer: AgentDetail = {
     {
       id: "a-3",
       commitmentType: "offer",
-      summary: "Initial $180k flat offer, 12-month term.",
+      summary: "Proposed $180k flat, 12-month term.",
       deliberationId: "training-data-q4",
       deliberationTitle: "training-data Q4 license",
       counterparty: "publisher-co",
@@ -196,7 +196,7 @@ const legalBot: AgentDetail = {
     {
       id: "a-1",
       commitmentType: "approval",
-      summary: "DPA v2.1 verified for trinity-data; signoff cleared.",
+      summary: "Verified DPA v2.1 for trinity-data and cleared signoff.",
       deliberationId: "web-archive-opt-in",
       deliberationTitle: "web-archive opt-in",
       counterparty: "trinity-data",
@@ -205,7 +205,7 @@ const legalBot: AgentDetail = {
     {
       id: "a-2",
       commitmentType: "dpa_reference",
-      summary: "Linked DPA #DPA-2026-041 to web-archive opt-in.",
+      summary: "Pinned DPA #DPA-2026-041 to web-archive opt-in.",
       deliberationId: "web-archive-opt-in",
       deliberationTitle: "web-archive opt-in",
       counterparty: "trinity-data",
@@ -223,7 +223,7 @@ const legalBot: AgentDetail = {
     {
       id: "a-4",
       commitmentType: "approval",
-      summary: "Cleared liability cap at 12mo fees for octostack draft.",
+      summary: "Approved liability cap at 12mo fees on octostack draft.",
       deliberationId: "code-corpus-license",
       deliberationTitle: "code corpus license",
       counterparty: "octostack",
@@ -312,7 +312,7 @@ const policyAgent: AgentDetail = {
     {
       id: "a-1",
       commitmentType: "amendment",
-      summary: "Blocked: octostack DPA references v2.0; needs v2.1 upgrade.",
+      summary: "Blocked octostack: DPA references v2.0, requires v2.1 upgrade.",
       deliberationId: "code-corpus-license",
       deliberationTitle: "code corpus license",
       counterparty: "octostack",
@@ -321,7 +321,7 @@ const policyAgent: AgentDetail = {
     {
       id: "a-2",
       commitmentType: "approval",
-      summary: "Cleared zenith image corpus against bundle@v2.1.",
+      summary: "Approved zenith image corpus against bundle@v2.1.",
       deliberationId: "image-corpus-rev-share",
       deliberationTitle: "image corpus rev-share",
       counterparty: "zenith",
@@ -330,7 +330,7 @@ const policyAgent: AgentDetail = {
     {
       id: "a-3",
       commitmentType: "approval",
-      summary: "Cleared trinity-data web-archive opt-in (US-only subjects).",
+      summary: "Approved trinity-data web-archive opt-in (US-only subjects).",
       deliberationId: "web-archive-opt-in",
       deliberationTitle: "web-archive opt-in",
       counterparty: "trinity-data",
@@ -418,7 +418,7 @@ const dataCatalogAgent: AgentDetail = {
     {
       id: "a-2",
       commitmentType: "scope_clause",
-      summary: "Lineage check: image-corpus-v3 includes 4 upstream sets.",
+      summary: "Traced lineage: image-corpus-v3 derives from 4 upstream sets.",
       deliberationId: "image-corpus-rev-share",
       deliberationTitle: "image corpus rev-share",
       counterparty: "zenith",
@@ -497,7 +497,7 @@ const pricingAgent: AgentDetail = {
     {
       id: "a-1",
       commitmentType: "offer",
-      summary: "Revenue-share proposal: 12% gross, capped at $200k/yr.",
+      summary: "Proposed revenue-share: 12% gross, capped at $200k/yr.",
       deliberationId: "image-corpus-rev-share",
       deliberationTitle: "image corpus rev-share",
       counterparty: "zenith",
@@ -506,7 +506,7 @@ const pricingAgent: AgentDetail = {
     {
       id: "a-2",
       commitmentType: "counter",
-      summary: "Counter: $220k flat, 18mo term (vs $180k flat, 24mo).",
+      summary: "Countered with $220k flat, 18mo term (vs $180k flat, 24mo).",
       deliberationId: "training-data-q4",
       deliberationTitle: "training-data Q4 license",
       counterparty: "publisher-co",
@@ -515,7 +515,7 @@ const pricingAgent: AgentDetail = {
     {
       id: "a-3",
       commitmentType: "offer",
-      summary: "Initial license proposal: github public repos, 3-year term.",
+      summary: "Proposed license on github public repos, 3-year term.",
       deliberationId: "code-corpus-license",
       deliberationTitle: "code corpus license",
       counterparty: "octostack",
