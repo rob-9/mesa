@@ -63,7 +63,7 @@ export function Sidebar() {
       </Link>
 
       <Link
-        href="/agents"
+        href="/agents/new"
         className="deploy-cta"
         style={{
           position: "relative",

@@ -1,3 +1,4 @@
+import { addAgent, getAgent, listAgents, setSeed } from "./agent-store";
 import { DEMO_NOW_ISO } from "./format";
 import type { AgentDetail } from "./types";
 
@@ -524,12 +525,17 @@ const pricingAgent: AgentDetail = {
   ]
 };
 
-const all: AgentDetail[] = [labBuyer, legalBot, policyAgent, dataCatalogAgent, pricingAgent];
+const seed: AgentDetail[] = [labBuyer, legalBot, policyAgent, dataCatalogAgent, pricingAgent];
+setSeed(seed);
 
 export function fixtureAgents(): AgentDetail[] {
-  return all;
+  return listAgents();
 }
 
 export function fixtureAgent(id: string): AgentDetail | null {
-  return all.find((a) => a.id === id) ?? null;
+  return getAgent(id);
+}
+
+export function appendAgent(agent: AgentDetail): void {
+  addAgent(agent);
 }
