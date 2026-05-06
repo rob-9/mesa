@@ -180,7 +180,8 @@ export function CommitmentGraph({ commitments, selectedId, onSelect }: Commitmen
             : isFlagged
             ? "var(--amber)"
             : "var(--surface-2)";
-          const fill = isSelected ? "var(--accent-strong-bg)" : "var(--surface-1)";
+          // Selected nodes signal via accent border + drop-shadow only — no fill change.
+          const fill = "var(--surface-1)";
           const accent = typeAccent[c.type];
           return (
             <g
@@ -194,8 +195,6 @@ export function CommitmentGraph({ commitments, selectedId, onSelect }: Commitmen
               }}
               onClick={() => onSelect(c.id)}
             >
-              {/* Native browser tooltip on hover — full summary regardless of node size. */}
-              <title>{`${c.type}\n\n${c.summary}\n\nderived from turns ${c.derivedFromTurns.join(", ")}`}</title>
               <rect
                 x={n.x}
                 y={n.y}
@@ -214,7 +213,6 @@ export function CommitmentGraph({ commitments, selectedId, onSelect }: Commitmen
               <text
                 x={n.x + 22}
                 y={n.y + 17}
-                fontFamily="var(--font-mono)"
                 fontSize={10.5}
                 fontWeight={isSelected ? 600 : 500}
                 fill={isSelected ? "var(--accent)" : "var(--fg-2)"}
@@ -226,8 +224,7 @@ export function CommitmentGraph({ commitments, selectedId, onSelect }: Commitmen
                 <text
                   x={n.x + n.width - 10}
                   y={n.y + 17}
-                  fontFamily="var(--font-mono)"
-                  fontSize={9}
+                    fontSize={9}
                   fill={isSelected ? "var(--accent)" : "var(--fg-5)"}
                   textAnchor="end"
                 >

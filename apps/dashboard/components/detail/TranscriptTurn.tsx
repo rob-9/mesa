@@ -25,14 +25,17 @@ export function TranscriptTurn({ turn, highlighted, registerRef }: TranscriptTur
   const wrapAlign = right ? "flex-end" : "flex-start";
   const headerOrder = right ? "row-reverse" : "row";
 
-  // Bubble palette
+  // Bubble palette. Outgoing (lab/right) messages get a slight warm tint so the
+  // viewer can tell at a glance which side is "yours".
   const bg = highlighted
     ? "var(--accent-strong-bg)"
     : right
-    ? "var(--surface-2)"
+    ? "linear-gradient(rgba(217, 119, 87, 0.10), rgba(217, 119, 87, 0.10)), var(--surface-2)"
     : "var(--surface-1)";
   const border = highlighted
     ? "1px solid var(--accent)"
+    : right
+    ? "1px solid rgba(217, 119, 87, 0.22)"
     : "1px solid var(--surface-2)";
   const textColor = highlighted ? "var(--fg-0)" : right ? "var(--fg-1)" : "var(--fg-2)";
 

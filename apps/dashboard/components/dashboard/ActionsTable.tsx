@@ -50,7 +50,7 @@ export function ActionsTable({ actions }: { actions: Action[] }) {
         <span style={{ textAlign: "right" }}>AGE</span>
         <span style={{ textAlign: "right" }}>DECIDE</span>
       </div>
-      <div style={{ flex: 1, overflowY: "auto", minHeight: 0 }}>
+      <div style={{ flex: 1, overflowY: "auto", overscrollBehavior: "none", minHeight: 0 }}>
         {actions.map((action, i) => {
           const blocked = blockedLabel(action);
           const isLast = i === actions.length - 1;

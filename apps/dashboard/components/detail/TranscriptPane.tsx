@@ -13,6 +13,7 @@ export function TranscriptPane({ turns, highlightedTurnIds, registerTurnRef }: T
       style={{
         borderRight: "1px solid var(--surface-2)",
         overflowY: "auto",
+        overscrollBehavior: "none",
         display: "flex",
         flexDirection: "column",
         background: "var(--surface-0)"
@@ -34,17 +35,18 @@ export function TranscriptPane({ turns, highlightedTurnIds, registerTurnRef }: T
         <span
           aria-hidden
           style={{
-            width: 6,
-            height: 6,
+            width: 8,
+            height: 8,
             borderRadius: "var(--r-pill)",
-            background: "var(--fg-3)"
+            background: "rgba(140, 160, 200, 0.9)",
+            boxShadow: "0 0 0 3px rgba(140, 160, 200, 0.18)"
           }}
         />
         <span
           className="mono"
           style={{
             fontSize: 11,
-            color: "var(--fg-5)",
+            color: "var(--fg-3)",
             letterSpacing: "0.08em"
           }}
         >

@@ -23,11 +23,11 @@ export function CommitmentsPane({
     <div
       style={{
         overflowY: "auto",
+        overscrollBehavior: "none",
         display: "flex",
         flexDirection: "column",
         minWidth: 0,
-        background:
-          "linear-gradient(180deg, rgba(217, 119, 87, 0.04) 0%, rgba(217, 119, 87, 0) 200px), var(--surface-0)"
+        background: "var(--surface-0)"
       }}
     >
       <div
@@ -47,17 +47,18 @@ export function CommitmentsPane({
           <span
             aria-hidden
             style={{
-              width: 6,
-              height: 6,
+              width: 8,
+              height: 8,
               borderRadius: "var(--r-pill)",
-              background: "var(--accent)"
+              background: "var(--accent)",
+              boxShadow: "0 0 0 3px rgba(217, 119, 87, 0.2)"
             }}
           />
           <span
             className="mono"
             style={{
-              fontSize: 10,
-              color: "var(--fg-5)",
+              fontSize: 11,
+              color: "var(--accent)",
               letterSpacing: "0.08em"
             }}
           >

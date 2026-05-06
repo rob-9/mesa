@@ -50,6 +50,14 @@ html, body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+  height: 100%;
+}
+
+/* Every internal scroll container kills its own rubber-band. */
+.no-bounce,
+main {
+  overscroll-behavior: none;
 }
 
 /* Hover-elevate any clickable list/table row that opts in. */
@@ -79,8 +87,9 @@ button {
   cursor: pointer;
 }
 
+/* Was monospace; now just tabular-numerals so stat numbers/timestamps line up
+   while inheriting the sitewide Inter sans (matches the chat-bubble font). */
 .mono {
-  font-family: var(--font-mono);
   font-feature-settings: "tnum";
 }
 

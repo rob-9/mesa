@@ -37,7 +37,7 @@ export function DeliberationsTable({ deliberations }: { deliberations: Deliberat
         <span>WAITING ON</span>
         <span style={{ textAlign: "right" }}>LAST</span>
       </div>
-      <div style={{ flex: 1, overflowY: "auto", minHeight: 0 }}>
+      <div style={{ flex: 1, overflowY: "auto", overscrollBehavior: "none", minHeight: 0 }}>
         {deliberations.map((d, i) => (
           <DeliberationRow
             key={d.id}
