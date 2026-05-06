@@ -63,7 +63,8 @@ export async function deployAgent(input: DeployAgentInput): Promise<AgentDetail>
     },
     connections: input.connections,
     policies: input.policies,
-    activity: []
+    activity: [],
+    reasoning: []
   };
   appendAgent(agent);
   return agent;

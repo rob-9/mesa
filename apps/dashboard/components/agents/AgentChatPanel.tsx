@@ -40,11 +40,8 @@ export function AgentChatPanel({
       }}
     >
       {/* header */}
-      <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--surface-2)" }}>
-        <div className="mono" style={{ fontSize: 10, color: "var(--fg-5)", letterSpacing: "0.06em" }}>
-          NATURAL LANGUAGE
-        </div>
-        <div style={{ fontSize: 13, color: "var(--fg-1)", fontWeight: 500 }}>Configure with chat</div>
+      <div style={{ padding: "14px 16px", borderBottom: "1px solid var(--surface-2)" }}>
+        <div style={{ fontSize: 13, color: "var(--fg-1)", fontWeight: 500 }}>Configure Your Agent</div>
       </div>
 
       {/* message list */}

@@ -160,6 +160,14 @@ export interface AgentActivityItem {
   timestamp: string; // ISO-8601
 }
 
+// Why the agent produced one specific commitment. Keyed by AgentActivityItem.id.
+export interface AgentReasoning {
+  activityId: string;        // matches AgentActivityItem.id
+  contextPulled: string[];   // sources / facts the agent retrieved before deciding
+  ruleApplied: string;       // the policy or heuristic that bound the decision
+  decision: string;          // one-paragraph rationale for the final value
+}
+
 export interface AgentConfig {
   model: string;         // 'claude-opus-4-7', 'gpt-5-pro', ...
   persona: string;       // short system-prompt synopsis
@@ -173,4 +181,5 @@ export interface AgentDetail extends AgentStatus {
   connections: AgentConnection[];
   policies: AgentPolicy[];
   activity: AgentActivityItem[];
+  reasoning: AgentReasoning[];
 }

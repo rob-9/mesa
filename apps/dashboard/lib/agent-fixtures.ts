@@ -116,6 +116,40 @@ const labBuyer: AgentDetail = {
       counterparty: "publisher-co",
       timestamp: ago(420)
     }
+  ],
+  reasoning: [
+    {
+      activityId: "a-1",
+      contextPulled: [
+        "company-knowledge-graph: 4 prior publisher-co licenses, all English-only",
+        "pricing-db: archive material >5y old prices at 0.4× current",
+        "legal precedent: opinion content carries 3× indemnity exposure"
+      ],
+      ruleApplied: "spend cap $250k forces narrow scope; default to non-exclusive when counterparty has no exclusivity history",
+      decision:
+        "Restricted to articles from 2018+ to avoid the archive premium and keep volume inside the spend cap. English-only matches downstream training set. No-opinion clause keeps indemnity exposure inside the standard cap. 2-year non-exclusive aligns with the Q4 OKR window."
+    },
+    {
+      activityId: "a-2",
+      contextPulled: [
+        "publisher-co rights table: translation rights licensed separately to translation-co",
+        "pricing-db: ambiguous-rights deals carry +30% legal review cost"
+      ],
+      ruleApplied: "rights-clarity rule: do not pay for rights the counterparty cannot cleanly grant",
+      decision:
+        "Pulling translations out drops the quote by ~$40k and removes a downstream dispute risk. Counterparty agreed inside one round."
+    },
+    {
+      activityId: "a-3",
+      contextPulled: [
+        "pricing-db median comparable: $200k flat for similar non-exclusive scope",
+        "historical-deals-warehouse: publisher-co last 3 deals closed at 88-94% of median",
+        "Salesforce CRM: opportunity owner has soft target $175k"
+      ],
+      ruleApplied: "non-exclusive band: anchor at median minus 10%; never below opportunity-owner soft target unless override",
+      decision:
+        "$180k is 90% of the median and 3% above the soft target. 12-month term matches the budget cycle and gives room to renegotiate before the next planning round."
+    }
   ]
 };
 
@@ -230,6 +264,50 @@ const legalBot: AgentDetail = {
       counterparty: "octostack",
       timestamp: ago(640)
     }
+  ],
+  reasoning: [
+    {
+      activityId: "a-1",
+      contextPulled: [
+        "DocuSign: trinity-data DPA v2.1 executed 2026-04-02, signatures verified",
+        "internal-contracts-repo: trinity-data uses our standard mutual-indemnity template",
+        "OPA: bundle@v2.1 evaluation = pass"
+      ],
+      ruleApplied: "DPA gate: signoff blocked unless an executed DPA matching active bundle is on file",
+      decision:
+        "All three checks cleared. Cleared signoff for the web-archive opt-in deliberation."
+    },
+    {
+      activityId: "a-2",
+      contextPulled: [
+        "DocuSign envelope #DPA-2026-041 (executed 2026-04-02)",
+        "deliberation web-archive-opt-in references no DPA"
+      ],
+      ruleApplied: "every active deliberation must pin one DPA reference before signoff",
+      decision:
+        "Pinned the executed DPA to the deliberation so downstream commitments inherit its scope and version."
+    },
+    {
+      activityId: "a-3",
+      contextPulled: [
+        "zenith counter-draft used unilateral indemnity (counterparty only)",
+        "internal-contracts-repo: standard mutual-indemnity carve-out language v3"
+      ],
+      ruleApplied: "indemnity floor: refuse unilateral language; require mutual carve-out for IP and gross negligence",
+      decision:
+        "Replaced the unilateral clause with the standard mutual carve-out. Counterparty accepted in next round."
+    },
+    {
+      activityId: "a-4",
+      contextPulled: [
+        "octostack proposed 12mo-fees liability cap",
+        "internal-contracts-repo: 87% of comparable deals close at 12mo cap",
+        "deliberation total fees < $200k"
+      ],
+      ruleApplied: "liability cap: 12mo-fees acceptable when total fees stay under $250k",
+      decision:
+        "12mo cap aligns with comparable practice for deals at this size. Approved without amendment."
+    }
   ]
 };
 
@@ -337,6 +415,41 @@ const policyAgent: AgentDetail = {
       counterparty: "trinity-data",
       timestamp: ago(720)
     }
+  ],
+  reasoning: [
+    {
+      activityId: "a-1",
+      contextPulled: [
+        "octostack DPA reference resolved to v2.0 in compliance-rules-repo",
+        "deliberation includes EU subjects (jurisdiction tag from knowledge-graph)",
+        "OPA: bundle@v2.1 evaluation = fail (rule eu_subjects_require_v21)"
+      ],
+      ruleApplied: "EU subjects: hard-reject any commitment under DPA <v2.1",
+      decision:
+        "Bundle evaluation failed on the EU-subjects rule. Blocked with a structured amendment requiring DPA upgrade to v2.1; sent to #compliance and the override path."
+    },
+    {
+      activityId: "a-2",
+      contextPulled: [
+        "zenith DPA v2.1 on file",
+        "image-corpus jurisdiction set: US, CA, UK (no EU)",
+        "OPA: bundle@v2.1 evaluation = pass"
+      ],
+      ruleApplied: "approve when bundle evaluation passes and DPA matches active bundle",
+      decision:
+        "All checks pass. Approved without amendment."
+    },
+    {
+      activityId: "a-3",
+      contextPulled: [
+        "trinity-data subject set tagged US-only by knowledge-graph",
+        "EU-subjects rule does not trigger",
+        "OPA: bundle@v2.1 evaluation = pass"
+      ],
+      ruleApplied: "US-only subjects skip the v2.1 hard-gate; standard bundle check applies",
+      decision:
+        "Bundle passed; subjects are US-only so the EU rule does not apply. Approved."
+    }
   ]
 };
 
@@ -424,6 +537,29 @@ const dataCatalogAgent: AgentDetail = {
       deliberationTitle: "image corpus rev-share",
       counterparty: "zenith",
       timestamp: ago(880)
+    }
+  ],
+  reasoning: [
+    {
+      activityId: "a-1",
+      contextPulled: [
+        "data-catalog: 'github public repos' fuzzy-matched 3 candidates",
+        "lineage-graph: gh-public-2024 has cleanest provenance + license labels",
+        "policy: pii tag absent on gh-public-2024"
+      ],
+      ruleApplied: "resolve ambiguous dataset names to the candidate with cleanest provenance and matching license labels",
+      decision:
+        "gh-public-2024 had the highest match score and clean license labels. Pinned it as the canonical reference for the scope clause."
+    },
+    {
+      activityId: "a-2",
+      contextPulled: [
+        "lineage-graph: image-corpus-v3 derives from 4 upstream sets (creative-commons-imgs, museum-archive-2023, partner-photos-2024, public-domain-art)",
+        "two of four upstream sets have PII tags downstream"
+      ],
+      ruleApplied: "surface full lineage when any upstream contains pii-tagged content",
+      decision:
+        "Surfaced full lineage so downstream agents can choose between the full corpus and a pii-free subset."
     }
   ]
 };
@@ -521,6 +657,41 @@ const pricingAgent: AgentDetail = {
       deliberationTitle: "code corpus license",
       counterparty: "octostack",
       timestamp: ago(820)
+    }
+  ],
+  reasoning: [
+    {
+      activityId: "a-1",
+      contextPulled: [
+        "pricing-db: image-corpus rates run 8-15% gross rev share",
+        "historical-deals-warehouse: 3 zenith comparables capped at $200-250k/yr",
+        "counter band evaluation: zenith's last opening offer was 14%"
+      ],
+      ruleApplied: "counter band: anchor at the comparable median; cap at the 75th-percentile annual ceiling",
+      decision:
+        "12% sits inside the comparable band and below counterparty's last opening. $200k cap aligns with the 75th-percentile annual figure in the warehouse."
+    },
+    {
+      activityId: "a-2",
+      contextPulled: [
+        "publisher-co counter at $180k flat / 24mo",
+        "pricing-db comparable median: $210k for similar 24mo deals",
+        "historical-deals-warehouse: 18mo deals close ~6% above 24mo on similar rights"
+      ],
+      ruleApplied: "auto-counter when offer falls outside the +/- 15% comparable band",
+      decision:
+        "The $180k/24mo offer was 14% below median. Countered with $220k flat at 18mo to bring the deal back inside the band and recover term flexibility."
+    },
+    {
+      activityId: "a-3",
+      contextPulled: [
+        "data-catalog confirmed gh-public-2024 as canonical",
+        "pricing-db: code corpora rate at $0.04/MB for non-exclusive 3yr",
+        "historical-deals-warehouse: octostack's last code deal closed at $0.038/MB"
+      ],
+      ruleApplied: "anchor at counterparty's last comparable rate when one exists",
+      decision:
+        "Anchored the opening offer to octostack's prior rate. 3-year term matches octostack's preferred contract length."
     }
   ]
 };

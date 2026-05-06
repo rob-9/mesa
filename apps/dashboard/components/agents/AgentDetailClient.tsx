@@ -5,6 +5,7 @@ import { AgentHeader } from "./AgentHeader";
 import { AgentActivityCard } from "./AgentActivityCard";
 import { AgentConnectionsCard } from "./AgentConnectionsCard";
 import { AgentPoliciesCard } from "./AgentPoliciesCard";
+import { AgentReasoningCard } from "./AgentReasoningCard";
 import { AgentChatPanel, type ChatMessage } from "./AgentChatPanel";
 import { Tabs } from "./Tabs";
 import { runScript } from "@/lib/agent-chat-script";
@@ -45,6 +46,7 @@ export function AgentDetailClient({ initialAgent }: { initialAgent: AgentDetail 
         }}
       >
         <Tabs
+          height={540}
           tabs={[
             {
               id: "activity",
@@ -57,6 +59,14 @@ export function AgentDetailClient({ initialAgent }: { initialAgent: AgentDetail 
               label: "Connected systems",
               count: agent.connections.length,
               content: <AgentConnectionsCard connections={agent.connections} />
+            },
+            {
+              id: "reasoning",
+              label: "Reasoning",
+              count: agent.reasoning.length,
+              content: (
+                <AgentReasoningCard reasoning={agent.reasoning} activity={agent.activity} />
+              )
             },
             {
               id: "guardrails",

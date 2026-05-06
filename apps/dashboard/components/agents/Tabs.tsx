@@ -10,7 +10,15 @@ export interface TabSpec {
   content: ReactNode;
 }
 
-export function Tabs({ tabs, initialId }: { tabs: TabSpec[]; initialId?: string }) {
+export function Tabs({
+  tabs,
+  initialId,
+  height
+}: {
+  tabs: TabSpec[];
+  initialId?: string;
+  height?: number;
+}) {
   const [active, setActive] = useState(initialId ?? tabs[0]?.id);
   const current = tabs.find((t) => t.id === active) ?? tabs[0];
   return (
@@ -22,7 +30,8 @@ export function Tabs({ tabs, initialId }: { tabs: TabSpec[]; initialId?: string 
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        minWidth: 0
+        minWidth: 0,
+        height
       }}
     >
       {/* tab strip */}
@@ -80,7 +89,9 @@ export function Tabs({ tabs, initialId }: { tabs: TabSpec[]; initialId?: string 
         })}
       </div>
       {/* panel */}
-      <div style={{ minWidth: 0 }}>{current.content}</div>
+      <div style={{ minWidth: 0, flex: 1, minHeight: 0, overflowY: "auto" }}>
+        {current.content}
+      </div>
     </div>
   );
 }

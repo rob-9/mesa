@@ -86,38 +86,87 @@ export function AgentHeader({ agent }: { agent: AgentDetail }) {
       </div>
       <div style={{ height: 1, background: "var(--surface-2)", marginTop: 16 }} />
       {/* config strip */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 12 }}>
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 14, marginTop: 14 }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "auto auto 1fr",
+            gap: 14,
+            alignItems: "center"
+          }}
+        >
+          <span
+            className="mono"
+            style={{
+              fontSize: 10,
+              color: "var(--fg-5)",
+              letterSpacing: "0.06em"
+            }}
+          >
+            MODEL
+          </span>
           <span
             className="mono"
             style={{
               padding: "3px 10px",
-              background: "var(--surface-2)",
-              color: "var(--fg-1)",
+              background: "var(--accent-soft)",
+              color: "var(--accent)",
               borderRadius: "var(--r-pill)",
-              fontSize: 11
+              fontSize: 11,
+              whiteSpace: "nowrap"
             }}
           >
             {agent.config.model}
           </span>
-          <span style={{ color: "var(--fg-5)", fontSize: 11 }}>·</span>
-          {agent.config.capabilities.map((c) => (
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
             <span
-              key={c}
+              className="mono"
               style={{
-                padding: "3px 10px",
-                background: "var(--surface-1)",
-                border: "1px solid var(--surface-2)",
-                borderRadius: "var(--r-pill)",
-                fontSize: 11
+                fontSize: 10,
+                color: "var(--fg-5)",
+                letterSpacing: "0.06em",
+                marginRight: 4
               }}
             >
-              <TypeLabel type={c} />
+              CAPABILITIES
             </span>
-          ))}
+            {agent.config.capabilities.map((c) => (
+              <span
+                key={c}
+                style={{
+                  padding: "3px 10px",
+                  background: "var(--surface-1)",
+                  border: "1px solid var(--surface-2)",
+                  borderRadius: "var(--r-pill)",
+                  fontSize: 11
+                }}
+              >
+                <TypeLabel type={c} />
+              </span>
+            ))}
+          </div>
         </div>
-        <div style={{ fontSize: 12, color: "var(--fg-2)", fontStyle: "italic", lineHeight: 1.5 }}>
-          {agent.config.persona}
+        <div style={{ display: "flex", gap: 12, alignItems: "stretch" }}>
+          <div
+            aria-hidden
+            style={{
+              width: 2,
+              background: "var(--accent)",
+              borderRadius: 1,
+              flexShrink: 0,
+              opacity: 0.7
+            }}
+          />
+          <div
+            style={{
+              fontSize: 12,
+              color: "var(--fg-2)",
+              fontStyle: "italic",
+              lineHeight: 1.55
+            }}
+          >
+            {agent.config.persona}
+          </div>
         </div>
       </div>
     </div>
