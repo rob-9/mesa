@@ -14,24 +14,42 @@ export function TranscriptPane({ turns, highlightedTurnIds, registerTurnRef }: T
         borderRight: "1px solid var(--surface-2)",
         overflowY: "auto",
         display: "flex",
-        flexDirection: "column"
+        flexDirection: "column",
+        background: "var(--surface-0)"
       }}
     >
       <div
-        className="mono"
         style={{
           padding: "12px 22px",
           borderBottom: "1px solid var(--surface-2)",
-          fontSize: 11,
-          color: "var(--fg-5)",
-          letterSpacing: "0.08em",
           position: "sticky",
           top: 0,
           background: "var(--surface-0)",
-          zIndex: 1
+          zIndex: 1,
+          display: "flex",
+          alignItems: "center",
+          gap: 8
         }}
       >
-        TRANSCRIPT
+        <span
+          aria-hidden
+          style={{
+            width: 6,
+            height: 6,
+            borderRadius: "var(--r-pill)",
+            background: "var(--fg-3)"
+          }}
+        />
+        <span
+          className="mono"
+          style={{
+            fontSize: 11,
+            color: "var(--fg-5)",
+            letterSpacing: "0.08em"
+          }}
+        >
+          TRANSCRIPT
+        </span>
       </div>
       <div style={{ padding: "16px 22px" }}>
         {turns.length === 0 && (

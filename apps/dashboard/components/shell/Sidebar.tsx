@@ -26,16 +26,12 @@ export function Sidebar() {
   return (
     <aside
       style={{
-        width: 216,
-        flexShrink: 0,
         background: "var(--surface-1)",
         borderRight: "1px solid var(--surface-2)",
         display: "flex",
         flexDirection: "column",
         padding: "16px 12px",
-        position: "sticky",
-        top: 0,
-        maxHeight: "100vh",
+        height: "100vh",
         overflowY: "auto"
       }}
     >

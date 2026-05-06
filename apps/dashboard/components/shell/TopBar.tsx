@@ -5,11 +5,13 @@ export function TopBar() {
   return (
     <header
       style={{
+        flexShrink: 0,
         display: "flex",
         alignItems: "center",
         gap: 18,
         padding: "12px 28px",
-        borderBottom: "1px solid var(--surface-2)"
+        borderBottom: "1px solid var(--surface-2)",
+        background: "var(--bg)"
       }}
     >
       <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>

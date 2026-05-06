@@ -20,7 +20,16 @@ export function CommitmentsPane({
   onChangeViewMode
 }: CommitmentsPaneProps) {
   return (
-    <div style={{ overflowY: "auto", display: "flex", flexDirection: "column", minWidth: 0 }}>
+    <div
+      style={{
+        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column",
+        minWidth: 0,
+        background:
+          "linear-gradient(180deg, rgba(217, 119, 87, 0.04) 0%, rgba(217, 119, 87, 0) 200px), var(--surface-0)"
+      }}
+    >
       <div
         style={{
           padding: "10px 18px",
@@ -34,16 +43,27 @@ export function CommitmentsPane({
           alignItems: "center"
         }}
       >
-        <span
-          className="mono"
-          style={{
-            fontSize: 10,
-            color: "var(--fg-5)",
-            letterSpacing: "0.08em"
-          }}
-        >
-          COMMITMENTS · {commitments.length}
-        </span>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span
+            aria-hidden
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: "var(--r-pill)",
+              background: "var(--accent)"
+            }}
+          />
+          <span
+            className="mono"
+            style={{
+              fontSize: 10,
+              color: "var(--fg-5)",
+              letterSpacing: "0.08em"
+            }}
+          >
+            COMMITMENTS · {commitments.length}
+          </span>
+        </div>
         <ViewToggle mode={viewMode} onChange={onChangeViewMode} />
       </div>
       {viewMode === "list" ? (

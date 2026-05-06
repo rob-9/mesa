@@ -4,9 +4,16 @@ import { TopBar } from "./TopBar";
 
 export function AppShell({ children }: { children: ReactNode }) {
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "216px minmax(0, 1fr)",
+        height: "100vh",
+        overflow: "hidden"
+      }}
+    >
       <Sidebar />
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, minHeight: "100vh" }}>
+      <div style={{ display: "flex", flexDirection: "column", minWidth: 0, height: "100vh" }}>
         <TopBar />
         <main
           style={{
@@ -18,7 +25,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             maxWidth: 1280,
             margin: "0 auto",
             minWidth: 0,
-            minHeight: 0
+            minHeight: 0,
+            overflowY: "auto"
           }}
         >
           {children}

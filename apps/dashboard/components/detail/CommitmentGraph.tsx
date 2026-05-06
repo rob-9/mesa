@@ -19,13 +19,13 @@ interface PositionedNode {
   indexInLayer: number;
 }
 
-const NODE_W = 188;
-const NODE_H = 76;
-const LAYER_GAP = 36;
-const NODE_GAP = 16;
-const PAD_X = 20;
-const PAD_TOP = 20;
-const PAD_BOTTOM = 20;
+const NODE_W = 204;
+const NODE_H = 88;
+const LAYER_GAP = 56;
+const NODE_GAP = 18;
+const PAD_X = 24;
+const PAD_TOP = 28;
+const PAD_BOTTOM = 28;
 
 // Color hue per type group — keeps the monochrome aesthetic but gives each
 // node a tiny visual anchor so the graph is scannable.
@@ -117,44 +117,24 @@ export function CommitmentGraph({ commitments, selectedId, onSelect }: Commitmen
   }
 
   return (
-    <div style={{ padding: 16, overflow: "auto" }}>
+    <div
+      style={{
+        padding: 20,
+        minWidth: 0
+      }}
+    >
       <svg
         width={width}
         height={height}
         viewBox={`0 0 ${width} ${height}`}
-        style={{ display: "block", margin: "0 auto", maxWidth: "100%" }}
+        style={{ display: "block", margin: "0 auto", maxWidth: "100%", height: "auto" }}
       >
-        <defs>
-          <marker
-            id="arrow-default"
-            viewBox="0 0 10 10"
-            refX="8"
-            refY="5"
-            markerWidth="6"
-            markerHeight="6"
-            orient="auto-start-reverse"
-          >
-            <path d="M 0 1 L 8 5 L 0 9 z" fill="var(--surface-3)" />
-          </marker>
-          <marker
-            id="arrow-active"
-            viewBox="0 0 10 10"
-            refX="8"
-            refY="5"
-            markerWidth="7"
-            markerHeight="7"
-            orient="auto-start-reverse"
-          >
-            <path d="M 0 1 L 8 5 L 0 9 z" fill="var(--accent)" />
-          </marker>
-        </defs>
-
         {/* Edges */}
         {edges.map((e, i) => {
           const x1 = e.from.x + e.from.width / 2;
           const y1 = e.from.y + e.from.height;
           const x2 = e.to.x + e.to.width / 2;
-          const y2 = e.to.y - 2; // small gap before the arrowhead
+          const y2 = e.to.y;
           const midY = (y1 + y2) / 2;
           const path = `M ${x1} ${y1} C ${x1} ${midY}, ${x2} ${midY}, ${x2} ${y2}`;
           // Path length for the draw-on animation.
@@ -170,7 +150,7 @@ export function CommitmentGraph({ commitments, selectedId, onSelect }: Commitmen
               stroke={e.selected ? "var(--accent)" : "var(--surface-3)"}
               strokeWidth={e.selected ? 1.6 : 1}
               opacity={dimmed ? 0.25 : 0.85}
-              markerEnd={`url(#${e.selected ? "arrow-active" : "arrow-default"})`}
+              strokeLinecap="round"
               style={
                 e.selected
                   ? {
@@ -214,6 +194,8 @@ export function CommitmentGraph({ commitments, selectedId, onSelect }: Commitmen
               }}
               onClick={() => onSelect(c.id)}
             >
+              {/* Native browser tooltip on hover — full summary regardless of node size. */}
+              <title>{`${c.type}\n\n${c.summary}\n\nderived from turns ${c.derivedFromTurns.join(", ")}`}</title>
               <rect
                 x={n.x}
                 y={n.y}
@@ -252,12 +234,13 @@ export function CommitmentGraph({ commitments, selectedId, onSelect }: Commitmen
                   ←{c.derivedFromTurns.join(",")}
                 </text>
               )}
-              {/* Summary — HTML inside foreignObject so it wraps and clamps cleanly */}
+              {/* Summary — HTML inside foreignObject so it wraps cleanly. Three-line
+                  clamp gives most summaries full coverage; long ones reveal in the tooltip. */}
               <foreignObject
                 x={n.x + 10}
                 y={n.y + 26}
                 width={n.width - 20}
-                height={n.height - 32}
+                height={n.height - 34}
               >
                 <div
                   // @ts-expect-error xmlns is valid on div inside foreignObject
@@ -267,9 +250,10 @@ export function CommitmentGraph({ commitments, selectedId, onSelect }: Commitmen
                     color: isSelected ? "var(--fg-0)" : "var(--fg-2)",
                     lineHeight: 1.35,
                     display: "-webkit-box",
-                    WebkitLineClamp: 2,
+                    WebkitLineClamp: 3,
                     WebkitBoxOrient: "vertical",
-                    overflow: "hidden"
+                    overflow: "hidden",
+                    pointerEvents: "none"
                   }}
                 >
                   {c.summary}

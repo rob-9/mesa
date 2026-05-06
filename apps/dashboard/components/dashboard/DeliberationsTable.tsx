@@ -10,12 +10,17 @@ export function DeliberationsTable({ deliberations }: { deliberations: Deliberat
         background: "var(--surface-0)",
         border: "1px solid var(--surface-2)",
         borderRadius: "var(--r-card)",
-        overflow: "hidden"
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        flex: 1,
+        minHeight: 0
       }}
     >
       <div
         className="mono"
         style={{
+          flexShrink: 0,
           display: "grid",
           gridTemplateColumns: GRID,
           gap: 14,
@@ -32,14 +37,16 @@ export function DeliberationsTable({ deliberations }: { deliberations: Deliberat
         <span>WAITING ON</span>
         <span style={{ textAlign: "right" }}>LAST</span>
       </div>
-      {deliberations.map((d, i) => (
-        <DeliberationRow
-          key={d.id}
-          deliberation={d}
-          isLast={i === deliberations.length - 1}
-          gridTemplate={GRID}
-        />
-      ))}
+      <div style={{ flex: 1, overflowY: "auto", minHeight: 0 }}>
+        {deliberations.map((d, i) => (
+          <DeliberationRow
+            key={d.id}
+            deliberation={d}
+            isLast={i === deliberations.length - 1}
+            gridTemplate={GRID}
+          />
+        ))}
+      </div>
     </div>
   );
 }
