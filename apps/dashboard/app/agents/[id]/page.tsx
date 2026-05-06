@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { AgentActivityCard } from "@/components/agents/AgentActivityCard";
 import { AgentConfigCard } from "@/components/agents/AgentConfigCard";
 import { AgentConnectionsCard } from "@/components/agents/AgentConnectionsCard";
 import { AgentHeader } from "@/components/agents/AgentHeader";
@@ -26,7 +27,7 @@ export default async function AgentDetailPage({
       >
         {/* left column */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {/* activity card slotted in a later task */}
+          <AgentActivityCard items={agent.activity} />
           <AgentConfigCard agent={agent} />
         </div>
         {/* right column */}
