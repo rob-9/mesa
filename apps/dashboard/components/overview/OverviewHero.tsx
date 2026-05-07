@@ -9,7 +9,7 @@ type Tone = "accent" | "amber" | "muted";
 // the remaining stats. Monotone — no gradients.
 export function OverviewHero({ stats }: { stats: Stats }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
         <HeroTile
           value={stats.awaitingAction}

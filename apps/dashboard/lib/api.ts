@@ -1,14 +1,29 @@
 import { appendAgent, fixtureAgent, fixtureAgents } from "./agent-fixtures";
+import {
+  fixtureCounterparties,
+  fixtureCounterparty,
+  fixtureCounterpartyRollups,
+  type CounterpartyRollup
+} from "./counterparty-fixtures";
 import { fixtureDashboard, fixtureDeliberation } from "./fixtures";
 import { fixtureOverview } from "./overview-fixtures";
+import { fixturePolicies } from "./policy-fixtures";
+import { fixtureAuditEvents } from "./audit-fixtures";
+import { fixtureOrgSettings } from "./settings-fixtures";
+import { fixtureAnalytics } from "./analytics-fixtures";
 import type {
   AgentConnection,
   AgentDetail,
   AgentPolicy,
+  AnalyticsData,
+  AuditEvent,
   CommitmentType,
+  Counterparty,
   DashboardData,
   DeliberationDetail,
-  OverviewData
+  OrgSettings,
+  OverviewData,
+  Policy
 } from "./types";
 
 // v1 reads from local fixtures. The eventual fastapi swap is mechanical:
@@ -32,6 +47,34 @@ export async function getAgents(): Promise<AgentDetail[]> {
 
 export async function getAgent(id: string): Promise<AgentDetail | null> {
   return fixtureAgent(id);
+}
+
+export async function getCounterparties(): Promise<Counterparty[]> {
+  return fixtureCounterparties();
+}
+
+export async function getCounterparty(slug: string): Promise<Counterparty | null> {
+  return fixtureCounterparty(slug);
+}
+
+export async function getCounterpartyRollups(): Promise<Record<string, CounterpartyRollup>> {
+  return fixtureCounterpartyRollups();
+}
+
+export async function getPolicies(): Promise<Policy[]> {
+  return fixturePolicies();
+}
+
+export async function getAuditEvents(): Promise<AuditEvent[]> {
+  return fixtureAuditEvents();
+}
+
+export async function getOrgSettings(): Promise<OrgSettings> {
+  return fixtureOrgSettings();
+}
+
+export async function getAnalytics(): Promise<AnalyticsData> {
+  return fixtureAnalytics();
 }
 
 export interface DeployAgentInput {

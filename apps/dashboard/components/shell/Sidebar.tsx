@@ -6,19 +6,77 @@ import { Icon } from "@/components/icons/Icon";
 
 type NavItem = { href: string; label: string; icon: Parameters<typeof Icon>[0]["name"] };
 
-const items: NavItem[] = [
+const primaryItems: NavItem[] = [
   { href: "/", label: "Overview", icon: "compass" },
   { href: "/deliberations", label: "Deliberations", icon: "list" },
-  { href: "/agents", label: "Agents", icon: "robot" },
+  { href: "/agents", label: "Agents", icon: "robot" }
+];
+
+const secondaryItems: NavItem[] = [
   { href: "/counterparties", label: "Counterparties", icon: "building" },
   { href: "/policies", label: "Policies", icon: "scales" },
   { href: "/audit", label: "Audit", icon: "scroll" },
-  { href: "/settings", label: "Settings", icon: "gear" }
+  { href: "/analytics", label: "Analytics", icon: "chart-bar" }
 ];
+
+const settingsItem: NavItem = { href: "/settings", label: "Settings", icon: "gear" };
 
 function isActive(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";
   return pathname === href || pathname.startsWith(href + "/");
+}
+
+function NavLink({ item, active }: { item: NavItem; active: boolean }) {
+  return (
+    <Link
+      href={item.href}
+      className={active ? undefined : "nav-item"}
+      style={{
+        position: "relative",
+        display: "flex",
+        alignItems: "center",
+        gap: 9,
+        height: 30,
+        padding: "0 10px",
+        borderRadius: 8,
+        background: active ? "var(--surface-2)" : "transparent",
+        color: active ? "var(--fg-0)" : "var(--fg-3)",
+        fontSize: 12,
+        textDecoration: "none"
+      }}
+    >
+      {active && (
+        <span
+          aria-hidden
+          style={{
+            position: "absolute",
+            left: 0,
+            top: "50%",
+            transform: "translateY(-50%)",
+            width: 2,
+            height: 14,
+            background: "var(--accent)",
+            borderRadius: 2
+          }}
+        />
+      )}
+      <Icon name={item.icon} size={14} />
+      {item.label}
+    </Link>
+  );
+}
+
+function Divider() {
+  return (
+    <div
+      aria-hidden
+      style={{
+        height: 1,
+        background: "var(--surface-2)",
+        margin: "8px 6px"
+      }}
+    />
+  );
 }
 
 export function Sidebar() {
@@ -86,50 +144,21 @@ export function Sidebar() {
       </Link>
 
       <nav style={{ display: "flex", flexDirection: "column", gap: 1 }}>
-        {items.map((item) => {
-          const active = isActive(pathname, item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={active ? undefined : "nav-item"}
-              style={{
-                position: "relative",
-                display: "flex",
-                alignItems: "center",
-                gap: 9,
-                height: 30,
-                padding: "0 10px",
-                borderRadius: 8,
-                background: active ? "var(--surface-2)" : "transparent",
-                color: active ? "var(--fg-0)" : "var(--fg-3)",
-                fontSize: 12,
-                textDecoration: "none"
-              }}
-            >
-              {active && (
-                <span
-                  aria-hidden
-                  style={{
-                    position: "absolute",
-                    left: 0,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    width: 2,
-                    height: 14,
-                    background: "var(--accent)",
-                    borderRadius: 2
-                  }}
-                />
-              )}
-              <Icon name={item.icon} size={14} />
-              {item.label}
-            </Link>
-          );
-        })}
+        {primaryItems.map((item) => (
+          <NavLink key={item.href} item={item} active={isActive(pathname, item.href)} />
+        ))}
+        <Divider />
+        {secondaryItems.map((item) => (
+          <NavLink key={item.href} item={item} active={isActive(pathname, item.href)} />
+        ))}
       </nav>
 
       <div style={{ flex: 1 }} />
+
+      <nav style={{ display: "flex", flexDirection: "column", gap: 1, marginBottom: 8 }}>
+        <Divider />
+        <NavLink item={settingsItem} active={isActive(pathname, settingsItem.href)} />
+      </nav>
 
       <div
         style={{

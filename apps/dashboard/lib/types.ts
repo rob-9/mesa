@@ -185,3 +185,110 @@ export interface AgentDetail extends AgentStatus {
   activity: AgentActivityItem[];
   reasoning: AgentReasoning[];
 }
+
+// ─── Counterparties ────────────────────────────────────────────────────────
+
+export type TrustTier = "verified" | "standard" | "watchlist";
+
+export interface CounterpartyPrincipal {
+  name: string;            // 'M. Sato (legal)', ...
+  role?: string;           // 'legal', 'commercial', ...
+  keyFingerprint: string;  // ed25519:abcd…
+}
+
+export interface Counterparty {
+  slug: string;            // 'publisher-co' — matches Deliberation.counterparty
+  name: string;            // 'Publisher Co.'
+  domain: string;          // 'publisher.example'
+  trustTier: TrustTier;
+  principals: CounterpartyPrincipal[];
+  schemas: string[];       // vertical-pack ids in use
+  firstDeliberationAt: string; // ISO
+  notes?: string;
+}
+
+// ─── Policies ──────────────────────────────────────────────────────────────
+
+export type PolicyAction = "flag" | "block" | "route";
+
+export type PolicyScope =
+  | { kind: "global" }
+  | { kind: "agent"; agentId: string; agentName: string }
+  | { kind: "counterparty"; counterpartySlug: string; counterpartyName: string };
+
+export interface Policy {
+  id: string;
+  name: string;
+  scope: PolicyScope;
+  condition: string;       // human-readable: 'term_months > 24'
+  action: PolicyAction;
+  routeTo?: string;        // when action = 'route'
+  hits30d: number;
+  enabled: boolean;
+}
+
+// ─── Audit log ─────────────────────────────────────────────────────────────
+
+export type AuditEventKind =
+  | "transcript_turn"
+  | "commitment_signed"
+  | "policy_fired"
+  | "agent_deployed"
+  | "principal_added";
+
+export interface AuditEvent {
+  id: string;              // ULID-ish
+  ts: string;              // ISO
+  kind: AuditEventKind;
+  actor: string;           // principal or agent id
+  target: string;          // deliberation id, commitment id, etc.
+  hash: string;            // sha256 prefix
+  prevHash: string;        // chain pointer
+  summary: string;
+  payload?: Record<string, unknown>;
+}
+
+// ─── Settings / org ────────────────────────────────────────────────────────
+
+export interface OrgPrincipal {
+  id: string;
+  name: string;            // 'Robert Ji'
+  role: string;            // 'Ops', 'Legal', ...
+  email: string;
+  keyFingerprint: string;
+  addedAt: string;         // ISO
+}
+
+export interface VerticalPack {
+  id: string;              // 'core', 'datasharing'
+  version: string;         // 'v1.2.0'
+  fieldsCount: number;
+  description: string;
+}
+
+export interface IntegrationTile {
+  id: string;
+  name: string;
+  description: string;
+  icon: "slack" | "mail" | "webhook";
+  connected: boolean;
+}
+
+export interface OrgSettings {
+  name: string;
+  slug: string;
+  defaultPack: string;
+  principals: OrgPrincipal[];
+  packs: VerticalPack[];
+  integrations: IntegrationTile[];
+}
+
+// ─── Analytics ─────────────────────────────────────────────────────────────
+
+export interface AnalyticsData {
+  throughput14d: number[];        // resolved per day, oldest first
+  autoResolveRate: string;        // pre-formatted, e.g. '89%'
+  autoResolveTrend14d: number[];  // 0..1 per day
+  ttrBuckets: { label: string; count: number }[]; // time-to-resolution distribution
+  policyFires: { kind: string; count: number; tone: "neutral" | "accent" | "amber" }[];
+}
