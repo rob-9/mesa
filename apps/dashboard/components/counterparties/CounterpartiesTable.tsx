@@ -20,11 +20,7 @@ export function CounterpartiesTable({
         background: "var(--surface-0)",
         border: "1px solid var(--surface-2)",
         borderRadius: "var(--r-card)",
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-        flex: 1,
-        minHeight: 0
+        overflow: "hidden"
       }}
     >
       <div
@@ -48,7 +44,7 @@ export function CounterpartiesTable({
         <span style={{ textAlign: "right" }}>LAST</span>
         <span />
       </div>
-      <div style={{ flex: 1, overflowY: "auto", overscrollBehavior: "none", minHeight: 0 }}>
+      <div>
         {counterparties.map((c, i) => {
           const r = rollups[c.slug];
           return (

@@ -42,7 +42,7 @@ function compareAgents(a: AgentDetail, b: AgentDetail, key: SortKey, dir: SortDi
 export function AgentsTable({ agents }: { agents: AgentDetail[] }) {
   const [sortKey, setSortKey] = useState<SortKey>("state");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
-  const [grouped, setGrouped] = useState(false);
+  const [grouped, setGrouped] = useState(true);
 
   const sorted = useMemo(
     () => [...agents].sort((a, b) => compareAgents(a, b, sortKey, sortDir)),
@@ -73,18 +73,14 @@ export function AgentsTable({ agents }: { agents: AgentDetail[] }) {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0, gap: 10 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
       <Toolbar grouped={grouped} setGrouped={setGrouped} />
       <div
         style={{
           background: "var(--surface-0)",
           border: "1px solid var(--surface-2)",
           borderRadius: "var(--r-card)",
-          overflow: "hidden",
-          display: "flex",
-          flexDirection: "column",
-          flex: 1,
-          minHeight: 0
+          overflow: "hidden"
         }}
       >
         <HeaderRow
@@ -93,7 +89,7 @@ export function AgentsTable({ agents }: { agents: AgentDetail[] }) {
           onClick={onHeaderClick}
           interactive={!grouped}
         />
-        <div style={{ flex: 1, overflowY: "auto", overscrollBehavior: "none", minHeight: 0 }}>
+        <div>
           {grouped && groups
             ? groups.map((g) => (
                 <div key={g.state}>
