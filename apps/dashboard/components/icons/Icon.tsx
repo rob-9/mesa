@@ -15,7 +15,17 @@ type IconName =
   | "plus"
   | "check"
   | "x"
-  | "chevron-right";
+  | "chevron-right"
+  | "chevron-up"
+  | "chevron-down"
+  | "chart-bar"
+  | "key"
+  | "copy"
+  | "filter"
+  | "slack"
+  | "mail"
+  | "webhook"
+  | "shield";
 
 interface IconProps {
   name: IconName;
@@ -170,6 +180,83 @@ export function Icon({ name, size = 16, className }: IconProps) {
       return (
         <svg {...common}>
           <polyline points="9 6 15 12 9 18" />
+        </svg>
+      );
+    case "chevron-up":
+      return (
+        <svg {...common}>
+          <polyline points="6 15 12 9 18 15" />
+        </svg>
+      );
+    case "chevron-down":
+      return (
+        <svg {...common}>
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      );
+    case "chart-bar":
+      return (
+        <svg {...common}>
+          <line x1="4" y1="20" x2="20" y2="20" />
+          <rect x="6" y="11" width="3" height="9" />
+          <rect x="11" y="6" width="3" height="14" />
+          <rect x="16" y="14" width="3" height="6" />
+        </svg>
+      );
+    case "key":
+      return (
+        <svg {...common}>
+          <circle cx="8" cy="15" r="4" />
+          <path d="M11 13l9-9" />
+          <path d="M17 7l3 3" />
+          <path d="M14 10l2 2" />
+        </svg>
+      );
+    case "copy":
+      return (
+        <svg {...common}>
+          <rect x="9" y="9" width="11" height="11" rx="2" />
+          <path d="M5 15V6a2 2 0 012-2h9" />
+        </svg>
+      );
+    case "filter":
+      return (
+        <svg {...common}>
+          <path d="M4 5h16l-6 8v6l-4-2v-4z" />
+        </svg>
+      );
+    case "slack":
+      return (
+        <svg {...common}>
+          <rect x="4" y="10" width="6" height="3" rx="1.5" />
+          <rect x="14" y="11" width="6" height="3" rx="1.5" />
+          <rect x="11" y="4" width="3" height="6" rx="1.5" />
+          <rect x="10" y="14" width="3" height="6" rx="1.5" />
+        </svg>
+      );
+    case "mail":
+      return (
+        <svg {...common}>
+          <rect x="3" y="6" width="18" height="13" rx="2" />
+          <polyline points="3 8 12 14 21 8" />
+        </svg>
+      );
+    case "webhook":
+      return (
+        <svg {...common}>
+          <circle cx="7" cy="17" r="2.5" />
+          <circle cx="17" cy="17" r="2.5" />
+          <circle cx="12" cy="6" r="2.5" />
+          <path d="M9.5 17h5" />
+          <path d="M11 8.5l-3 5" />
+          <path d="M13 8.5l3 5" />
+        </svg>
+      );
+    case "shield":
+      return (
+        <svg {...common}>
+          <path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" />
+          <polyline points="9 12 11 14 15 10" />
         </svg>
       );
   }

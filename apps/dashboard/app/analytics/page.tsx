@@ -1,9 +1,9 @@
 import { AppShell } from "@/components/shell/AppShell";
-import { SettingsTabs } from "@/components/settings/SettingsTabs";
-import { getOrgSettings } from "@/lib/api";
+import { AnalyticsCards } from "@/components/analytics/AnalyticsCards";
+import { getAnalytics } from "@/lib/api";
 
-export default async function SettingsPage() {
-  const settings = await getOrgSettings();
+export default async function AnalyticsPage() {
+  const data = await getAnalytics();
   return (
     <AppShell>
       <div style={{ marginBottom: 18 }}>
@@ -17,13 +17,13 @@ export default async function SettingsPage() {
             color: "var(--fg-0)"
           }}
         >
-          Settings
+          Analytics
         </h1>
         <div style={{ marginTop: 4, fontSize: 12, color: "var(--fg-4)" }}>
-          Org info, principals and ed25519 keys, vertical-pack schemas, and integrations.
+          Throughput, auto-resolution rate, time-to-resolution, and policy activity over the last 14 days.
         </div>
       </div>
-      <SettingsTabs settings={settings} />
+      <AnalyticsCards data={data} />
     </AppShell>
   );
 }
