@@ -135,6 +135,34 @@ export interface IntegrationStatus {
   connected: boolean;
 }
 
+export interface SignificantEvent {
+  id: string;
+  kind:
+    | "deliberation_signed"
+    | "policy_fired"
+    | "agent_deployed"
+    | "integration_disconnected"
+    | "principal_added";
+  timestamp: string; // ISO-8601
+  summary: string;
+  href?: string;
+}
+
+export interface RiskPulse {
+  flaggedOpen: number;
+  policyFires24h: number;
+  staleOver7d: number;
+}
+
+export interface SystemPulse {
+  deployedAgents: number;
+  integrationsConnected: number;
+  integrationsTotal: number;
+  flagged: number;
+  policyFires24h: number;
+  health: "healthy" | "degraded";
+}
+
 export interface OverviewData {
   stats: {
     activeDeliberations: number;
@@ -149,6 +177,10 @@ export interface OverviewData {
   actions: Action[];
   totalActions: number;
   integrations: IntegrationStatus[];
+  // New fields (Task 3 will populate):
+  pulse?: SystemPulse;
+  events?: SignificantEvent[];
+  risk?: RiskPulse;
 }
 
 // ─── Agents detail ─────────────────────────────────────────────────────────
