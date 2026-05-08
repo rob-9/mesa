@@ -132,7 +132,6 @@ export default function DeployAgentPage() {
               value={templateId}
               onChange={onTemplateChange}
               options={templateOptions}
-              mono
             />
           </div>
           <button

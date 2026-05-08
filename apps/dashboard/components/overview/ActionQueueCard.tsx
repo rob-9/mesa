@@ -6,7 +6,7 @@ import type { Action } from "@/lib/types";
 import { Card } from "./Card";
 
 export function ActionQueueCard({ actions, total }: { actions: Action[]; total: number }) {
-  const top = actions.slice(0, 3);
+  const top = actions;
   return (
     <Card
       title="Action queue"
@@ -21,7 +21,7 @@ export function ActionQueueCard({ actions, total }: { actions: Action[]; total: 
       }
       noPadBody
     >
-      <div>
+      <div style={{ height: "100%", overflowY: "auto", overscrollBehavior: "none" }}>
         {top.map((action, i) => (
           <Link
             key={action.id}

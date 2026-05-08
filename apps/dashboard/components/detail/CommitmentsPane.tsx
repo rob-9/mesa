@@ -29,6 +29,7 @@ export function CommitmentsPane({
         display: "flex",
         flexDirection: "column",
         minWidth: 0,
+        minHeight: 0,
         background: "var(--surface-0)"
       }}
     >

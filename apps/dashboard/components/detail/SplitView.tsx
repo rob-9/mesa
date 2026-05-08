@@ -102,15 +102,16 @@ export function SplitView({ turns, commitments, live = false }: SplitViewProps) 
   return (
     <div
       style={{
+        position: "absolute",
+        inset: 0,
         display: "grid",
         gridTemplateColumns: "1fr 1fr",
+        gridTemplateRows: "minmax(0, 1fr)",
         gap: 0,
         background: "var(--surface-0)",
         border: "1px solid var(--surface-2)",
         borderRadius: "var(--r-card)",
-        overflow: "hidden",
-        flex: 1,
-        minHeight: 480
+        overflow: "hidden"
       }}
     >
       <TranscriptPane

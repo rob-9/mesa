@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { Icon } from "@/components/icons/Icon";
 import { TypeLabel } from "@/components/primitives/TypeLabel";
 import { formatRelative } from "@/lib/format";
 import type { Action } from "@/lib/types";
 
-const GRID = "120px minmax(0, 1.6fr) 130px 130px 60px 110px";
+const GRID = "90px minmax(0, 1fr) 110px 110px 48px";
 
 function blockedLabel(action: Action): { text: string; color: string } {
   if (action.kind === "human_signoff") {
@@ -22,11 +21,10 @@ export function ActionsTable({ actions }: { actions: Action[] }) {
         border: "1px solid var(--surface-2)",
         borderRadius: "var(--r-card)",
         overflow: "hidden",
-        marginBottom: 24,
         display: "flex",
         flexDirection: "column",
-        flexShrink: 0,
-        maxHeight: 260
+        flex: 1,
+        minHeight: 0
       }}
     >
       <div
@@ -44,11 +42,10 @@ export function ActionsTable({ actions }: { actions: Action[] }) {
         }}
       >
         <span>TYPE</span>
-        <span>DELIBERATION</span>
-        <span>COUNTERPARTY</span>
-        <span>BLOCKED ON</span>
+        <span>TITLE</span>
+        <span>PARTY</span>
+        <span>BLOCKED</span>
         <span style={{ textAlign: "right" }}>AGE</span>
-        <span style={{ textAlign: "right" }}>DECIDE</span>
       </div>
       <div style={{ flex: 1, overflowY: "auto", overscrollBehavior: "none", minHeight: 0 }}>
         {actions.map((action, i) => {
@@ -89,38 +86,6 @@ export function ActionsTable({ actions }: { actions: Action[] }) {
               >
                 {formatRelative(action.commitment.createdAt)}
               </span>
-              <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
-                <button
-                  aria-label="Approve"
-                  style={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: "var(--r-pill)",
-                    background: "var(--accent-soft)",
-                    color: "var(--accent)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center"
-                  }}
-                >
-                  <Icon name="check" size={14} />
-                </button>
-                <button
-                  aria-label="Reject"
-                  style={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: "var(--r-pill)",
-                    background: "var(--surface-2)",
-                    color: "var(--fg-3)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center"
-                  }}
-                >
-                  <Icon name="x" size={14} />
-                </button>
-              </div>
             </div>
           );
         })}

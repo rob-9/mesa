@@ -40,7 +40,8 @@ export function TranscriptPane({
         overscrollBehavior: "none",
         display: "flex",
         flexDirection: "column",
-        background: "var(--surface-0)"
+        background: "var(--surface-0)",
+        minHeight: 0
       }}
     >
       <div

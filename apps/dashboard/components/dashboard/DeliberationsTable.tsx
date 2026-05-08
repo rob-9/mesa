@@ -1,7 +1,7 @@
 import type { Deliberation } from "@/lib/types";
 import { DeliberationRow } from "./DeliberationRow";
 
-const GRID = "minmax(0, 1.6fr) 130px 160px 130px 60px";
+const GRID = "minmax(0, 1fr) 100px 130px 100px 44px";
 
 export function DeliberationsTable({ deliberations }: { deliberations: Deliberation[] }) {
   return (
@@ -31,10 +31,10 @@ export function DeliberationsTable({ deliberations }: { deliberations: Deliberat
           borderBottom: "1px solid var(--surface-2)"
         }}
       >
-        <span>DELIBERATION</span>
-        <span>COUNTERPARTY</span>
+        <span>TITLE</span>
+        <span>PARTY</span>
         <span>PROGRESS</span>
-        <span>WAITING ON</span>
+        <span>WAITING</span>
         <span style={{ textAlign: "right" }}>LAST</span>
       </div>
       <div style={{ flex: 1, overflowY: "auto", overscrollBehavior: "none", minHeight: 0 }}>
