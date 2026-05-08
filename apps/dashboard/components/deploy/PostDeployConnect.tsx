@@ -5,9 +5,13 @@ import { Icon } from "@/components/icons/Icon";
 import { Select } from "@/components/primitives/Select";
 import { fixtureCounterparties } from "@/lib/counterparty-fixtures";
 import type { Counterparty, CounterpartyAgent, TrustTier } from "@/lib/types";
+import { AgentCard } from "./AgentCard";
 import type { WizardState } from "./types";
 
 type Phase = "form" | "waiting" | "accepted";
+
+const DEFAULT_SCOPE =
+  "License training-data Q4 corpus for $250k, signoff by Friday.";
 
 interface Props {
   deployedAgent: WizardState;
@@ -164,26 +168,192 @@ function FormPhase({
           gap: 0
         }}
       >
-        <YouCard agent={deployedAgent} />
+        <AgentCard agent={deployedAgent} sideLabel="YOU" />
         <Connector active={!!cpAgent} />
-        {cp && cpAgent ? (
-          <ThemCard counterparty={cp} agent={cpAgent} />
-        ) : (
-          <PlaceholderCard
-            hint={cp ? "Select an agent below" : "Select a counterparty below"}
-          />
-        )}
+        <ThemSelectorCard
+          counterparty={cp}
+          agent={cpAgent}
+          counterpartySlug={counterpartySlug}
+          onCounterpartyChange={onCounterpartyChange}
+          agentId={agentId}
+          setAgentId={setAgentId}
+          cpOptions={cpOptions}
+          cpAgentOptions={cpAgentOptions}
+          cpAgentDisabled={cpAgentDisabled}
+        />
       </div>
 
-      {/* Selectors row */}
+      {/* Scope + send */}
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 12,
-          padding: "16px 18px 6px"
+          padding: "16px 18px 16px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 10
         }}
       >
+        <Field label="SCOPE OF CONVERSATION">
+          <ScopeTextarea scope={scope} setScope={setScope} />
+        </Field>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center"
+          }}
+        >
+          <span style={{ fontSize: 11, color: "var(--fg-5)" }}>
+            Both sides will see this scope.
+          </span>
+          <PrimaryButton label="Request to chat" enabled={canRequest} onClick={onRequest} />
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ─── Cards ──────────────────────────────────────────────────────────────────
+
+
+function ThemSelectorCard({
+  counterparty,
+  agent,
+  counterpartySlug,
+  onCounterpartyChange,
+  agentId,
+  setAgentId,
+  cpOptions,
+  cpAgentOptions,
+  cpAgentDisabled
+}: {
+  counterparty: Counterparty | undefined;
+  agent: CounterpartyAgent | undefined;
+  counterpartySlug: string;
+  onCounterpartyChange: (slug: string) => void;
+  agentId: string;
+  setAgentId: (id: string) => void;
+  cpOptions: { value: string; label: string }[];
+  cpAgentOptions: { value: string; label: string }[];
+  cpAgentDisabled: boolean;
+}) {
+  const filled = !!counterparty && !!agent;
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
+        padding: 12,
+        background: "var(--surface-0)",
+        border: "1px solid var(--surface-2)",
+        borderRadius: 10
+      }}
+    >
+      {/* Header row — agent identity when filled, hint when empty */}
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        {filled ? (
+          <>
+            <Avatar
+              letter={agent!.name.charAt(0).toUpperCase()}
+              size={28}
+              tone="neutral"
+            />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                minWidth: 0,
+                flex: 1,
+                lineHeight: 1.25
+              }}
+            >
+              <span
+                style={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "var(--fg-0)",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}
+              >
+                {agent!.name}
+              </span>
+              <span style={{ fontSize: 11, color: "var(--fg-4)" }}>
+                {agent!.role}
+              </span>
+            </div>
+          </>
+        ) : (
+          <>
+            <div
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: "50%",
+                background: "var(--surface-1)",
+                border: "1px dashed var(--surface-3)",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "var(--fg-5)",
+                flexShrink: 0
+              }}
+            >
+              <Icon name="agent" size={13} />
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                minWidth: 0,
+                flex: 1,
+                lineHeight: 1.25
+              }}
+            >
+              <span style={{ fontSize: 12, color: "var(--fg-4)" }}>
+                {counterparty
+                  ? "Pick an agent below"
+                  : "Pick a counterparty below"}
+              </span>
+              <span style={{ fontSize: 11, color: "var(--fg-5)" }}>
+                Their agent will appear here.
+              </span>
+            </div>
+          </>
+        )}
+        <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+          {filled && <TrustBadge tier={counterparty!.trustTier} />}
+          <MicroLabel>THEM</MicroLabel>
+        </div>
+      </div>
+
+      {filled && (
+        <>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+            <Pill label={counterparty!.name} accent />
+          </div>
+          {counterparty!.principals[0]?.keyFingerprint && (
+            <span
+              className="mono"
+              style={{
+                fontSize: 10,
+                color: "var(--fg-5)",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap"
+              }}
+            >
+              {counterparty!.principals[0].keyFingerprint}
+            </span>
+          )}
+        </>
+      )}
+
+      <div style={{ height: 1, background: "var(--surface-2)" }} />
+
+      {/* Inline selectors */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         <Field label="COUNTERPARTY">
           <Select
             value={counterpartySlug}
@@ -208,224 +378,82 @@ function FormPhase({
           </div>
         </Field>
       </div>
-
-      {/* Scope + send */}
-      <div
-        style={{
-          padding: "10px 18px 16px",
-          display: "flex",
-          flexDirection: "column",
-          gap: 10
-        }}
-      >
-        <Field label="SCOPE OF CONVERSATION">
-          <textarea
-            value={scope}
-            onChange={(e) => setScope(e.target.value)}
-            rows={2}
-            placeholder="License training-data Q4 corpus for $250k, signoff by Friday."
-            style={{
-              width: "100%",
-              padding: "10px 12px",
-              background: "var(--surface-0)",
-              border: "1px solid var(--surface-2)",
-              borderRadius: 8,
-              fontSize: 12,
-              color: "var(--fg-1)",
-              fontFamily: "inherit",
-              resize: "vertical",
-              minHeight: 60,
-              outline: "none",
-              lineHeight: 1.5
-            }}
-          />
-        </Field>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center"
-          }}
-        >
-          <span style={{ fontSize: 11, color: "var(--fg-5)" }}>
-            Both sides will see this scope.
-          </span>
-          <PrimaryButton label="Request to chat" enabled={canRequest} onClick={onRequest} />
-        </div>
-      </div>
-    </>
-  );
-}
-
-// ─── Cards ──────────────────────────────────────────────────────────────────
-
-function YouCard({ agent }: { agent: WizardState }) {
-  const letter = (agent.name || "A").charAt(0).toUpperCase();
-  const caps = agent.capabilities.slice(0, 3);
-  const more = Math.max(0, agent.capabilities.length - caps.length);
-  return (
-    <SideCard
-      tone="accent"
-      letter={letter}
-      name={agent.name || "Your agent"}
-      sub={agent.role || "agent"}
-      sideLabel="YOU"
-      chips={caps}
-      extraChip={more > 0 ? `+${more}` : null}
-      mono={agent.model}
-    />
-  );
-}
-
-function ThemCard({
-  counterparty,
-  agent
-}: {
-  counterparty: Counterparty;
-  agent: CounterpartyAgent;
-}) {
-  return (
-    <SideCard
-      tone="neutral"
-      letter={agent.name.charAt(0).toUpperCase()}
-      name={agent.name}
-      sub={agent.role}
-      sideLabel="THEM"
-      chips={[counterparty.name]}
-      chipAccent
-      mono={counterparty.principals[0]?.keyFingerprint}
-      trailing={<TrustBadge tier={counterparty.trustTier} />}
-    />
-  );
-}
-
-function SideCard({
-  tone,
-  letter,
-  name,
-  sub,
-  chips,
-  chipAccent = false,
-  extraChip = null,
-  mono,
-  sideLabel,
-  trailing
-}: {
-  tone: "accent" | "neutral";
-  letter: string;
-  name: string;
-  sub: string;
-  chips: string[];
-  chipAccent?: boolean;
-  extraChip?: string | null;
-  mono?: string;
-  sideLabel: string;
-  trailing?: React.ReactNode;
-}) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 10,
-        padding: 12,
-        background: "var(--surface-0)",
-        border: `1px solid ${tone === "accent" ? "rgba(217,119,87,0.30)" : "var(--surface-2)"}`,
-        borderRadius: 10,
-        boxShadow:
-          tone === "accent"
-            ? "inset 0 0 0 1px rgba(217,119,87,0.06)"
-            : undefined
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <Avatar letter={letter} size={28} tone={tone} />
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            minWidth: 0,
-            flex: 1,
-            lineHeight: 1.25
-          }}
-        >
-          <span
-            style={{
-              fontSize: 13,
-              fontWeight: 600,
-              color: "var(--fg-0)",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap"
-            }}
-          >
-            {name}
-          </span>
-          <span style={{ fontSize: 11, color: "var(--fg-4)" }}>{sub}</span>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
-          {trailing}
-          <MicroLabel>{sideLabel}</MicroLabel>
-        </div>
-      </div>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
-        {chips.map((c) => (
-          <Pill key={c} label={c} accent={chipAccent} />
-        ))}
-        {extraChip && <Pill label={extraChip} />}
-      </div>
-      {mono && (
-        <span
-          className="mono"
-          style={{
-            fontSize: 10,
-            color: "var(--fg-5)",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap"
-          }}
-        >
-          {mono}
-        </span>
-      )}
     </div>
   );
 }
 
-function PlaceholderCard({ hint }: { hint: string }) {
+function ScopeTextarea({
+  scope,
+  setScope
+}: {
+  scope: string;
+  setScope: (s: string) => void;
+}) {
+  const empty = scope.length === 0;
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 8,
-        padding: 18,
-        background: "var(--surface-0)",
-        border: "1px dashed var(--surface-3)",
-        borderRadius: 10,
-        minHeight: 116
-      }}
-    >
-      <div
-        style={{
-          width: 28,
-          height: 28,
-          borderRadius: "50%",
-          background: "var(--surface-1)",
-          border: "1px dashed var(--surface-3)",
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "var(--fg-5)"
+    <div style={{ position: "relative" }}>
+      <textarea
+        value={scope}
+        onChange={(e) => setScope(e.target.value)}
+        onKeyDown={(e) => {
+          // Tab to accept the suggested scope when the field is empty.
+          if (e.key === "Tab" && !e.shiftKey && empty) {
+            e.preventDefault();
+            setScope(DEFAULT_SCOPE);
+          }
         }}
-      >
-        <Icon name="agent" size={13} />
-      </div>
-      <div style={{ fontSize: 11, color: "var(--fg-5)", textAlign: "center" }}>
-        {hint}
-      </div>
+        rows={4}
+        placeholder={DEFAULT_SCOPE}
+        style={{
+          width: "100%",
+          padding: "10px 12px",
+          background: "var(--surface-0)",
+          border: "1px solid var(--surface-2)",
+          borderRadius: 8,
+          fontSize: 12,
+          color: "var(--fg-1)",
+          fontFamily: "inherit",
+          resize: "vertical",
+          minHeight: 120,
+          outline: "none",
+          lineHeight: 1.5
+        }}
+      />
+      {empty && (
+        <span
+          style={{
+            position: "absolute",
+            bottom: 10,
+            right: 12,
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 5,
+            fontSize: 10,
+            color: "var(--fg-5)",
+            pointerEvents: "none"
+          }}
+        >
+          <kbd
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              minWidth: 18,
+              height: 16,
+              padding: "0 5px",
+              background: "var(--surface-2)",
+              border: "1px solid var(--surface-3)",
+              borderRadius: 4,
+              fontSize: 9,
+              fontFamily: "var(--font-mono, monospace)",
+              color: "var(--fg-3)"
+            }}
+          >
+            Tab
+          </kbd>
+          <span>to use suggested</span>
+        </span>
+      )}
     </div>
   );
 }
