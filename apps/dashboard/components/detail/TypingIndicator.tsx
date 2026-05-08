@@ -19,6 +19,9 @@ export function TypingIndicator({ speaker }: TypingIndicatorProps) {
   return (
     <div
       className="typing-indicator-in"
+      role="status"
+      aria-live="polite"
+      aria-label={`${speaker} is composing a turn`}
       style={{
         display: "flex",
         flexDirection: "column",

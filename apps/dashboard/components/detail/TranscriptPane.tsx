@@ -34,21 +34,38 @@ export function TranscriptPane({
   auditEvent = null
 }: TranscriptPaneProps) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  // Track whether the reader has scrolled away from the tail. While they are
+  // reading earlier turns we DO NOT yank them back to the bottom on each new
+  // streamed turn — that's the worst part of most live chat UIs.
+  const pinnedToBottomRef = useRef<boolean>(true);
 
   useEffect(() => {
     if (!stickToBottom) return;
     const el = scrollRef.current;
     if (!el) return;
+    if (!pinnedToBottomRef.current) return;
     el.scrollTop = el.scrollHeight;
   }, [stickToBottom, turns.length, typingSpeaker, auditEvent]);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    pinnedToBottomRef.current = distanceFromBottom < 64;
+  };
 
   return (
     <div
       ref={scrollRef}
+      onScroll={handleScroll}
+      role="log"
+      aria-live={stickToBottom ? "polite" : "off"}
+      aria-relevant="additions"
+      aria-label={stickToBottom ? "Live deliberation transcript" : "Deliberation transcript"}
       style={{
         borderRight: "1px solid var(--surface-2)",
         overflowY: "auto",
-        overscrollBehavior: "none",
+        overscrollBehavior: "contain",
+        scrollBehavior: "smooth",
         display: "flex",
         flexDirection: "column",
         background: "var(--surface-0)",
@@ -97,8 +114,31 @@ export function TranscriptPane({
       </div>
       <div style={{ padding: "16px 22px" }}>
         {turns.length === 0 && !typingSpeaker && (
-          <div style={{ color: "var(--fg-4)", fontSize: 13 }}>
-            {stickToBottom ? "Waiting for the first turn…" : "No transcript turns recorded yet."}
+          <div
+            className="transcript-turn-in"
+            style={{
+              color: "var(--fg-4)",
+              fontSize: 13,
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "10px 0"
+            }}
+          >
+            {stickToBottom && (
+              <span
+                aria-hidden
+                className="live-pulse-dot"
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: "var(--r-pill)",
+                  background: "rgba(120, 200, 140, 0.95)",
+                  flexShrink: 0
+                }}
+              />
+            )}
+            {stickToBottom ? "Connecting to agents — first turn incoming…" : "No transcript turns recorded yet."}
           </div>
         )}
         {turns.map((turn) => (

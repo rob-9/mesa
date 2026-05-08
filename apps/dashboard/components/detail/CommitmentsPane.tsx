@@ -71,12 +71,37 @@ export function CommitmentsPane({
             COMMITMENTS · {commitments.length}
           </span>
         </div>
-        <ViewToggle mode={viewMode} onChange={onChangeViewMode} />
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <span
+            className="mono"
+            title="Keyboard: j/k or arrows to step, Esc to clear"
+            aria-hidden
+            style={{
+              fontSize: 10,
+              color: "var(--fg-5)",
+              letterSpacing: "0.04em",
+              userSelect: "none"
+            }}
+          >
+            j/k · esc
+          </span>
+          <ViewToggle mode={viewMode} onChange={onChangeViewMode} />
+        </div>
       </div>
       {viewMode === "list" ? (
         <div style={{ padding: "14px 18px" }}>
           {commitments.length === 0 && (
-            <div style={{ color: "var(--fg-4)", fontSize: 13 }}>No commitments extracted yet.</div>
+            <div
+              className="transcript-turn-in"
+              style={{
+                color: "var(--fg-4)",
+                fontSize: 13,
+                padding: "10px 0",
+                lineHeight: 1.5
+              }}
+            >
+              No commitments extracted yet — they appear here as agents propose terms.
+            </div>
           )}
           {commitments.map((c) => (
             <CommitmentCard

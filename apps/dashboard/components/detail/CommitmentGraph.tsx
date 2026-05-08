@@ -123,10 +123,24 @@ export function CommitmentGraph({ commitments, selectedId, onSelect }: Commitmen
         minWidth: 0
       }}
     >
+      {commitments.length === 0 && (
+        <div
+          style={{
+            color: "var(--fg-4)",
+            fontSize: 13,
+            textAlign: "center",
+            padding: "24px 0"
+          }}
+        >
+          No commitments graphed yet — they will appear as agents propose terms.
+        </div>
+      )}
       <svg
         width={width}
         height={height}
         viewBox={`0 0 ${width} ${height}`}
+        role="img"
+        aria-label={`Commitment dependency graph with ${nodes.length} nodes and ${edges.length} edges`}
         style={{ display: "block", margin: "0 auto", maxWidth: "100%", height: "auto" }}
       >
         {/* Edges */}
@@ -187,14 +201,47 @@ export function CommitmentGraph({ commitments, selectedId, onSelect }: Commitmen
             <g
               key={c.id}
               className={`graph-node${isSelected ? " graph-node-selected" : ""}`}
+              role="button"
+              tabIndex={0}
+              aria-pressed={isSelected}
+              aria-label={`${c.type} · ${c.status} · ${c.summary}`}
               style={{
                 cursor: "pointer",
                 opacity: dimmed ? 0.45 : 1,
                 transition: "opacity 180ms ease",
-                animation: `mesa-graph-node-in 260ms ease-out ${n.layer * 60 + n.indexInLayer * 30}ms backwards`
+                animation: `mesa-graph-node-in 260ms ease-out ${n.layer * 60 + n.indexInLayer * 30}ms backwards`,
+                outline: "none"
               }}
               onClick={() => onSelect(c.id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onSelect(c.id);
+                }
+              }}
             >
+              {/* Selection halo — a soft ring behind the node, animated on
+                  selection via the existing mesa-pulse keyframe. */}
+              {isSelected && (
+                <rect
+                  key={`halo-${c.id}`}
+                  x={n.x - 4}
+                  y={n.y - 4}
+                  width={n.width + 8}
+                  height={n.height + 8}
+                  rx={12}
+                  ry={12}
+                  fill="none"
+                  stroke="var(--accent)"
+                  strokeWidth={1}
+                  opacity={0.35}
+                  style={{
+                    transformBox: "fill-box",
+                    transformOrigin: "center",
+                    animation: "mesa-pulse 220ms ease-out"
+                  }}
+                />
+              )}
               <rect
                 x={n.x}
                 y={n.y}

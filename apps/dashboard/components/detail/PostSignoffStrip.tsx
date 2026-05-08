@@ -19,6 +19,9 @@ export function PostSignoffStrip({ entries, onSignoff }: PostSignoffStripProps) 
   return (
     <div
       className="post-signoff-strip-in"
+      role="region"
+      aria-live="polite"
+      aria-label="Post-signoff fan-out"
       style={{
         borderTop: "1px solid var(--surface-2)",
         background: "var(--surface-0)",
@@ -145,7 +148,9 @@ function RowAction({
   if (entry.task.kind === "human_signoff") {
     return (
       <button
+        type="button"
         onClick={onSignoff}
+        aria-label={`Sign off — ${entry.task.deliverable}`}
         style={{
           padding: "6px 14px",
           borderRadius: "var(--r-pill)",
@@ -155,7 +160,8 @@ function RowAction({
           fontWeight: 600,
           border: "1px solid var(--accent)",
           flexShrink: 0,
-          minWidth: 86
+          minWidth: 86,
+          cursor: "pointer"
         }}
       >
         Sign off

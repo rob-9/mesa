@@ -275,6 +275,49 @@ export function SplitView({
     setSelectedCommitmentId((current) => (current === id ? null : id));
   }, []);
 
+  // Keyboard nav: Esc clears the current selection, j/k or ArrowDown/ArrowUp
+  // step through commitments. We ignore key events that originate inside an
+  // input/textarea/contenteditable so we don't hijack typing in any future
+  // command bar.
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const tag = target?.tagName;
+      if (
+        tag === "INPUT" ||
+        tag === "TEXTAREA" ||
+        tag === "SELECT" ||
+        target?.isContentEditable
+      ) {
+        return;
+      }
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === "Escape" && selectedCommitmentId !== null) {
+        setSelectedCommitmentId(null);
+        e.preventDefault();
+        return;
+      }
+      const list = visibleCommitments;
+      if (list.length === 0) return;
+      const isNext = e.key === "j" || e.key === "ArrowDown";
+      const isPrev = e.key === "k" || e.key === "ArrowUp";
+      if (!isNext && !isPrev) return;
+      const idx = selectedCommitmentId
+        ? list.findIndex((c) => c.id === selectedCommitmentId)
+        : -1;
+      const nextIdx = isNext
+        ? (idx < 0 ? 0 : Math.min(list.length - 1, idx + 1))
+        : (idx <= 0 ? 0 : idx - 1);
+      const next = list[nextIdx];
+      if (next) {
+        setSelectedCommitmentId(next.id);
+        e.preventDefault();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [selectedCommitmentId, visibleCommitments]);
+
   const recordOperatorAudit = useCallback(() => {
     if (!hitlGate) return;
     setAuditEvent({

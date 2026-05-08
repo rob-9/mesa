@@ -35,6 +35,8 @@ export function HITLBanner({
     return (
       <div
         key="accepted"
+        role="status"
+        aria-live="polite"
         className="hitl-banner-in"
         style={{
           display: "flex",
@@ -61,6 +63,8 @@ export function HITLBanner({
     return (
       <div
         key="declined"
+        role="status"
+        aria-live="polite"
         className="hitl-banner-in"
         style={{
           display: "flex",
@@ -92,24 +96,27 @@ export function HITLBanner({
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0, flex: 1 }}>
           <div style={{ fontWeight: 500, color: "var(--fg-1)" }}>
-            Outreach withdrawn — counter-terms not authorized
+            Outreach paused — counter-terms not authorized
           </div>
           <div className="mono" style={{ fontSize: 11, color: "var(--fg-5)" }}>
             {gate.policyBound}
           </div>
         </div>
         <button
+          type="button"
           onClick={onOverride}
+          aria-label="Override decline and resume deliberation"
           style={{
             padding: "7px 13px",
             borderRadius: "var(--r-pill)",
             background: "var(--surface-2)",
             color: "var(--fg-2)",
             fontSize: 12,
-            border: "1px solid var(--surface-3)"
+            border: "1px solid var(--surface-3)",
+            cursor: "pointer"
           }}
         >
-          Override and resume
+          Override · resume
         </button>
       </div>
     );
@@ -119,6 +126,9 @@ export function HITLBanner({
   return (
     <div
       key="pending"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
       className="hitl-banner-in"
       style={{
         display: "flex",
@@ -158,7 +168,7 @@ export function HITLBanner({
               fontWeight: 600
             }}
           >
-            HITL · pinging human approver
+            HITL · awaiting human approval
           </span>
           <span
             className="mono"
@@ -238,7 +248,9 @@ export function HITLBanner({
         }}
       >
         <button
+          type="button"
           onClick={onForceAccept}
+          aria-label="Force accept — bypass Slack approval and authorize counter-terms"
           style={{
             padding: "8px 14px",
             borderRadius: "var(--r-pill)",
@@ -246,20 +258,24 @@ export function HITLBanner({
             color: "#1a0e08",
             fontSize: 12,
             fontWeight: 600,
-            border: "1px solid var(--accent)"
+            border: "1px solid var(--accent)",
+            cursor: "pointer"
           }}
         >
           Force accept
         </button>
         <button
+          type="button"
           onClick={onDecline}
+          aria-label="Decline — withdraw counter-terms"
           style={{
             padding: "7px 13px",
             borderRadius: "var(--r-pill)",
             background: "var(--surface-1)",
             color: "var(--fg-3)",
             fontSize: 11,
-            border: "1px solid var(--surface-3)"
+            border: "1px solid var(--surface-3)",
+            cursor: "pointer"
           }}
         >
           Decline

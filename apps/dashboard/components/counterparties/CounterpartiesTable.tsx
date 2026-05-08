@@ -45,6 +45,18 @@ export function CounterpartiesTable({
         <span />
       </div>
       <div>
+        {counterparties.length === 0 && (
+          <div
+            style={{
+              padding: "32px 20px",
+              textAlign: "center",
+              color: "var(--fg-5)",
+              fontSize: 12
+            }}
+          >
+            No counterparties yet — start a deliberation to see them here.
+          </div>
+        )}
         {counterparties.map((c, i) => {
           const r = rollups[c.slug];
           return (

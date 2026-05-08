@@ -14,6 +14,8 @@ export function CommitmentCard({ commitment, selected, onSelect, animateIn = fal
   const ref = useRef<HTMLButtonElement | null>(null);
   // 200ms one-shot scale-pulse on selection so the click is visibly registered
   // even on a recorded video. We re-trigger by re-applying the animation class.
+  // Also ensure the selected card is visible inside the scrolling commitments
+  // pane (it can be scrolled via keyboard nav from outside the viewport).
   useEffect(() => {
     if (!selected || !ref.current) return;
     const el = ref.current;
@@ -21,6 +23,7 @@ export function CommitmentCard({ commitment, selected, onSelect, animateIn = fal
     // Force reflow so the animation re-fires.
     void el.offsetHeight;
     el.style.animation = "mesa-pulse 200ms ease-out";
+    el.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }, [selected]);
 
   const isPending = commitment.status === "pending";
@@ -36,6 +39,8 @@ export function CommitmentCard({ commitment, selected, onSelect, animateIn = fal
       ref={ref}
       type="button"
       onClick={onSelect}
+      aria-pressed={selected}
+      aria-label={`${commitment.type} · ${commitment.status} · ${commitment.summary}`}
       className={animateIn ? "commitment-card-in" : undefined}
       style={{
         display: "block",
@@ -52,7 +57,7 @@ export function CommitmentCard({ commitment, selected, onSelect, animateIn = fal
         padding: "12px 14px",
         marginBottom: 10,
         cursor: "pointer",
-        transition: "border-color 0.15s, box-shadow 0.15s, background 0.15s"
+        transition: "border-color 0.15s, box-shadow 0.15s, background 0.15s, transform 0.15s"
       }}
     >
       <div
