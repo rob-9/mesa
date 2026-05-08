@@ -1,6 +1,14 @@
 import { DEMO_NOW_ISO } from "./format";
 import { fixtureDashboard } from "./fixtures";
-import type { AgentStatus, IntegrationStatus, OverviewData, RecentActivity } from "./types";
+import type {
+  AgentStatus,
+  IntegrationStatus,
+  OverviewData,
+  RecentActivity,
+  RiskPulse,
+  SignificantEvent,
+  SystemPulse
+} from "./types";
 
 function ago(minutes: number): string {
   return new Date(new Date(DEMO_NOW_ISO).getTime() - minutes * 60_000).toISOString();
@@ -106,8 +114,84 @@ const integrations: IntegrationStatus[] = [
   { id: "int-snowflake", name: "Snowflake", description: "Commitment data warehouse", connected: false }
 ];
 
+const events: SignificantEvent[] = [
+  {
+    id: "ev-1",
+    kind: "deliberation_signed",
+    timestamp: ago(58),
+    summary: "web-archive opt-in signed by trinity-data.",
+    href: "/deliberations/web-archive-opt-in"
+  },
+  {
+    id: "ev-2",
+    kind: "policy_fired",
+    timestamp: ago(120),
+    summary: "spend-cap policy flagged training-data Q4 ($240k).",
+    href: "/policies"
+  },
+  {
+    id: "ev-3",
+    kind: "policy_fired",
+    timestamp: ago(122),
+    summary: "spend-cap policy flagged image-corpus rev-share ($180k).",
+    href: "/policies"
+  },
+  {
+    id: "ev-4",
+    kind: "agent_deployed",
+    timestamp: ago(220),
+    summary: "pricing-agent deployed (v0.4.2) by rj@mesa.dev.",
+    href: "/agents/ag-5"
+  },
+  {
+    id: "ev-5",
+    kind: "integration_disconnected",
+    timestamp: ago(290),
+    summary: "Snowflake integration disconnected — token expired.",
+    href: "/settings"
+  },
+  {
+    id: "ev-6",
+    kind: "principal_added",
+    timestamp: ago(60 * 24 + 90),
+    summary: "Principal M. Zhao (legal) added.",
+    href: "/settings"
+  }
+];
+
 export function fixtureOverview(): OverviewData {
   const dashboard = fixtureDashboard();
+  const now = new Date(DEMO_NOW_ISO).getTime();
+  const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+  const staleOver7d = dashboard.deliberations.filter(
+    (d) => now - new Date(d.lastActivity).getTime() > sevenDaysMs
+  ).length;
+  const policyFires24h = events.filter(
+    (e) =>
+      e.kind === "policy_fired" &&
+      now - new Date(e.timestamp).getTime() < 24 * 60 * 60 * 1000
+  ).length;
+  const integrationsConnected = integrations.filter((i) => i.connected).length;
+  const hasBlockedAgent = agents.some((a) => a.state === "blocked");
+  const hasDisconnectedIntegration = integrationsConnected < integrations.length;
+  const health: SystemPulse["health"] =
+    hasBlockedAgent || hasDisconnectedIntegration ? "degraded" : "healthy";
+
+  const pulse: SystemPulse = {
+    deployedAgents: agents.length,
+    integrationsConnected,
+    integrationsTotal: integrations.length,
+    flagged: dashboard.counts.flagged,
+    policyFires24h,
+    health
+  };
+
+  const risk: RiskPulse = {
+    flaggedOpen: dashboard.counts.flagged,
+    policyFires24h,
+    staleOver7d
+  };
+
   return {
     stats: {
       activeDeliberations: dashboard.counts.active,
@@ -121,6 +205,9 @@ export function fixtureOverview(): OverviewData {
     recent,
     actions: dashboard.actions,
     totalActions: dashboard.actions.length,
-    integrations
+    integrations,
+    pulse,
+    events,
+    risk
   };
 }
