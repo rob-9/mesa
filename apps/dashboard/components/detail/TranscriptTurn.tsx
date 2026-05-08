@@ -6,6 +6,7 @@ interface TranscriptTurnProps {
   turn: Turn;
   highlighted: boolean;
   registerRef: (id: number, el: HTMLDivElement | null) => void;
+  animateIn?: boolean;
 }
 
 // Speaker placement: 'lab' is the buyer (X's side) → right. Anyone else → left.
@@ -13,7 +14,7 @@ function isSelf(speaker: string): boolean {
   return speaker === "lab";
 }
 
-export function TranscriptTurn({ turn, highlighted, registerRef }: TranscriptTurnProps) {
+export function TranscriptTurn({ turn, highlighted, registerRef, animateIn = false }: TranscriptTurnProps) {
   const setRef = useCallback(
     (el: HTMLDivElement | null) => {
       registerRef(turn.id, el);
@@ -47,6 +48,7 @@ export function TranscriptTurn({ turn, highlighted, registerRef }: TranscriptTur
   return (
     <div
       ref={setRef}
+      className={animateIn ? "transcript-turn-in" : undefined}
       style={{
         display: "flex",
         flexDirection: "column",

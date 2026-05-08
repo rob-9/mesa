@@ -1,16 +1,34 @@
 import { ActionsTable } from "@/components/dashboard/ActionsTable";
 import { DeliberationsTable } from "@/components/dashboard/DeliberationsTable";
 import { FilterChips } from "@/components/dashboard/FilterChips";
+import { MostRecentCards } from "@/components/dashboard/MostRecentCards";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { AppShell } from "@/components/shell/AppShell";
 import { getDashboard } from "@/lib/api";
 
 export default async function DeliberationsPage() {
   const data = await getDashboard();
+  const recentCount = Math.min(3, data.deliberations.length);
   return (
     <AppShell>
       <PageHeader counts={data.counts} />
       <FilterChips active="All" />
+
+      {recentCount > 0 && (
+        <>
+          <SectionLabel
+            title={`Most recent · ${recentCount}`}
+            subtitle="Latest activity across your deliberations."
+          />
+          <MostRecentCards deliberations={data.deliberations} />
+        </>
+      )}
+
+      <SectionLabel
+        title={`Active deliberations · ${data.deliberations.length}`}
+        subtitle="Click any row to open the transcript and commitment graph."
+      />
+      <DeliberationsTable deliberations={data.deliberations} />
 
       {data.actions.length > 0 && (
         <>
@@ -21,12 +39,6 @@ export default async function DeliberationsPage() {
           <ActionsTable actions={data.actions} />
         </>
       )}
-
-      <SectionLabel
-        title={`Active deliberations · ${data.deliberations.length}`}
-        subtitle="Click any row to open the transcript and commitment graph."
-      />
-      <DeliberationsTable deliberations={data.deliberations} />
     </AppShell>
   );
 }

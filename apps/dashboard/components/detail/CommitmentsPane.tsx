@@ -10,6 +10,7 @@ interface CommitmentsPaneProps {
   onSelect: (id: string) => void;
   viewMode: ViewMode;
   onChangeViewMode: (mode: ViewMode) => void;
+  animateIn?: boolean;
 }
 
 export function CommitmentsPane({
@@ -17,7 +18,8 @@ export function CommitmentsPane({
   selectedId,
   onSelect,
   viewMode,
-  onChangeViewMode
+  onChangeViewMode,
+  animateIn = false
 }: CommitmentsPaneProps) {
   return (
     <div
@@ -32,7 +34,8 @@ export function CommitmentsPane({
     >
       <div
         style={{
-          padding: "10px 18px",
+          padding: "10px 22px",
+          minHeight: 44,
           borderBottom: "1px solid var(--surface-2)",
           position: "sticky",
           top: 0,
@@ -40,7 +43,9 @@ export function CommitmentsPane({
           zIndex: 1,
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center"
+          alignItems: "center",
+          boxSizing: "border-box",
+          lineHeight: 1
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -78,6 +83,7 @@ export function CommitmentsPane({
               commitment={c}
               selected={c.id === selectedId}
               onSelect={() => onSelect(c.id)}
+              animateIn={animateIn}
             />
           ))}
         </div>

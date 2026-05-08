@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { StepCapabilities } from "@/components/deploy/StepCapabilities";
 import { StepConnections } from "@/components/deploy/StepConnections";
 import { StepIdentity } from "@/components/deploy/StepIdentity";
@@ -9,8 +9,10 @@ import { StepPolicies } from "@/components/deploy/StepPolicies";
 import { StepReview } from "@/components/deploy/StepReview";
 import { WizardShell } from "@/components/deploy/WizardShell";
 import type { WizardState } from "@/components/deploy/types";
+import { Select } from "@/components/primitives/Select";
 import { AppShell } from "@/components/shell/AppShell";
 import { deployAgent } from "@/lib/api";
+import { findAgentTemplate, listAgentTemplates, templateToWizardState } from "@/lib/agent-templates";
 
 const STEPS = [
   { id: "identity", label: "Identity" },
@@ -19,6 +21,8 @@ const STEPS = [
   { id: "policies", label: "Policies" },
   { id: "review", label: "Review" }
 ];
+
+const BLANK_TEMPLATE = "__blank__";
 
 const initial: WizardState = {
   name: "",
@@ -36,6 +40,29 @@ export default function DeployAgentPage() {
   const [step, setStep] = useState(0);
   const [state, setState] = useState<WizardState>(initial);
   const [deploying, setDeploying] = useState(false);
+  const [templateId, setTemplateId] = useState<string>(BLANK_TEMPLATE);
+
+  const templateOptions = useMemo(() => {
+    const list = listAgentTemplates().map((t) => ({
+      value: t.id,
+      label: `${t.name} · ${t.role}`
+    }));
+    return [{ value: BLANK_TEMPLATE, label: "Start from blank" }, ...list];
+  }, []);
+
+  const onTemplateChange = (id: string) => {
+    setTemplateId(id);
+    if (id === BLANK_TEMPLATE) {
+      setState(initial);
+      setStep(0);
+      return;
+    }
+    const tpl = findAgentTemplate(id);
+    if (tpl) {
+      setState(templateToWizardState(tpl));
+      setStep(0);
+    }
+  };
 
   const stepValid = (s: number): boolean => {
     if (s === 0) return state.name.trim().length > 0 && state.role.trim().length > 0;
@@ -47,8 +74,8 @@ export default function DeployAgentPage() {
     if (deploying) return;
     setDeploying(true);
     try {
-      const agent = await deployAgent(state);
-      router.push(`/agents/${agent.id}`);
+      await deployAgent(state);
+      router.push(`/deliberations/training-data-q4?live=1`);
     } catch (err) {
       setDeploying(false);
       throw err;
@@ -75,6 +102,67 @@ export default function DeployAgentPage() {
           Bring an internal agent onto the platform with the systems and guardrails it needs.
         </div>
       </div>
+
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          marginBottom: 18,
+          padding: "12px 14px",
+          background: "var(--surface-0)",
+          border: "1px solid var(--surface-2)",
+          borderRadius: "var(--r-card)"
+        }}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <span
+            className="mono"
+            style={{ fontSize: 11, color: "var(--fg-4)", letterSpacing: "0.06em" }}
+          >
+            START FROM EXISTING AGENT
+          </span>
+          <span style={{ fontSize: 12, color: "var(--fg-5)" }}>
+            Pre-fills the wizard. Pick a template and hit Quick deploy to skip all configuration steps.
+          </span>
+        </div>
+        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ minWidth: 280 }}>
+            <Select
+              value={templateId}
+              onChange={onTemplateChange}
+              options={templateOptions}
+              mono
+            />
+          </div>
+          <button
+            type="button"
+            onClick={onDeploy}
+            disabled={templateId === BLANK_TEMPLATE || deploying}
+            style={{
+              height: 32,
+              padding: "0 14px",
+              borderRadius: 8,
+              border: "1px solid var(--accent)",
+              background:
+                templateId === BLANK_TEMPLATE || deploying
+                  ? "var(--surface-1)"
+                  : "var(--accent)",
+              color:
+                templateId === BLANK_TEMPLATE || deploying ? "var(--fg-5)" : "var(--bg)",
+              fontSize: 12,
+              fontWeight: 500,
+              cursor:
+                templateId === BLANK_TEMPLATE || deploying ? "not-allowed" : "pointer",
+              opacity: templateId === BLANK_TEMPLATE || deploying ? 0.6 : 1,
+              whiteSpace: "nowrap"
+            }}
+          >
+            {deploying ? "Deploying…" : "Quick deploy"}
+          </button>
+        </div>
+      </div>
+
       <WizardShell
         steps={STEPS}
         current={step}
