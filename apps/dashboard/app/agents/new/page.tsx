@@ -65,7 +65,8 @@ export default function DeployAgentPage() {
     const tpl = findAgentTemplate(id);
     if (tpl) {
       setState(templateToWizardState(tpl));
-      setStep(0);
+      // Templates pre-fill every section, so jump straight to Review.
+      setStep(STEPS.length - 1);
     }
   };
 
@@ -86,12 +87,6 @@ export default function DeployAgentPage() {
       setDeploying(false);
       throw err;
     }
-  };
-
-  // Quick deploy → jump to Review so the user can scan all five sections
-  // before committing. They confirm with the wizard's footer Deploy button.
-  const onQuickDeploy = () => {
-    setStep(STEPS.length - 1);
   };
 
   const onConnectComplete = () => {
@@ -140,7 +135,7 @@ export default function DeployAgentPage() {
               START FROM EXISTING AGENT
             </span>
             <span style={{ fontSize: 12, color: "var(--fg-5)" }}>
-              Pre-fills the wizard. Pick a template and hit Quick deploy to skip all configuration steps.
+              Pre-fills every section from a saved configuration. Lands you on Review — edit anything or hit Deploy.
             </span>
           </div>
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
@@ -151,31 +146,6 @@ export default function DeployAgentPage() {
                 options={templateOptions}
               />
             </div>
-            <button
-              type="button"
-              onClick={onQuickDeploy}
-              disabled={templateId === BLANK_TEMPLATE || deploying}
-              style={{
-                height: 32,
-                padding: "0 14px",
-                borderRadius: 8,
-                border: "1px solid var(--accent)",
-                background:
-                  templateId === BLANK_TEMPLATE || deploying
-                    ? "var(--surface-1)"
-                    : "var(--accent)",
-                color:
-                  templateId === BLANK_TEMPLATE || deploying ? "var(--fg-5)" : "var(--bg)",
-                fontSize: 12,
-                fontWeight: 500,
-                cursor:
-                  templateId === BLANK_TEMPLATE || deploying ? "not-allowed" : "pointer",
-                opacity: templateId === BLANK_TEMPLATE || deploying ? 0.6 : 1,
-                whiteSpace: "nowrap"
-              }}
-            >
-              Quick deploy
-            </button>
           </div>
         </div>
       )}

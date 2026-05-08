@@ -34,7 +34,9 @@ export function WizardShell({
         borderRadius: "var(--r-card)",
         display: "flex",
         flexDirection: "column",
-        overflow: "hidden"
+        overflow: "hidden",
+        flex: "1 1 0",
+        minHeight: 0
       }}
     >
       {/* progress strip */}
@@ -45,7 +47,8 @@ export function WizardShell({
           gap: 8,
           padding: "14px 18px",
           borderBottom: "1px solid var(--surface-2)",
-          background: "var(--surface-1)"
+          background: "var(--surface-1)",
+          flexShrink: 0
         }}
       >
         {steps.map((s, i) => {
@@ -106,8 +109,17 @@ export function WizardShell({
         })}
       </div>
 
-      {/* body */}
-      <div style={{ padding: "22px 22px 26px", minHeight: 320 }}>{children}</div>
+      {/* body — scrolls internally so the footer Deploy button stays visible */}
+      <div
+        style={{
+          padding: "22px 22px 26px",
+          flex: "1 1 0",
+          minHeight: 0,
+          overflowY: "auto"
+        }}
+      >
+        {children}
+      </div>
 
       {/* footer */}
       <div
@@ -117,7 +129,8 @@ export function WizardShell({
           alignItems: "center",
           padding: "12px 18px",
           borderTop: "1px solid var(--surface-2)",
-          background: "var(--surface-1)"
+          background: "var(--surface-1)",
+          flexShrink: 0
         }}
       >
         <button
