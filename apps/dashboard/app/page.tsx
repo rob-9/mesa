@@ -1,16 +1,19 @@
 import { AppShell } from "@/components/shell/AppShell";
-import { ActionQueueCard } from "@/components/overview/ActionQueueCard";
-import { AgentStatusStrip } from "@/components/overview/AgentStatusStrip";
-import { IntegrationsCard } from "@/components/overview/IntegrationsCard";
-import { OverviewHero } from "@/components/overview/OverviewHero";
-import { RecentActivityCard } from "@/components/overview/RecentActivityCard";
+import { AgentFleetCard } from "@/components/overview/AgentFleetCard";
+import { ConnectivityCard } from "@/components/overview/ConnectivityCard";
+import { FleetNavbar } from "@/components/overview/FleetNavbar";
+import { RiskPulseCard } from "@/components/overview/RiskPulseCard";
+import { SignificantEventsCard } from "@/components/overview/SignificantEventsCard";
 import { getOverview } from "@/lib/api";
 
 export default async function OverviewPage() {
   const data = await getOverview();
+  const events = data.events;
+  const risk = data.risk;
+
   return (
     <AppShell>
-      <div style={{ marginBottom: 12 }}>
+      <div style={{ marginBottom: 12, flexShrink: 0 }}>
         <h1
           style={{
             margin: 0,
@@ -21,36 +24,51 @@ export default async function OverviewPage() {
             color: "var(--fg-0)"
           }}
         >
-          Overview <span style={{ color: "var(--fg-3)", fontWeight: 400 }}>· X</span>
+          Overview
         </h1>
         <div style={{ marginTop: 4, fontSize: 12, color: "var(--fg-4)" }}>
-          What your agents have been doing today.
+          Operational health across your agents, integrations, and policies.
         </div>
       </div>
+
       <div
         style={{
+          marginBottom: 10,
+          flexShrink: 0,
           display: "flex",
-          flexDirection: "column",
           gap: 10,
-          flex: 1,
-          minHeight: 0
+          alignItems: "stretch"
         }}
       >
-        <OverviewHero stats={data.stats} />
+        <FleetNavbar agents={data.agents} />
+        <RiskPulseCard risk={risk} />
+      </div>
+
+      <div
+        style={{
+          flex: 1,
+          minHeight: 0,
+          display: "grid",
+          gridTemplateColumns: "minmax(0, 1.6fr) minmax(0, 1fr)",
+          gap: 10
+        }}
+      >
+        <div style={{ minHeight: 0, display: "flex", flexDirection: "column" }}>
+          <AgentFleetCard agents={data.agents} />
+        </div>
         <div
           style={{
-            display: "grid",
-            gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1.4fr)",
-            gap: 12,
-            flex: 1,
-            minHeight: 0
+            minHeight: 0,
+            display: "flex",
+            flexDirection: "column",
+            gap: 10
           }}
         >
-          <ActionQueueCard actions={data.actions} total={data.totalActions} />
-          <RecentActivityCard items={data.recent} />
+          <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
+            <SignificantEventsCard events={events} />
+          </div>
+          <ConnectivityCard integrations={data.integrations} />
         </div>
-        <AgentStatusStrip agents={data.agents} />
-        <IntegrationsCard integrations={data.integrations} />
       </div>
     </AppShell>
   );

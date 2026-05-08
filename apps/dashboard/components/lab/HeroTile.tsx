@@ -1,39 +1,17 @@
 import Link from "next/link";
 import { Icon } from "@/components/icons/Icon";
-import type { OverviewData } from "@/lib/types";
 
-type Stats = OverviewData["stats"];
-type Tone = "accent" | "amber" | "muted";
-
-// Two-up hero pair (Awaiting action + Flagged) over a thin supporting line of
-// the remaining stats. Monotone — no gradients.
-export function OverviewHero({ stats }: { stats: Stats }) {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-        <HeroTile
-          value={stats.awaitingAction}
-          title="awaiting action"
-          subtitle="needs you or an internal agent"
-          tone={stats.awaitingAction > 0 ? "accent" : "muted"}
-          href="/deliberations"
-          ctaLabel="Review"
-        />
-        <HeroTile
-          value={stats.flagged}
-          title="flagged"
-          subtitle={stats.flagged === 0 ? "no policy issues right now" : "policy violations open"}
-          tone={stats.flagged > 0 ? "amber" : "muted"}
-          href="/deliberations"
-          ctaLabel="Inspect"
-        />
-      </div>
-      <SupportingLine stats={stats} />
-    </div>
-  );
+export interface LabStats {
+  activeDeliberations: number;
+  awaitingAction: number;
+  medianAge: string;
+  autoResolved: string;
+  flagged: number;
+  deployedAgents: number;
 }
 
-// Exported for re-use inside /lab.
+type Tone = "accent" | "amber" | "muted";
+
 export function HeroTile({
   value,
   title,
@@ -51,8 +29,7 @@ export function HeroTile({
 }) {
   const valueColor =
     tone === "accent" ? "var(--accent)" : tone === "amber" ? "var(--amber)" : "var(--fg-3)";
-  const bg =
-    tone === "accent" ? "var(--accent-strong-bg)" : "var(--surface-1)";
+  const bg = tone === "accent" ? "var(--accent-strong-bg)" : "var(--surface-1)";
   const border =
     tone === "accent" ? "1px solid var(--accent-strong-border)" : "1px solid var(--surface-2)";
 
@@ -112,8 +89,7 @@ export function HeroTile({
   );
 }
 
-// Exported for re-use inside /lab.
-export function SupportingLine({ stats }: { stats: Stats }) {
+export function SupportingLine({ stats }: { stats: LabStats }) {
   const items = [
     { value: stats.activeDeliberations, label: "active" },
     { value: stats.medianAge, label: "median age" },

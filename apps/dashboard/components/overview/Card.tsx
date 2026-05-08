@@ -18,7 +18,9 @@ export function Card({ title, eyebrow, trailing, children, noPadBody = false }: 
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        minWidth: 0
+        flex: 1,
+        minWidth: 0,
+        minHeight: 0
       }}
     >
       {(title || eyebrow || trailing) && (
@@ -47,7 +49,18 @@ export function Card({ title, eyebrow, trailing, children, noPadBody = false }: 
           {trailing}
         </div>
       )}
-      <div style={{ padding: noPadBody ? 0 : 16, flex: 1, minWidth: 0, minHeight: 0 }}>{children}</div>
+      <div
+        style={{
+          padding: noPadBody ? 0 : 16,
+          flex: 1,
+          minWidth: 0,
+          minHeight: 0,
+          display: "flex",
+          flexDirection: "column"
+        }}
+      >
+        {children}
+      </div>
     </div>
   );
 }

@@ -118,16 +118,6 @@ export interface AgentStatus {
   lastActivity: string; // ISO-8601
 }
 
-export interface RecentActivity {
-  id: string;
-  commitmentType: CommitmentType;
-  summary: string;
-  deliberationId: string;
-  deliberationTitle: string;
-  counterparty: string;
-  timestamp: string; // ISO-8601
-}
-
 export interface IntegrationStatus {
   id: string;
   name: string;       // 'Salesforce', 'Slack', ...
@@ -135,19 +125,29 @@ export interface IntegrationStatus {
   connected: boolean;
 }
 
+export interface SignificantEvent {
+  id: string;
+  kind:
+    | "deliberation_signed"
+    | "policy_fired"
+    | "agent_deployed"
+    | "integration_disconnected"
+    | "principal_added";
+  timestamp: string; // ISO-8601
+  summary: string;
+  href?: string;
+}
+
+export interface RiskPulse {
+  flaggedOpen: number;
+  policyFires24h: number;
+  staleOver7d: number;
+}
+
 export interface OverviewData {
-  stats: {
-    activeDeliberations: number;
-    awaitingAction: number;
-    medianAge: string;       // pre-formatted median age of open deliberations, e.g. "4.1h"
-    autoResolved: string;    // share resolved without human review, e.g. "89%"
-    flagged: number;
-    deployedAgents: number;
-  };
   agents: AgentStatus[];
-  recent: RecentActivity[];
-  actions: Action[];
-  totalActions: number;
+  events: SignificantEvent[];
+  risk: RiskPulse;
   integrations: IntegrationStatus[];
 }
 
@@ -172,7 +172,7 @@ export interface AgentPolicy {
   rationale?: string;    // one-line: why this exists
 }
 
-// One row in the activity card. Mirrors RecentActivity but scoped to agent.
+// One row in the activity card, scoped to a single agent.
 export interface AgentActivityItem {
   id: string;
   commitmentType: CommitmentType;
