@@ -28,7 +28,16 @@ const monoInputStyle: CSSProperties = {
   fontSize: 11
 };
 
+// Slug pattern enforced by the hint copy on the Name field.
+const SLUG_RE = /^[a-z0-9][a-z0-9-]*$/;
+
 export function StepIdentity({ state, setState }: Props) {
+  const nameValue = state.name;
+  const nameInvalid = nameValue.length > 0 && !SLUG_RE.test(nameValue);
+  const ownerValue = state.owner;
+  const ownerInvalid =
+    ownerValue.length > 0 && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(ownerValue);
+
   return (
     <div
       style={{
@@ -47,21 +56,39 @@ export function StepIdentity({ state, setState }: Props) {
             gap: 14
           }}
         >
-          <Field label="Name" hint="lowercase, hyphenated">
+          <Field
+            label="Name"
+            hint={
+              nameInvalid
+                ? "use lowercase letters, digits, and hyphens only"
+                : "lowercase, hyphenated"
+            }
+            required
+          >
             <input
               type="text"
               value={state.name}
               onChange={(e) => setState((s) => ({ ...s, name: e.target.value }))}
               placeholder="procurement-agent"
-              style={monoInputStyle}
+              autoComplete="off"
+              spellCheck={false}
+              required
+              aria-required="true"
+              aria-invalid={nameInvalid || undefined}
+              style={{
+                ...monoInputStyle,
+                borderColor: nameInvalid ? "var(--accent)" : "var(--surface-2)"
+              }}
             />
           </Field>
-          <Field label="Role" hint="human-readable">
+          <Field label="Role" hint="human-readable" required>
             <input
               type="text"
               value={state.role}
               onChange={(e) => setState((s) => ({ ...s, role: e.target.value }))}
               placeholder="data buyer"
+              required
+              aria-required="true"
               style={inputStyle}
             />
           </Field>
@@ -77,13 +104,21 @@ export function StepIdentity({ state, setState }: Props) {
               mono
             />
           </Field>
-          <Field label="Owner">
+          <Field
+            label="Owner"
+            hint={ownerInvalid ? "enter a valid email address" : undefined}
+          >
             <input
               type="email"
               value={state.owner}
               onChange={(e) => setState((s) => ({ ...s, owner: e.target.value }))}
               placeholder="rj@mesa.dev"
-              style={inputStyle}
+              autoComplete="email"
+              aria-invalid={ownerInvalid || undefined}
+              style={{
+                ...inputStyle,
+                borderColor: ownerInvalid ? "var(--accent)" : "var(--surface-2)"
+              }}
             />
           </Field>
         </div>
@@ -99,13 +134,18 @@ export function StepIdentity({ state, setState }: Props) {
             minHeight: 0
           }}
         >
-          <span style={{ fontSize: 12, color: "var(--fg-2)", fontWeight: 500 }}>
+          <label
+            htmlFor="agent-persona"
+            style={{ fontSize: 12, color: "var(--fg-2)", fontWeight: 500 }}
+          >
             Persona
-          </span>
+          </label>
           <textarea
+            id="agent-persona"
             value={state.persona}
             onChange={(e) => setState((s) => ({ ...s, persona: e.target.value }))}
             placeholder="Sources licensed training data within budget. Pushes for non-exclusive terms and short renewal windows."
+            aria-describedby="agent-persona-hint"
             style={{
               background: "var(--surface-0)",
               border: "1px solid var(--surface-2)",
@@ -121,6 +161,12 @@ export function StepIdentity({ state, setState }: Props) {
               lineHeight: 1.5
             }}
           />
+          <span
+            id="agent-persona-hint"
+            style={{ fontSize: 11, color: "var(--fg-5)" }}
+          >
+            How this agent should behave during a deliberation. Drives its tone and priorities.
+          </span>
         </div>
       </div>
 

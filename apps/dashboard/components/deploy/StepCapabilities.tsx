@@ -37,13 +37,37 @@ export function StepCapabilities({ state, setState }: Props) {
 
   const isEmpty = state.capabilities.length === 0;
 
+  const count = state.capabilities.length;
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      <div>
-        <div style={{ fontSize: 13, color: "var(--fg-1)", fontWeight: 500 }}>
-          Pick the commitment types this agent is permitted to emit.
+    <div
+      role="group"
+      aria-labelledby="capabilities-heading"
+      aria-describedby="capabilities-hint"
+      style={{ display: "flex", flexDirection: "column", gap: 14 }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "space-between",
+          gap: 12
+        }}
+      >
+        <div>
+          <div
+            id="capabilities-heading"
+            style={{ fontSize: 13, color: "var(--fg-1)", fontWeight: 500 }}
+          >
+            Pick the commitment types this agent is permitted to emit.
+          </div>
+          <div
+            id="capabilities-hint"
+            style={{ marginTop: 4, fontSize: 12, color: isEmpty ? "var(--accent)" : "var(--fg-4)" }}
+          >
+            {isEmpty ? "Pick at least one to continue." : `${count} selected`}
+          </div>
         </div>
-        <div style={{ marginTop: 4, fontSize: 12, color: "var(--fg-4)" }}>Pick at least one.</div>
       </div>
       <div
         style={{
@@ -58,7 +82,29 @@ export function StepCapabilities({ state, setState }: Props) {
             <button
               key={c}
               type="button"
+              role="checkbox"
+              aria-checked={selected}
               onClick={() => toggle(c)}
+              onKeyDown={(e) => {
+                if (e.key === " " || e.key === "Enter") {
+                  e.preventDefault();
+                  toggle(c);
+                }
+              }}
+              onMouseEnter={(e) => {
+                if (!selected) {
+                  e.currentTarget.style.borderColor = "var(--surface-3)";
+                  e.currentTarget.style.background = "var(--surface-1)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!selected) {
+                  e.currentTarget.style.borderColor = isEmpty
+                    ? "var(--surface-3)"
+                    : "var(--surface-2)";
+                  e.currentTarget.style.background = "var(--surface-0)";
+                }
+              }}
               style={{
                 display: "flex",
                 alignItems: "center",

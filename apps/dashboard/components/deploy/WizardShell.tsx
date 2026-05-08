@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useRef, type KeyboardEvent, type ReactNode } from "react";
 
 interface Step {
   id: string;
@@ -26,6 +26,29 @@ export function WizardShell({
   nextDisabled = false,
   children
 }: Props) {
+  const bodyRef = useRef<HTMLDivElement>(null);
+
+  // On step change, focus the first focusable element in the body so keyboard
+  // users land on the new step's primary input, and screen readers announce it.
+  useEffect(() => {
+    const root = bodyRef.current;
+    if (!root) return;
+    const focusable = root.querySelector<HTMLElement>(
+      'input:not([disabled]), textarea:not([disabled]), select:not([disabled]), button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+    focusable?.focus({ preventScroll: true });
+    root.scrollTop = 0;
+  }, [current]);
+
+  // Cmd/Ctrl+Enter advances the wizard from anywhere in the body — including
+  // textareas where a plain Enter inserts a newline.
+  const onBodyKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === "Enter" && !nextDisabled && onNext) {
+      e.preventDefault();
+      onNext();
+    }
+  };
+
   return (
     <div
       style={{
@@ -40,7 +63,8 @@ export function WizardShell({
       }}
     >
       {/* progress strip */}
-      <div
+      <ol
+        aria-label={`Step ${current + 1} of ${steps.length}: ${steps[current]?.label ?? ""}`}
         style={{
           display: "flex",
           alignItems: "center",
@@ -48,14 +72,18 @@ export function WizardShell({
           padding: "14px 18px",
           borderBottom: "1px solid var(--surface-2)",
           background: "var(--surface-1)",
-          flexShrink: 0
+          flexShrink: 0,
+          margin: 0,
+          listStyle: "none"
         }}
       >
         {steps.map((s, i) => {
           const reached = i <= current;
+          const isCurrent = i === current;
           return (
-            <div
+            <li
               key={s.id}
+              aria-current={isCurrent ? "step" : undefined}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -104,13 +132,17 @@ export function WizardShell({
                   }}
                 />
               )}
-            </div>
+            </li>
           );
         })}
-      </div>
+      </ol>
 
       {/* body — scrolls internally so the footer Deploy button stays visible */}
       <div
+        ref={bodyRef}
+        onKeyDown={onBodyKeyDown}
+        role="region"
+        aria-label={steps[current]?.label}
         style={{
           padding: "22px 22px 26px",
           flex: "1 1 0",
@@ -137,6 +169,7 @@ export function WizardShell({
           type="button"
           onClick={onPrev}
           disabled={!onPrev}
+          aria-label="Previous step"
           style={{
             height: 30,
             padding: "0 14px",
@@ -150,25 +183,65 @@ export function WizardShell({
         >
           ← Back
         </button>
-        <button
-          type="button"
-          onClick={onNext}
-          disabled={nextDisabled || !onNext}
-          style={{
-            height: 30,
-            padding: "0 16px",
-            background: nextDisabled ? "var(--surface-2)" : "var(--accent)",
-            color: nextDisabled ? "var(--fg-4)" : "var(--bg)",
-            border: "1px solid",
-            borderColor: nextDisabled ? "var(--surface-2)" : "var(--accent)",
-            borderRadius: 8,
-            fontSize: 12,
-            fontWeight: 500,
-            cursor: nextDisabled ? "not-allowed" : "pointer"
-          }}
-        >
-          {nextLabel} →
-        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <span
+            aria-hidden
+            style={{
+              fontSize: 10,
+              color: "var(--fg-5)",
+              letterSpacing: "0.04em",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 4
+            }}
+          >
+            <kbd
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: 16,
+                padding: "0 5px",
+                background: "var(--surface-2)",
+                border: "1px solid var(--surface-3)",
+                borderRadius: 4,
+                fontSize: 9,
+                fontFamily: "var(--font-mono, monospace)",
+                color: "var(--fg-3)"
+              }}
+            >
+              ⌘↵
+            </kbd>
+            to advance
+          </span>
+          <button
+            type="button"
+            onClick={onNext}
+            disabled={nextDisabled || !onNext}
+            aria-keyshortcuts="Meta+Enter Control+Enter"
+            style={{
+              height: 30,
+              padding: "0 16px",
+              background: nextDisabled ? "var(--surface-2)" : "var(--accent)",
+              color: nextDisabled ? "var(--fg-4)" : "var(--bg)",
+              border: "1px solid",
+              borderColor: nextDisabled ? "var(--surface-2)" : "var(--accent)",
+              borderRadius: 8,
+              fontSize: 12,
+              fontWeight: 500,
+              cursor: nextDisabled ? "not-allowed" : "pointer",
+              transition: "filter 120ms ease"
+            }}
+            onMouseEnter={(e) => {
+              if (!nextDisabled) e.currentTarget.style.filter = "brightness(1.08)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.filter = "";
+            }}
+          >
+            {nextLabel} →
+          </button>
+        </div>
       </div>
     </div>
   );

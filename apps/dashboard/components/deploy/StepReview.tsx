@@ -28,7 +28,8 @@ function Section({
   children: ReactNode;
 }) {
   return (
-    <div
+    <section
+      aria-labelledby={`review-${title.toLowerCase()}`}
       style={{
         borderBottom: "1px solid var(--surface-2)",
         padding: "14px 16px"
@@ -42,15 +43,29 @@ function Section({
           marginBottom: 8
         }}
       >
-        <span
+        <h3
+          id={`review-${title.toLowerCase()}`}
           className="mono"
-          style={{ fontSize: 10, color: "var(--fg-5)", letterSpacing: "0.06em" }}
+          style={{
+            fontSize: 10,
+            color: "var(--fg-5)",
+            letterSpacing: "0.06em",
+            margin: 0,
+            fontWeight: 500
+          }}
         >
           {title.toUpperCase()}
-        </span>
+        </h3>
         <button
           type="button"
           onClick={onEdit}
+          aria-label={`Edit ${title}`}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.textDecoration = "underline";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.textDecoration = "none";
+          }}
           style={{
             background: "transparent",
             border: "none",
@@ -64,7 +79,7 @@ function Section({
         </button>
       </div>
       <div>{children}</div>
-    </div>
+    </section>
   );
 }
 
@@ -90,6 +105,14 @@ function KV({ k, v, mono = false }: { k: string; v: ReactNode; mono?: boolean })
 }
 
 const dash = <span style={{ color: "var(--fg-5)" }}>—</span>;
+
+function EmptyHint({ children }: { children: ReactNode }) {
+  return (
+    <span style={{ fontSize: 11, color: "var(--fg-5)", fontStyle: "italic" }}>
+      {children}
+    </span>
+  );
+}
 
 export function StepReview({ state, goToStep }: Props) {
   const groupedConnections = KIND_ORDER.map((kind) => ({
@@ -137,7 +160,7 @@ export function StepReview({ state, goToStep }: Props) {
 
       <Section title="Capabilities" onEdit={() => goToStep(1)}>
         {state.capabilities.length === 0 ? (
-          dash
+          <EmptyHint>None selected — agent will not be able to act.</EmptyHint>
         ) : (
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
             {state.capabilities.map((c) => (
@@ -161,7 +184,7 @@ export function StepReview({ state, goToStep }: Props) {
 
       <Section title="Connections" onEdit={() => goToStep(2)}>
         {state.connections.length === 0 ? (
-          dash
+          <EmptyHint>No systems wired up — optional.</EmptyHint>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             <div style={{ fontSize: 11, color: "var(--fg-4)" }}>
@@ -206,7 +229,7 @@ export function StepReview({ state, goToStep }: Props) {
 
       <Section title="Policies" onEdit={() => goToStep(3)}>
         {state.policies.length === 0 ? (
-          dash
+          <EmptyHint>No guardrails set — optional, but recommended.</EmptyHint>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
             {state.policies.map((p) => (

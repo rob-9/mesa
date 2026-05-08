@@ -104,14 +104,33 @@ export function StepConnections({ state, setState }: Props) {
     });
   };
 
+  const selectedCount = state.connections.length;
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-      <div>
-        <div style={{ fontSize: 13, color: "var(--fg-1)", fontWeight: 500 }}>
-          Wire this agent into the systems it needs.
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-end",
+          justifyContent: "space-between",
+          gap: 12
+        }}
+      >
+        <div>
+          <div style={{ fontSize: 13, color: "var(--fg-1)", fontWeight: 500 }}>
+            Wire this agent into the systems it needs.
+          </div>
+          <div style={{ marginTop: 4, fontSize: 12, color: "var(--fg-4)" }}>
+            Optional. Pick from connected providers.
+          </div>
         </div>
-        <div style={{ marginTop: 4, fontSize: 12, color: "var(--fg-4)" }}>
-          Optional. Pick from connected providers.
+        <div
+          aria-live="polite"
+          style={{ fontSize: 11, color: "var(--fg-4)" }}
+        >
+          {selectedCount === 0
+            ? "none selected"
+            : `${selectedCount} selected`}
         </div>
       </div>
 
@@ -130,6 +149,8 @@ export function StepConnections({ state, setState }: Props) {
           return (
             <div
               key={kind}
+              role="group"
+              aria-label={KIND_LABEL[kind]}
               style={{
                 borderBottom: isLastGroup ? "none" : "1px solid var(--surface-2)"
               }}
@@ -151,6 +172,12 @@ export function StepConnections({ state, setState }: Props) {
                 return (
                   <label
                     key={c.id}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "var(--surface-1)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "transparent";
+                    }}
                     style={{
                       display: "grid",
                       gridTemplateColumns: "16px minmax(0, 1fr) auto",
@@ -158,7 +185,8 @@ export function StepConnections({ state, setState }: Props) {
                       alignItems: "center",
                       padding: "10px 16px",
                       borderBottom: isLast ? "none" : "1px solid var(--border-row, var(--surface-2))",
-                      cursor: "pointer"
+                      cursor: "pointer",
+                      transition: "background 120ms ease"
                     }}
                   >
                     <input

@@ -75,6 +75,8 @@ export function PostDeployConnect({ deployedAgent, onComplete }: Props) {
     >
       {/* Header strip */}
       <div
+        role="status"
+        aria-live="polite"
         style={{
           display: "flex",
           alignItems: "center",
@@ -364,6 +366,7 @@ function ThemSelectorCard({
         </Field>
         <Field label="THEIR AGENT">
           <div
+            aria-disabled={cpAgentDisabled || undefined}
             style={{
               opacity: cpAgentDisabled ? 0.5 : 1,
               pointerEvents: cpAgentDisabled ? "none" : "auto"
@@ -373,7 +376,7 @@ function ThemSelectorCard({
               value={agentId}
               onChange={setAgentId}
               options={cpAgentOptions}
-              placeholder={cpAgentDisabled ? "—" : "Select their agent…"}
+              placeholder={cpAgentDisabled ? "Pick a counterparty first" : "Select their agent…"}
             />
           </div>
         </Field>
@@ -404,6 +407,7 @@ function ScopeTextarea({
         }}
         rows={4}
         placeholder={DEFAULT_SCOPE}
+        aria-describedby={empty ? "scope-tab-hint" : undefined}
         style={{
           width: "100%",
           padding: "10px 12px",
@@ -421,6 +425,7 @@ function ScopeTextarea({
       />
       {empty && (
         <span
+          id="scope-tab-hint"
           style={{
             position: "absolute",
             bottom: 10,
@@ -553,6 +558,9 @@ function WaitingPhase({
   return (
     <div
       className="typing-indicator-in"
+      role="status"
+      aria-live="polite"
+      aria-label={`Waiting for ${counterpartyName} to accept the request from ${cpAgentName}.`}
       style={{
         display: "flex",
         flexDirection: "column",
@@ -710,6 +718,12 @@ function PrimaryButton({
       type="button"
       onClick={onClick}
       disabled={!enabled}
+      onMouseEnter={(e) => {
+        if (enabled) e.currentTarget.style.filter = "brightness(1.08)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.filter = "";
+      }}
       style={{
         height: 32,
         padding: "0 14px",
@@ -723,11 +737,16 @@ function PrimaryButton({
         cursor: enabled ? "pointer" : "not-allowed",
         display: "inline-flex",
         alignItems: "center",
-        gap: 6
+        gap: 6,
+        transition: "filter 120ms ease"
       }}
     >
       {label}
-      {trailing && <span style={{ opacity: 0.85 }}>{trailing}</span>}
+      {trailing && (
+        <span aria-hidden style={{ opacity: 0.85 }}>
+          {trailing}
+        </span>
+      )}
     </button>
   );
 }
@@ -742,6 +761,9 @@ function AcceptedPhase({
   return (
     <div
       className="typing-indicator-in"
+      role="status"
+      aria-live="polite"
+      aria-label={`${cpAgentName} accepted. Opening deliberation with ${counterpartyName}.`}
       style={{
         display: "flex",
         flexDirection: "column",

@@ -145,6 +145,8 @@ export function StepPolicies({ state, setState }: Props) {
         <button
           type="button"
           onClick={() => setCustomOpen((v) => !v)}
+          aria-expanded={customOpen}
+          aria-controls="custom-policy-panel"
           style={{
             background: "transparent",
             border: "none",
@@ -158,11 +160,28 @@ export function StepPolicies({ state, setState }: Props) {
             gap: 6
           }}
         >
-          <span style={{ fontSize: 10, color: "var(--fg-4)" }}>{customOpen ? "▾" : "▸"}</span>
+          <span
+            aria-hidden
+            style={{
+              fontSize: 10,
+              color: "var(--fg-4)",
+              display: "inline-block",
+              transition: "transform 150ms ease",
+              transform: customOpen ? "rotate(90deg)" : "rotate(0deg)"
+            }}
+          >
+            ▸
+          </span>
           Custom policy
+          {!customOpen && (
+            <span style={{ fontSize: 11, color: "var(--fg-5)", fontWeight: 400 }}>
+              — add a one-off rule not covered above
+            </span>
+          )}
         </button>
         {customOpen && (
           <div
+            id="custom-policy-panel"
             style={{
               marginTop: 12,
               display: "grid",
