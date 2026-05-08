@@ -38,45 +38,49 @@ export function AgentDetailClient({ initialAgent }: { initialAgent: AgentDetail 
       <AgentHeader agent={agent} />
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "minmax(0, 1fr) 360px",
+          display: "flex",
+          flexWrap: "wrap",
           gap: 12,
           marginTop: 18,
-          alignItems: "start"
+          alignItems: "flex-start"
         }}
       >
-        <Tabs
-          height={540}
-          tabs={[
-            {
-              id: "activity",
-              label: "Activity",
-              count: agent.activity.length,
-              content: <AgentActivityCard items={agent.activity} />
-            },
-            {
-              id: "connections",
-              label: "Connected systems",
-              count: agent.connections.length,
-              content: <AgentConnectionsCard connections={agent.connections} />
-            },
-            {
-              id: "reasoning",
-              label: "Reasoning",
-              count: agent.reasoning.length,
-              content: (
-                <AgentReasoningCard reasoning={agent.reasoning} activity={agent.activity} />
-              )
-            },
-            {
-              id: "guardrails",
-              label: "Guardrails",
-              count: agent.policies.length,
-              content: <AgentPoliciesCard policies={agent.policies} />
-            }
-          ]}
-        />
-        <AgentChatPanel messages={messages} onSend={handleSend} />
+        <div style={{ flex: "1 1 320px", minWidth: 0 }}>
+          <Tabs
+            height={540}
+            tabs={[
+              {
+                id: "activity",
+                label: "Activity",
+                count: agent.activity.length,
+                content: <AgentActivityCard items={agent.activity} />
+              },
+              {
+                id: "connections",
+                label: "Connected systems",
+                count: agent.connections.length,
+                content: <AgentConnectionsCard connections={agent.connections} />
+              },
+              {
+                id: "reasoning",
+                label: "Reasoning",
+                count: agent.reasoning.length,
+                content: (
+                  <AgentReasoningCard reasoning={agent.reasoning} activity={agent.activity} />
+                )
+              },
+              {
+                id: "guardrails",
+                label: "Guardrails",
+                count: agent.policies.length,
+                content: <AgentPoliciesCard policies={agent.policies} />
+              }
+            ]}
+          />
+        </div>
+        <div style={{ width: "min(360px, 100%)", flexShrink: 0 }}>
+          <AgentChatPanel messages={messages} onSend={handleSend} />
+        </div>
       </div>
     </>
   );

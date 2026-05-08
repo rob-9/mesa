@@ -27,27 +27,29 @@ export function ActionsTable({ actions }: { actions: Action[] }) {
         minHeight: 0
       }}
     >
-      <div
-        className="mono"
-        style={{
-          flexShrink: 0,
-          display: "grid",
-          gridTemplateColumns: GRID,
-          gap: 14,
-          padding: "12px 20px",
-          fontSize: 11,
-          color: "var(--fg-5)",
-          letterSpacing: "0.06em",
-          borderBottom: "1px solid var(--surface-2)"
-        }}
-      >
-        <span>TYPE</span>
-        <span>TITLE</span>
-        <span>PARTY</span>
-        <span>BLOCKED</span>
-        <span style={{ textAlign: "right" }}>AGE</span>
-      </div>
-      <div style={{ flex: 1, overflowY: "auto", overscrollBehavior: "none", minHeight: 0 }}>
+      <div style={{ overflowX: "auto", display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
+       <div style={{ minWidth: 680, display: "flex", flexDirection: "column", flex: 1, minHeight: 0 }}>
+        <div
+          className="mono"
+          style={{
+            flexShrink: 0,
+            display: "grid",
+            gridTemplateColumns: GRID,
+            gap: 14,
+            padding: "12px 20px",
+            fontSize: 11,
+            color: "var(--fg-5)",
+            letterSpacing: "0.06em",
+            borderBottom: "1px solid var(--surface-2)"
+          }}
+        >
+          <span>TYPE</span>
+          <span>TITLE</span>
+          <span>PARTY</span>
+          <span>BLOCKED</span>
+          <span style={{ textAlign: "right" }}>AGE</span>
+        </div>
+        <div style={{ flex: 1, overflowY: "auto", overscrollBehavior: "none", minHeight: 0 }}>
         {actions.map((action, i) => {
           const blocked = blockedLabel(action);
           const isLast = i === actions.length - 1;
@@ -90,6 +92,8 @@ export function ActionsTable({ actions }: { actions: Action[] }) {
             </div>
           );
         })}
+        </div>
+       </div>
       </div>
     </div>
   );

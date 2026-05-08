@@ -24,7 +24,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             width: "100%",
             minWidth: 0,
             minHeight: 0,
-            overflowY: "auto"
+            overflow: "auto"
           }}
         >
           {children}

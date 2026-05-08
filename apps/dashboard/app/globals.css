@@ -62,13 +62,12 @@ html, body {
    1/0.9 so that after the zoom transform the body still covers the whole
    viewport (otherwise zoom leaves a 10% strip on the right and bottom). */
 html {
-  overflow: hidden;
   height: 100%;
 }
 body {
   zoom: 0.9;
   width: calc(100vw / 0.9);
-  height: calc(100vh / 0.9);
+  min-height: calc(100vh / 0.9);
 }
 
 /* Themed selection — keeps light-blue OS highlight off the page. */

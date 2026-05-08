@@ -83,6 +83,8 @@ export function AgentsTable({ agents }: { agents: AgentDetail[] }) {
           overflow: "hidden"
         }}
       >
+       <div style={{ overflowX: "auto" }}>
+        <div style={{ minWidth: 720 }}>
         <HeaderRow
           sortKey={sortKey}
           sortDir={sortDir}
@@ -126,6 +128,8 @@ export function AgentsTable({ agents }: { agents: AgentDetail[] }) {
                 />
               ))}
         </div>
+        </div>
+       </div>
       </div>
     </div>
   );
