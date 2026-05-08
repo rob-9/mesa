@@ -87,7 +87,7 @@ function Divider() {
       style={{
         height: 1,
         background: "var(--surface-2)",
-        margin: "8px 6px"
+        margin: "4px 6px"
       }}
     />
   );
@@ -102,7 +102,7 @@ function GroupHeader({ label }: { label: string }) {
         color: "var(--fg-5)",
         letterSpacing: "0.08em",
         textTransform: "uppercase",
-        padding: "10px 10px 4px"
+        padding: "6px 10px 2px"
       }}
     >
       {label}
@@ -119,7 +119,7 @@ export function Sidebar() {
         borderRight: "1px solid var(--surface-2)",
         display: "flex",
         flexDirection: "column",
-        padding: "16px 12px",
+        padding: "12px 12px 10px",
         height: "100%",
         overflowY: "auto"
       }}
@@ -132,7 +132,7 @@ export function Sidebar() {
           alignItems: "center",
           gap: 8,
           padding: "4px 6px",
-          marginBottom: 14,
+          marginBottom: 10,
           textDecoration: "none"
         }}
       >
@@ -170,7 +170,7 @@ export function Sidebar() {
           alignItems: "center",
           justifyContent: "center",
           height: 32,
-          marginBottom: 14,
+          marginBottom: 8,
           padding: "0 14px 0 28px", // reserve gutter for the absolute '+' icon
           background: "var(--accent)",
           color: "var(--bg)",
