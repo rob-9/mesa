@@ -6,7 +6,7 @@ export function RiskPulseCard({ risk }: { risk: RiskPulse }) {
     {
       value: risk.flaggedOpen,
       label: "flagged open",
-      href: "/deliberations",
+      href: "/deliberations?flagged=1",
       tone: risk.flaggedOpen > 0 ? "amber" : "neutral"
     },
     {
@@ -18,7 +18,7 @@ export function RiskPulseCard({ risk }: { risk: RiskPulse }) {
     {
       value: risk.staleOver7d,
       label: "stale > 7d",
-      href: "/deliberations",
+      href: "/deliberations?stale=1",
       tone: risk.staleOver7d > 0 ? "amber" : "neutral"
     }
   ];
