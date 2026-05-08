@@ -2,6 +2,8 @@ import { DEMO_NOW_ISO } from "./format";
 import type {
   Action,
   Commitment,
+  CommitmentStatus,
+  CommitmentType,
   DashboardData,
   Deliberation,
   DeliberationDetail,
@@ -375,6 +377,233 @@ const dashboardData: DashboardData = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Stub details for the other deliberations — concise turns + commitments so
+// the detail page renders something coherent when a user clicks through.
+// ─────────────────────────────────────────────────────────────────────────────
+
+function makeStubDetail(
+  deliberation: Deliberation,
+  baseIso: string,
+  turns: Array<[speaker: string, content: string]>,
+  commitments: Array<[type: CommitmentType, summary: string, status?: CommitmentStatus, derivedFromTurns?: number[]]>
+): DeliberationDetail {
+  const baseMs = new Date(baseIso).getTime();
+  const idShort = deliberation.id
+    .split("-")
+    .map((p) => p[0] ?? "")
+    .join("")
+    .slice(0, 4);
+  return {
+    deliberation,
+    turns: turns.map(([speaker, content], i) => ({
+      id: i + 1,
+      speaker,
+      content,
+      timestamp: new Date(baseMs + i * 90_000).toISOString()
+    })),
+    commitments: commitments.map(([type, summary, status = "accepted", derivedFromTurns = []], i) => ({
+      id: `c-${idShort}-${i + 1}`,
+      type,
+      summary,
+      derivedFromTurns,
+      status,
+      createdAt: new Date(baseMs + (i + 1) * 600_000).toISOString()
+    }))
+  };
+}
+
+const stubDetailConfigs: Array<{
+  id: string;
+  base: string;
+  turns: Array<[string, string]>;
+  commitments: Array<[CommitmentType, string, CommitmentStatus?, number[]?]>;
+}> = [
+  {
+    id: "web-archive-opt-in",
+    base: "2026-05-05T16:10:00Z",
+    turns: [
+      ["lab", "We'd like to opt in to your web archive crawl with reciprocal indexing rights."],
+      ["trinity", "Open to it. We require crawl-delay >= 5s and full robots.txt compliance."],
+      ["lab", "Confirmed. We'll honor crawl-delay and per-URL X-NoArchive at fetch time."],
+      ["trinity", "Term — 18 months, renewable on 30-day notice. Acceptable?"],
+      ["lab", "Acceptable. Renewable on either side, 30-day notice."],
+      ["trinity", "Compiling final terms. Sending to legal-bot for sign-off."]
+    ],
+    commitments: [
+      ["offer", "Lab proposes opt-in to trinity-data web archive with reciprocal indexing rights.", "accepted", [1, 2]],
+      ["scope_clause", "Crawl-delay 5s minimum; robots.txt-respecting; URL-level X-NoArchive supported.", "accepted", [2, 3]],
+      ["license_terms", "18-month renewable term with 30-day notice on either side.", "accepted", [4, 5]],
+      ["signoff", "Final terms compiled, awaiting legal-bot review.", "pending", [6]]
+    ]
+  },
+  {
+    id: "archive-renewal-2026",
+    base: "2026-05-05T16:00:00Z",
+    turns: [
+      ["lab", "Renewing the 2024 archive license. Same scope, term reset to 24 months."],
+      ["publisher", "Acknowledged. We need CPI indexing applied to the per-article fee."],
+      ["lab", "Acceptable. CPI-indexed annually, capped at +8% per year?"],
+      ["publisher", "Cap at +6% to mirror our other renewals."],
+      ["lab", "Agreed: +6% CPI cap, annual reset on contract anniversary."],
+      ["publisher", "DPA carries over unchanged. Sending final to your principal for signature."],
+      ["lab", "Final received. Routing to principal for sign-off."]
+    ],
+    commitments: [
+      ["offer", "Renewal proposal: 2024 archive license, 24-month term reset, scope preserved.", "accepted", [1]],
+      ["amendment", "CPI-indexed pricing with annual reset; +6% cap mirroring publisher-co's renewals.", "accepted", [2, 3, 4, 5]],
+      ["dpa_reference", "Standard publisher-co DPA carries over unchanged.", "accepted", [6]],
+      ["signoff", "Final renewal agreement awaiting principal signature.", "pending", [7]]
+    ]
+  },
+  {
+    id: "clinical-imaging-pilot",
+    base: "2026-05-05T15:50:00Z",
+    turns: [
+      ["med-corpus", "Opening pilot — 50k de-identified DICOM studies over 12 months."],
+      ["lab", "Pricing structure?"],
+      ["med-corpus", "$0.12/study flat, billed monthly. Volume tiers at 75k and 100k available."],
+      ["lab", "Tiered structure helps. Lock the $0.12 floor across the 12-month term?"],
+      ["med-corpus", "Agreed. $0.12 floor preserved; tiered discounts above 75k."],
+      ["lab", "HIPAA addendum needs to be referenced before any commitment is signed."],
+      ["med-corpus", "Standard HIPAA-equivalent processing addendum attached. Awaiting your review."]
+    ],
+    commitments: [
+      ["offer", "12-month pilot for 50k de-identified DICOM studies at $0.12/study.", "accepted", [1, 2, 3]],
+      ["license_terms", "$0.12 per-study floor for term; tiered discounts at 75k and 100k volumes.", "accepted", [4, 5]],
+      ["dpa_reference", "Med-corpus HIPAA-equivalent processing addendum attached.", "pending", [6, 7]]
+    ]
+  },
+  {
+    id: "image-corpus-rev-share",
+    base: "2026-05-05T15:30:00Z",
+    turns: [
+      ["zenith", "Proposal: 12% gross revenue share on derivative model output, no upfront license fee."],
+      ["lab", "Open to gross-rev-share but we need a cap — runaway tail-traffic could spike unexpectedly."],
+      ["zenith", "Acceptable. Cap at $200k/yr; reset annually on contract anniversary."],
+      ["lab", "Confirmed. 12% gross share, $200k/yr cap, annual reset."],
+      ["zenith", "Reporting cadence — monthly or quarterly?"],
+      ["lab", "Quarterly. Audit rights with 30-day notice."]
+    ],
+    commitments: [
+      ["offer", "Zenith proposes 12% gross revenue share on derivative model output, no upfront fee.", "accepted", [1]],
+      ["scope_clause", "Revenue share applies to derivative model commercial output only.", "accepted", [1]],
+      ["license_terms", "12% gross share with $200k/yr cap; annual reset on anniversary.", "accepted", [2, 3, 4]],
+      ["amendment", "Quarterly reporting cadence; 30-day notice audit rights.", "pending", [5, 6]]
+    ]
+  },
+  {
+    id: "pricing-renegotiation-zenith",
+    base: "2026-05-05T13:30:00Z",
+    turns: [
+      ["lab", "Opening pricing renegotiation on existing zenith imagery deals — current floor is too thin for sustained model output."],
+      ["zenith", "Concerned. Lifting the floor affects our other licensees who use the same rate card."],
+      ["lab", "Proposed: tiered floor at $40k/yr for new commitments only; existing deals grandfathered."],
+      ["zenith", "Reviewing impact across existing deals. Need 5 business days."],
+      ["lab", "Acknowledged. Holding open until your review completes."]
+    ],
+    commitments: [
+      ["amendment", "Open renegotiation: lift revenue-share floor for new commitments only.", "accepted", [1, 2]],
+      ["counter", "Tiered floor at $40k/yr applied prospectively; grandfather existing deals.", "pending", [3]],
+      ["scope_clause", "Amendment applies to new commitments only; existing deals preserve current floor.", "accepted", [3, 4, 5]]
+    ]
+  },
+  {
+    id: "code-corpus-license",
+    base: "2026-05-05T13:29:00Z",
+    turns: [
+      ["lab", "Licensing public github repos for code-model training. Scope: MIT/Apache/BSD-licensed only."],
+      ["octostack", "Acknowledged. Routing through compliance review."],
+      ["octostack", "License-filter pre-applied: any repo with non-permissive license excluded automatically."],
+      ["lab", "Confirmed. Pre-filter applied at ingest, no manual reconciliation needed."],
+      ["octostack", "Term — 3 years, non-exclusive. Pricing structure?"],
+      ["lab", "Per-repo flat fee, $0.50/repo/yr. Acceptable?"],
+      ["octostack", "Counter: $0.65/repo/yr, scaled by repo size and stars."]
+    ],
+    commitments: [
+      ["offer", "Lab proposes licensing octostack public repos for code-model training.", "accepted", [1, 2]],
+      ["scope_clause", "MIT/Apache/BSD-licensed repos only; pre-filter applied at ingest.", "accepted", [3, 4]],
+      ["license_terms", "3-year non-exclusive term.", "accepted", [5]],
+      ["counter", "$0.65/repo/yr pricing scaled by size and stars (counter to lab's $0.50 flat).", "pending", [6, 7]]
+    ]
+  },
+  {
+    id: "audio-podcasts-license",
+    base: "2026-05-05T11:30:00Z",
+    turns: [
+      ["lab", "Licensing English-language podcast interviews from 2020 onward."],
+      ["trinity", "Speaker consent — opt-in by interviewee, opt-out by host. Acceptable framing?"],
+      ["lab", "Workable. We need clarity on host vs. interviewee precedence."],
+      ["trinity", "Host opt-out is dispositive for ad-supported tiers; interviewee opt-in is dispositive for premium training tiers."],
+      ["lab", "Agreed. Two-tier consent model with explicit dispositive rules per tier."],
+      ["trinity", "Routing to legal-bot for consent-clause review."]
+    ],
+    commitments: [
+      ["offer", "Lab proposes licensing English-language podcast interviews 2020+.", "accepted", [1]],
+      ["scope_clause", "Two-tier consent: host opt-out controls ad-supported; interviewee opt-in controls premium training.", "accepted", [2, 3, 4, 5]],
+      ["participant_joined", "Speaker consent required per scope; both interviewee and host parties referenced.", "accepted", [5]],
+      ["counter", "Speaker-consent clause awaiting legal-bot precedent review.", "pending", [6]]
+    ]
+  },
+  {
+    id: "video-transcripts",
+    base: "2026-05-05T11:30:00Z",
+    turns: [
+      ["lab", "Licensing video transcripts from your editorial library."],
+      ["curio-press", "Counter: rights extend to interviewees, not just curio-press as publisher. Speaker attribution required."],
+      ["lab", "Disputed. Our reading: interviewees release rights via standard release on appearance."],
+      ["curio-press", "Standard release covers broadcast, not derivative training. Different rights regime."],
+      ["lab", "Escalating to legal. Holding all activity until counsel reviews."],
+      ["curio-press", "Acknowledged. Legal-routing on our side as well."]
+    ],
+    commitments: [
+      ["offer", "Lab proposes licensing curio-press video transcripts.", "accepted", [1]],
+      ["counter", "Curio-press claims interviewee rights extend to derivative training; speaker attribution required.", "flagged", [2, 4]],
+      ["scope_clause", "Speaker-attribution dispute escalated; both sides routing to legal counsel.", "flagged", [3, 5, 6]]
+    ]
+  },
+  {
+    id: "medical-journals-license",
+    base: "2026-05-04T16:30:00Z",
+    turns: [
+      ["lab", "Amendment §3 — extend coverage to 2024 issues."],
+      ["med-corpus", "Reviewing. 2024 issues represent ~18% volume increase, requires pricing adjustment."],
+      ["lab", "Proposed: maintain $0.18/article rate, accept the volume bump."],
+      ["med-corpus", "Counter: $0.21/article applied to 2024 issues only; legacy rate preserved for pre-2024."],
+      ["lab", "Agreed in principle. Need formal sign-off from policy-agent before commitment."],
+      ["med-corpus", "Standing by for policy-agent review."]
+    ],
+    commitments: [
+      ["offer", "Amendment §3 to extend medical journals license to 2024 issues.", "accepted", [1]],
+      ["amendment", "Coverage extended to 2024 issues; previously capped at 2023.", "accepted", [1, 2]],
+      ["counter", "$0.21/article for 2024 issues; legacy $0.18 preserved for pre-2024 content.", "pending", [3, 4, 5]]
+    ]
+  },
+  {
+    id: "news-syndication-eu",
+    base: "2026-05-03T10:30:00Z",
+    turns: [
+      ["lab", "Amendment proposal: DSM Article 15 carve-out for press publishers' rights."],
+      ["curio-press", "Disputing the carve-out scope. Our reading: fair-use exemption does not apply to LLM training."],
+      ["lab", "Counter: DSM §15 explicitly preserves fair-use carve-outs for research and computational analysis."],
+      ["curio-press", "Different counsel reading. Routing to our legal team for formal response."],
+      ["lab", "Pausing all syndication activity pending resolution. Estimated 5-7 business days."],
+      ["curio-press", "Acknowledged. Legal review in progress."]
+    ],
+    commitments: [
+      ["amendment", "DSM Article 15 carve-out proposal for press publishers' rights.", "accepted", [1]],
+      ["counter", "Curio-press disputes scope of fair-use exemption applying to LLM training.", "flagged", [2]],
+      ["scope_clause", "Both parties routing to legal counsel; activity paused 5-7 business days.", "flagged", [3, 4, 5, 6]]
+    ]
+  }
+];
+
+const stubDetails: Record<string, DeliberationDetail> = {};
+for (const cfg of stubDetailConfigs) {
+  const d = deliberations.find((x) => x.id === cfg.id);
+  if (d) stubDetails[cfg.id] = makeStubDetail(d, cfg.base, cfg.turns, cfg.commitments);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Public fixture accessors (consumed by lib/api.ts)
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -394,7 +623,5 @@ export function fixtureDeliberation(id: string): DeliberationDetail | null {
       postSignoffTasks: trainingDataQ4PostSignoff
     };
   }
-  // Other deliberations have stub turns/commitments — not navigated to in the demo,
-  // but the page still needs to render without crashing.
-  return { deliberation, turns: [], commitments: [] };
+  return stubDetails[id] ?? { deliberation, turns: [], commitments: [] };
 }
