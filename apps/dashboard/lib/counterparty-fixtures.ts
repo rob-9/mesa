@@ -11,6 +11,11 @@ const counterparties: Counterparty[] = [
       { name: "M. Sato",     role: "legal",      keyFingerprint: "ed25519:7f4c…a921" },
       { name: "D. Khurana",  role: "commercial", keyFingerprint: "ed25519:91a3…0f2b" }
     ],
+    representativeAgents: [
+      { id: "publisher-co/lex",   name: "Lex",   role: "legal counsel" },
+      { id: "publisher-co/margo", name: "Margo", role: "commercial lead" },
+      { id: "publisher-co/atlas", name: "Atlas", role: "rights & licensing" }
+    ],
     schemas: ["core", "datasharing"],
     firstDeliberationAt: "2025-09-12T10:14:00Z",
     notes: "GDPR-compliant DPA on file. Auto-approve renewals < $50k."
@@ -22,6 +27,10 @@ const counterparties: Counterparty[] = [
     trustTier: "verified",
     principals: [
       { name: "L. Ortiz", role: "ops", keyFingerprint: "ed25519:34bd…77c9" }
+    ],
+    representativeAgents: [
+      { id: "trinity-data/orion", name: "Orion", role: "data licensing" },
+      { id: "trinity-data/vega",  name: "Vega",  role: "ops contact" }
     ],
     schemas: ["core", "datasharing"],
     firstDeliberationAt: "2025-11-04T18:22:00Z"
@@ -35,6 +44,10 @@ const counterparties: Counterparty[] = [
       { name: "P. Wei", role: "commercial", keyFingerprint: "ed25519:c19f…48ee" },
       { name: "R. Foley", keyFingerprint: "ed25519:ad05…1133" }
     ],
+    representativeAgents: [
+      { id: "zenith/lumen", name: "Lumen", role: "imagery sales" },
+      { id: "zenith/pax",   name: "Pax",   role: "rights review" }
+    ],
     schemas: ["core"],
     firstDeliberationAt: "2026-02-19T09:01:00Z",
     notes: "Pricing terms typically negotiated by humans — flag offers > $100k."
@@ -47,6 +60,10 @@ const counterparties: Counterparty[] = [
     principals: [
       { name: "T. Nakamura", role: "legal", keyFingerprint: "ed25519:6622…9d4f" }
     ],
+    representativeAgents: [
+      { id: "octostack/nori",  name: "Nori",  role: "legal review" },
+      { id: "octostack/quill", name: "Quill", role: "contracts desk" }
+    ],
     schemas: ["core"],
     firstDeliberationAt: "2026-03-08T14:00:00Z"
   },
@@ -57,6 +74,9 @@ const counterparties: Counterparty[] = [
     trustTier: "watchlist",
     principals: [
       { name: "S. Marks", role: "legal", keyFingerprint: "ed25519:fa11…02bb" }
+    ],
+    representativeAgents: [
+      { id: "curio-press/sable", name: "Sable", role: "legal review" }
     ],
     schemas: ["datasharing"],
     firstDeliberationAt: "2026-01-22T11:48:00Z",
@@ -70,6 +90,11 @@ const counterparties: Counterparty[] = [
     principals: [
       { name: "A. Patel", role: "legal", keyFingerprint: "ed25519:2298…44a0" },
       { name: "K. Liang", role: "ops",   keyFingerprint: "ed25519:ee70…91c8" }
+    ],
+    representativeAgents: [
+      { id: "med-corpus/apex",  name: "Apex",  role: "compliance" },
+      { id: "med-corpus/helio", name: "Helio", role: "clinical ops" },
+      { id: "med-corpus/iris",  name: "Iris",  role: "data steward" }
     ],
     schemas: ["core", "datasharing"],
     firstDeliberationAt: "2025-07-30T08:10:00Z",

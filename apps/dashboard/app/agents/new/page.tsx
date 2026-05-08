@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+import { PostDeployConnect } from "@/components/deploy/PostDeployConnect";
 import { StepCapabilities } from "@/components/deploy/StepCapabilities";
 import { StepConnections } from "@/components/deploy/StepConnections";
 import { StepIdentity } from "@/components/deploy/StepIdentity";
@@ -35,11 +36,15 @@ const initial: WizardState = {
   policies: []
 };
 
+type Phase = "wizard" | "connect";
+
 export default function DeployAgentPage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [state, setState] = useState<WizardState>(initial);
   const [deploying, setDeploying] = useState(false);
+  const [phase, setPhase] = useState<Phase>("wizard");
+  const [deployedSnapshot, setDeployedSnapshot] = useState<WizardState | null>(null);
   const [templateId, setTemplateId] = useState<string>(BLANK_TEMPLATE);
 
   const templateOptions = useMemo(() => {
@@ -75,11 +80,16 @@ export default function DeployAgentPage() {
     setDeploying(true);
     try {
       await deployAgent(state);
-      router.push(`/deliberations/training-data-q4?live=1`);
+      setDeployedSnapshot(state);
+      setPhase("connect");
     } catch (err) {
       setDeploying(false);
       throw err;
     }
+  };
+
+  const onConnectComplete = () => {
+    router.push(`/deliberations/training-data-q4?live=1`);
   };
 
   const isLast = step === STEPS.length - 1;
@@ -103,79 +113,90 @@ export default function DeployAgentPage() {
         </div>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          marginBottom: 18,
-          padding: "12px 14px",
-          background: "var(--surface-0)",
-          border: "1px solid var(--surface-2)",
-          borderRadius: "var(--r-card)"
-        }}
-      >
-        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <span
-            className="mono"
-            style={{ fontSize: 11, color: "var(--fg-4)", letterSpacing: "0.06em" }}
-          >
-            START FROM EXISTING AGENT
-          </span>
-          <span style={{ fontSize: 12, color: "var(--fg-5)" }}>
-            Pre-fills the wizard. Pick a template and hit Quick deploy to skip all configuration steps.
-          </span>
-        </div>
-        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
-          <div style={{ minWidth: 280 }}>
-            <Select
-              value={templateId}
-              onChange={onTemplateChange}
-              options={templateOptions}
-            />
+      {phase === "wizard" && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            marginBottom: 18,
+            padding: "12px 14px",
+            background: "var(--surface-0)",
+            border: "1px solid var(--surface-2)",
+            borderRadius: "var(--r-card)"
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <span
+              className="mono"
+              style={{ fontSize: 11, color: "var(--fg-4)", letterSpacing: "0.06em" }}
+            >
+              START FROM EXISTING AGENT
+            </span>
+            <span style={{ fontSize: 12, color: "var(--fg-5)" }}>
+              Pre-fills the wizard. Pick a template and hit Quick deploy to skip all configuration steps.
+            </span>
           </div>
-          <button
-            type="button"
-            onClick={onDeploy}
-            disabled={templateId === BLANK_TEMPLATE || deploying}
-            style={{
-              height: 32,
-              padding: "0 14px",
-              borderRadius: 8,
-              border: "1px solid var(--accent)",
-              background:
-                templateId === BLANK_TEMPLATE || deploying
-                  ? "var(--surface-1)"
-                  : "var(--accent)",
-              color:
-                templateId === BLANK_TEMPLATE || deploying ? "var(--fg-5)" : "var(--bg)",
-              fontSize: 12,
-              fontWeight: 500,
-              cursor:
-                templateId === BLANK_TEMPLATE || deploying ? "not-allowed" : "pointer",
-              opacity: templateId === BLANK_TEMPLATE || deploying ? 0.6 : 1,
-              whiteSpace: "nowrap"
-            }}
-          >
-            {deploying ? "Deploying…" : "Quick deploy"}
-          </button>
+          <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ minWidth: 280 }}>
+              <Select
+                value={templateId}
+                onChange={onTemplateChange}
+                options={templateOptions}
+              />
+            </div>
+            <button
+              type="button"
+              onClick={onDeploy}
+              disabled={templateId === BLANK_TEMPLATE || deploying}
+              style={{
+                height: 32,
+                padding: "0 14px",
+                borderRadius: 8,
+                border: "1px solid var(--accent)",
+                background:
+                  templateId === BLANK_TEMPLATE || deploying
+                    ? "var(--surface-1)"
+                    : "var(--accent)",
+                color:
+                  templateId === BLANK_TEMPLATE || deploying ? "var(--fg-5)" : "var(--bg)",
+                fontSize: 12,
+                fontWeight: 500,
+                cursor:
+                  templateId === BLANK_TEMPLATE || deploying ? "not-allowed" : "pointer",
+                opacity: templateId === BLANK_TEMPLATE || deploying ? 0.6 : 1,
+                whiteSpace: "nowrap"
+              }}
+            >
+              {deploying ? "Deploying…" : "Quick deploy"}
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
-      <WizardShell
-        steps={STEPS}
-        current={step}
-        onPrev={step > 0 ? () => setStep(step - 1) : undefined}
-        onNext={isLast ? onDeploy : () => setStep(step + 1)}
-        nextLabel={isLast ? (deploying ? "Deploying…" : "Deploy") : "Continue"}
-        nextDisabled={!stepValid(step) || (isLast && deploying)}
-      >
-        {step === 0 && <StepIdentity state={state} setState={setState} />}
-        {step === 1 && <StepCapabilities state={state} setState={setState} />}
-        {step === 2 && <StepConnections state={state} setState={setState} />}
-        {step === 3 && <StepPolicies state={state} setState={setState} />}
-        {step === 4 && <StepReview state={state} goToStep={setStep} />}
-      </WizardShell>
+      {phase === "wizard" && (
+        <WizardShell
+          steps={STEPS}
+          current={step}
+          onPrev={step > 0 ? () => setStep(step - 1) : undefined}
+          onNext={isLast ? onDeploy : () => setStep(step + 1)}
+          nextLabel={isLast ? (deploying ? "Deploying…" : "Deploy") : "Continue"}
+          nextDisabled={!stepValid(step) || (isLast && deploying)}
+        >
+          {step === 0 && <StepIdentity state={state} setState={setState} />}
+          {step === 1 && <StepCapabilities state={state} setState={setState} />}
+          {step === 2 && <StepConnections state={state} setState={setState} />}
+          {step === 3 && <StepPolicies state={state} setState={setState} />}
+          {step === 4 && <StepReview state={state} goToStep={setStep} />}
+        </WizardShell>
+      )}
+
+      {phase === "connect" && deployedSnapshot && (
+        <PostDeployConnect
+          deployedAgent={deployedSnapshot}
+          onComplete={onConnectComplete}
+        />
+      )}
     </AppShell>
   );
 }

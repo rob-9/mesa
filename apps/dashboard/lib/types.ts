@@ -196,12 +196,21 @@ export interface CounterpartyPrincipal {
   keyFingerprint: string;  // ed25519:abcd…
 }
 
+// Agents the counterparty has connected on their side. Used by the
+// post-deploy "request to chat" handshake to populate the agent dropdown.
+export interface CounterpartyAgent {
+  id: string;              // 'publisher-co/lex'
+  name: string;            // 'Lex'
+  role: string;            // 'legal counsel'
+}
+
 export interface Counterparty {
   slug: string;            // 'publisher-co' — matches Deliberation.counterparty
   name: string;            // 'Publisher Co.'
   domain: string;          // 'publisher.example'
   trustTier: TrustTier;
   principals: CounterpartyPrincipal[];
+  representativeAgents: CounterpartyAgent[];
   schemas: string[];       // vertical-pack ids in use
   firstDeliberationAt: string; // ISO
   notes?: string;
