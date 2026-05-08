@@ -37,10 +37,11 @@ export function SignificantEventsCard({ events }: { events: SignificantEvent[] }
         {events.length === 0 && (
           <div
             style={{
-              padding: "28px 16px",
+              padding: "32px 16px",
               fontSize: 12,
-              color: "var(--fg-5)",
-              textAlign: "center"
+              color: "var(--fg-4)",
+              textAlign: "center",
+              lineHeight: 1.5
             }}
           >
             No significant events today.

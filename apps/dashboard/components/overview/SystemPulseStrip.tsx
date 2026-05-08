@@ -49,12 +49,12 @@ export function SystemPulseStrip({ pulse }: { pulse: SystemPulse }) {
           <span style={{ marginLeft: 5 }}>{it.label}</span>
         </span>
       ))}
-      <span style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: 6 }}>
+      <span style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: 7 }}>
         <span
           aria-hidden
           style={{
-            width: 6,
-            height: 6,
+            width: 7,
+            height: 7,
             borderRadius: "var(--r-pill)",
             background: healthColor
           }}

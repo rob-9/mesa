@@ -93,7 +93,7 @@ export function AgentFleetCard({ agents }: { agents: AgentStatus[] }) {
                     title={agent.deliberationTitle}
                     style={{
                       fontSize: 12,
-                      color: "var(--fg-2)",
+                      color: "var(--fg-1)",
                       display: "block",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
@@ -107,7 +107,7 @@ export function AgentFleetCard({ agents }: { agents: AgentStatus[] }) {
                 )}
                 <span
                   className="mono"
-                  style={{ fontSize: 10, color: "var(--fg-5)", display: "block", marginTop: 2 }}
+                  style={{ fontSize: 11, color: "var(--fg-5)", display: "block", marginTop: 2 }}
                 >
                   {formatRelative(agent.lastActivity)} ago
                 </span>
