@@ -10,27 +10,78 @@ type ViewMode = "list" | "graph";
 interface SplitViewProps {
   turns: Turn[];
   commitments: Commitment[];
+  live?: boolean;
 }
 
-export function SplitView({ turns, commitments }: SplitViewProps) {
+export function SplitView({ turns, commitments, live = false }: SplitViewProps) {
   const [selectedCommitmentId, setSelectedCommitmentId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("list");
+  const [visibleCount, setVisibleCount] = useState<number>(live ? 0 : turns.length);
+  const [typingSpeaker, setTypingSpeaker] = useState<string | null>(null);
+
+  // Progressive reveal of turns when in live mode, with a "typing…" pause
+  // before each turn lands. Cleared on unmount.
+  useEffect(() => {
+    if (!live) {
+      setVisibleCount(turns.length);
+      setTypingSpeaker(null);
+      return;
+    }
+    setVisibleCount(0);
+    setTypingSpeaker(null);
+    let cancelled = false;
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
+    const schedule = (fn: () => void, ms: number) => {
+      timeouts.push(setTimeout(fn, ms));
+    };
+    const revealNext = (idx: number) => {
+      if (cancelled || idx >= turns.length) {
+        setTypingSpeaker(null);
+        return;
+      }
+      setTypingSpeaker(turns[idx].speaker);
+      const typingDelay = 500 + Math.random() * 700;
+      schedule(() => {
+        if (cancelled) return;
+        setTypingSpeaker(null);
+        setVisibleCount(idx + 1);
+        const afterDelay = 250 + Math.random() * 350;
+        schedule(() => revealNext(idx + 1), afterDelay);
+      }, typingDelay);
+    };
+    schedule(() => revealNext(0), 500);
+    return () => {
+      cancelled = true;
+      for (const t of timeouts) clearTimeout(t);
+    };
+  }, [live, turns]);
+
+  const visibleTurns = useMemo(
+    () => (live ? turns.slice(0, visibleCount) : turns),
+    [live, turns, visibleCount]
+  );
+
+  // Commitments only "exist" once every turn they reference is on screen.
+  // Drives both the list and graph panes so the right side fills in alongside
+  // the transcript instead of being fully populated from the start.
+  const visibleCommitments = useMemo(() => {
+    if (!live) return commitments;
+    return commitments.filter((c) => {
+      if (c.derivedFromTurns.length === 0) return visibleCount > 0;
+      return Math.max(...c.derivedFromTurns) <= visibleCount;
+    });
+  }, [live, commitments, visibleCount]);
 
   const turnRefs = useRef<Map<number, HTMLDivElement | null>>(new Map());
-  // Hold the latest commitments in a ref so the scroll effect can read them
-  // without re-firing when the array identity changes.
   const commitmentsRef = useRef(commitments);
   commitmentsRef.current = commitments;
 
-  // Fire once per selection change. We do not depend on the resolved commitment
-  // object — the ref read keeps the effect monomorphic on the id.
   useEffect(() => {
     if (selectedCommitmentId === null) return;
     const c = commitmentsRef.current.find((x) => x.id === selectedCommitmentId);
     if (!c || c.derivedFromTurns.length === 0) return;
     const firstId = c.derivedFromTurns[0];
     const el = turnRefs.current.get(firstId);
-    // behavior: 'auto' is intentional — smooth scroll drops frames in recordings.
     el?.scrollIntoView({ behavior: "auto", block: "center" });
   }, [selectedCommitmentId]);
 
@@ -45,7 +96,6 @@ export function SplitView({ turns, commitments }: SplitViewProps) {
   }, []);
 
   const handleSelect = useCallback((id: string) => {
-    // Clicking the currently-selected card deselects.
     setSelectedCommitmentId((current) => (current === id ? null : id));
   }, []);
 
@@ -64,16 +114,20 @@ export function SplitView({ turns, commitments }: SplitViewProps) {
       }}
     >
       <TranscriptPane
-        turns={turns}
+        turns={visibleTurns}
         highlightedTurnIds={highlightedTurnIds}
         registerTurnRef={registerTurnRef}
+        stickToBottom={live}
+        animateIn={live}
+        typingSpeaker={typingSpeaker}
       />
       <CommitmentsPane
-        commitments={commitments}
+        commitments={visibleCommitments}
         selectedId={selectedCommitmentId}
         onSelect={handleSelect}
         viewMode={viewMode}
         onChangeViewMode={setViewMode}
+        animateIn={live}
       />
     </div>
   );

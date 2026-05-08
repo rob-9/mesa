@@ -7,9 +7,10 @@ interface CommitmentCardProps {
   commitment: Commitment;
   selected: boolean;
   onSelect: () => void;
+  animateIn?: boolean;
 }
 
-export function CommitmentCard({ commitment, selected, onSelect }: CommitmentCardProps) {
+export function CommitmentCard({ commitment, selected, onSelect, animateIn = false }: CommitmentCardProps) {
   const ref = useRef<HTMLButtonElement | null>(null);
   // 200ms one-shot scale-pulse on selection so the click is visibly registered
   // even on a recorded video. We re-trigger by re-applying the animation class.
@@ -35,6 +36,7 @@ export function CommitmentCard({ commitment, selected, onSelect }: CommitmentCar
       ref={ref}
       type="button"
       onClick={onSelect}
+      className={animateIn ? "commitment-card-in" : undefined}
       style={{
         display: "block",
         width: "100%",

@@ -699,6 +699,11 @@ const pricingAgent: AgentDetail = {
 const seed: AgentDetail[] = [labBuyer, legalBot, policyAgent, dataCatalogAgent, pricingAgent];
 setSeed(seed);
 
+// Returns the original seeded agents (templates), unaffected by anything deployed at runtime.
+export function getAgentTemplates(): AgentDetail[] {
+  return seed;
+}
+
 export function fixtureAgents(): AgentDetail[] {
   return listAgents();
 }
