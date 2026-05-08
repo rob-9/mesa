@@ -287,6 +287,22 @@ button {
   animation: summer-audit-in 320ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
+/* Post-signoff strip: container fades up once, rows stagger in behind it. */
+@keyframes post-signoff-strip-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.post-signoff-strip-in {
+  animation: post-signoff-strip-in 320ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+@keyframes post-signoff-row-in {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.post-signoff-row-in {
+  animation: post-signoff-row-in 280ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
 /* Three-dot "typing…" pulse used by the live transcript. */
 .typing-dot {
   width: 6px;

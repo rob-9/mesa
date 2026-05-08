@@ -1,9 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { Commitment, HitlGate, Turn } from "@/lib/types";
+import type { Commitment, HitlGate, PostSignoffTask, Turn } from "@/lib/types";
 import { CommitmentsPane } from "./CommitmentsPane";
 import { HITLBanner, type HitlState, type SlackApprover } from "./HITLBanner";
+import {
+  PostSignoffStrip,
+  type PostSignoffEntry,
+  type PostSignoffStatus
+} from "./PostSignoffStrip";
 import { TranscriptPane, type AuditEvent } from "./TranscriptPane";
 
 type ViewMode = "list" | "graph";
@@ -13,6 +18,7 @@ interface SplitViewProps {
   turns: Turn[];
   commitments: Commitment[];
   hitlGate?: HitlGate;
+  postSignoffTasks?: PostSignoffTask[];
   live?: boolean;
 }
 
@@ -27,8 +33,20 @@ const SLACK_APPROVER: SlackApprover = {
 const SLACK_AUTO_APPROVE_MS = 10_000;
 // How long the "Authorized" flash stays before fading out.
 const ACCEPTED_FLASH_MS = 2_600;
+// Stagger between agent2agent pings being kicked off in the post-signoff fan-out.
+const FANOUT_STAGGER_MS = 700;
+// Per-agent ping latency before resolution lands.
+const AGENT_PING_MS = 1_400;
+// Beat after the last turn lands before the strip itself appears.
+const FANOUT_PRELUDE_MS = 800;
 
-export function SplitView({ turns, commitments, hitlGate, live = false }: SplitViewProps) {
+export function SplitView({
+  turns,
+  commitments,
+  hitlGate,
+  postSignoffTasks,
+  live = false
+}: SplitViewProps) {
   const [selectedCommitmentId, setSelectedCommitmentId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [visibleCount, setVisibleCount] = useState<number>(live ? 0 : turns.length);
@@ -52,6 +70,25 @@ export function SplitView({ turns, commitments, hitlGate, live = false }: SplitV
         }
       : null
   );
+  // Post-signoff fan-out state. In replay everything is already resolved (with
+  // a static timestamp) so screenshots stay consistent; in live mode each task
+  // moves queued → pinging → resolved on its own schedule.
+  const initialSignoffStatuses = useMemo<Record<string, PostSignoffStatus>>(() => {
+    if (!postSignoffTasks) return {};
+    const map: Record<string, PostSignoffStatus> = {};
+    for (const t of postSignoffTasks) {
+      map[t.id] = !live ? "resolved" : "queued";
+    }
+    return map;
+  }, [postSignoffTasks, live]);
+  const [signoffStatuses, setSignoffStatuses] = useState(initialSignoffStatuses);
+  const [signoffResolvedAt, setSignoffResolvedAt] = useState<Record<string, string>>(() => {
+    if (!postSignoffTasks || live) return {};
+    const map: Record<string, string> = {};
+    for (const t of postSignoffTasks) map[t.id] = "14:39";
+    return map;
+  });
+  const [humanSignedOff, setHumanSignedOff] = useState<boolean>(!live);
 
   // Progressive reveal of turns when in live mode, with a "typing…" pause
   // before each turn lands. Pauses at the HITL gate until the user authorizes.
@@ -131,18 +168,71 @@ export function SplitView({ turns, commitments, hitlGate, live = false }: SplitV
     return () => clearTimeout(timer);
   }, [hitlState, bannerHidden]);
 
+  // Once every turn has been revealed in live mode, kick off the post-signoff
+  // fan-out: each agent2agent task gets pinged on a stagger and auto-resolves;
+  // the human signoff stays queued until the operator clicks the button.
+  const allTurnsRevealed = !live || visibleCount >= turns.length;
+  useEffect(() => {
+    if (!live || !postSignoffTasks || !allTurnsRevealed) return;
+    const agentTasks = postSignoffTasks.filter((t) => t.kind === "agent2agent");
+    if (agentTasks.length === 0) return;
+    let cancelled = false;
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
+    timeouts.push(
+      setTimeout(() => {
+        if (cancelled) return;
+        agentTasks.forEach((task, i) => {
+          timeouts.push(
+            setTimeout(() => {
+              if (cancelled) return;
+              setSignoffStatuses((prev) =>
+                prev[task.id] === "queued" ? { ...prev, [task.id]: "pinging" } : prev
+              );
+              timeouts.push(
+                setTimeout(() => {
+                  if (cancelled) return;
+                  const ts = clockNow();
+                  setSignoffStatuses((prev) =>
+                    prev[task.id] !== "resolved"
+                      ? { ...prev, [task.id]: "resolved" }
+                      : prev
+                  );
+                  setSignoffResolvedAt((prev) =>
+                    prev[task.id] ? prev : { ...prev, [task.id]: ts }
+                  );
+                }, AGENT_PING_MS)
+              );
+            }, i * FANOUT_STAGGER_MS)
+          );
+        });
+      }, FANOUT_PRELUDE_MS)
+    );
+    return () => {
+      cancelled = true;
+      for (const t of timeouts) clearTimeout(t);
+    };
+  }, [live, postSignoffTasks, allTurnsRevealed]);
+
   const visibleTurns = useMemo(
     () => (live ? turns.slice(0, visibleCount) : turns),
     [live, turns, visibleCount]
   );
 
   const visibleCommitments = useMemo(() => {
-    if (!live) return commitments;
-    return commitments.filter((c) => {
-      if (c.derivedFromTurns.length === 0) return visibleCount > 0;
-      return Math.max(...c.derivedFromTurns) <= visibleCount;
-    });
-  }, [live, commitments, visibleCount]);
+    const signoffId = postSignoffTasks?.find((t) => t.kind === "human_signoff")
+      ?.derivedFromCommitment;
+    const flipSignoff = (c: Commitment): Commitment =>
+      humanSignedOff && c.id === signoffId && c.status !== "accepted"
+        ? { ...c, status: "accepted" }
+        : c;
+    if (!live) return commitments.map(flipSignoff);
+    return commitments
+      .filter((c) => {
+        if (c.derivedFromTurns.length === 0) return visibleCount > 0;
+        return Math.max(...c.derivedFromTurns) <= visibleCount;
+      })
+      .map(flipSignoff);
+  }, [live, commitments, visibleCount, humanSignedOff, postSignoffTasks]);
 
   // Audit lines render alongside revealed turns: the gate audit only appears
   // once the gate-turn itself is visible.
@@ -209,8 +299,28 @@ export function SplitView({ turns, commitments, hitlGate, live = false }: SplitV
     recordOperatorAudit();
   }, [recordOperatorAudit]);
 
+  const handleSignoff = useCallback(() => {
+    const signoffTask = postSignoffTasks?.find((t) => t.kind === "human_signoff");
+    if (!signoffTask) return;
+    const ts = clockNow();
+    setSignoffStatuses((prev) => ({ ...prev, [signoffTask.id]: "resolved" }));
+    setSignoffResolvedAt((prev) => ({ ...prev, [signoffTask.id]: ts }));
+    setHumanSignedOff(true);
+  }, [postSignoffTasks]);
+
+  const signoffEntries = useMemo<PostSignoffEntry[]>(() => {
+    if (!postSignoffTasks) return [];
+    return postSignoffTasks.map((task) => ({
+      task,
+      status: signoffStatuses[task.id] ?? "queued",
+      resolvedAt: signoffResolvedAt[task.id]
+    }));
+  }, [postSignoffTasks, signoffStatuses, signoffResolvedAt]);
+
   const showBanner =
     hitlGate && hitlState !== "inactive" && !(hitlState === "accepted" && bannerHidden);
+  const showSignoffStrip =
+    !!postSignoffTasks && postSignoffTasks.length > 0 && allTurnsRevealed;
 
   return (
     <div
@@ -263,6 +373,9 @@ export function SplitView({ turns, commitments, hitlGate, live = false }: SplitV
           animateIn={live}
         />
       </div>
+      {showSignoffStrip && (
+        <PostSignoffStrip entries={signoffEntries} onSignoff={handleSignoff} />
+      )}
     </div>
   );
 }

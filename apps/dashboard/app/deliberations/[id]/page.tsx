@@ -22,6 +22,7 @@ export default async function DeliberationDetailPage({
           turns={detail.turns}
           commitments={detail.commitments}
           hitlGate={detail.hitlGate}
+          postSignoffTasks={detail.postSignoffTasks}
           live={live}
         />
       </div>
