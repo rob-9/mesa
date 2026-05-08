@@ -31,15 +31,50 @@ const trainingDataQ4Turns: Turn[] = [
   { id: 11, speaker: "lab",       content: "That's about $1,120/month at signing. We'd propose $750/month flat for the term, plus quarterly true-up audit rights.", timestamp: "2026-05-05T14:15:00Z" },
   { id: 12, speaker: "publisher", content: "Counter: $900/month flat, audit allowed with 24-hour notice, scope of audit limited to article-count reconciliation.", timestamp: "2026-05-05T14:17:00Z" },
   { id: 13, speaker: "lab",       content: "Agreed: $900/month flat, 24-hour audit notice, count reconciliation only.", timestamp: "2026-05-05T14:18:00Z" },
-  { id: 14, speaker: "lab",       content: "Opt-out — we'll honor robots.txt and per-URL X-NoArchive headers at the time of fetch.", timestamp: "2026-05-05T14:21:00Z" },
-  { id: 15, speaker: "publisher", content: "Add a kill-switch: if we issue a retraction or legal removal request, you must purge from training data within 7 days.", timestamp: "2026-05-05T14:22:00Z" },
-  { id: 16, speaker: "lab",       content: "Confirmed. 7-day retraction SLA, audit-logged.", timestamp: "2026-05-05T14:23:00Z" },
-  { id: 17, speaker: "publisher", content: "Usage restrictions — no resale of derivative model weights, no public attribution claims naming us as a training source.", timestamp: "2026-05-05T14:25:00Z" },
-  { id: 18, speaker: "lab",       content: "Agreed: no resale of weights, no model-card naming of publisher-co as a source.", timestamp: "2026-05-05T14:26:00Z" },
-  { id: 19, speaker: "publisher", content: "Data processing — we'll reference our standard DPA, GDPR-compliant. Linking the latest version.", timestamp: "2026-05-05T14:28:00Z" },
-  { id: 20, speaker: "lab",       content: "DPA reviewed and attached. No deviations from standard.", timestamp: "2026-05-05T14:30:00Z" },
-  { id: 21, speaker: "lab",       content: "Compiling all terms. Sending for sign-off.", timestamp: "2026-05-05T14:32:00Z" },
-  { id: 22, speaker: "publisher", content: "Standing by.", timestamp: "2026-05-05T14:33:00Z" }
+  { id: 14, speaker: "lab",       content: "Opt-out — we'll honor robots.txt and per-URL X-NoArchive headers at fetch time.", timestamp: "2026-05-05T14:21:00Z" },
+  { id: 15, speaker: "publisher", content: "Add a kill-switch: on retraction or legal removal request, you must purge from training data within 7 days.", timestamp: "2026-05-05T14:22:00Z" },
+  { id: 16, speaker: "lab",       content: "7-day purge exceeds our retraining cadence — policy ceiling is 30 days. Counter: 14 days on formal legal removal (court order, statutory takedown), 30 days on editorial retraction. Both audit-logged.", timestamp: "2026-05-05T14:25:00Z" },
+  { id: 17, speaker: "publisher", content: "Acceptable. 14-day SLA on formal legal removal, 30-day on retraction notices.", timestamp: "2026-05-05T14:26:00Z" },
+  { id: 18, speaker: "lab",       content: "Confirmed and logged against §6 of our model-update policy.", timestamp: "2026-05-05T14:27:00Z" },
+  { id: 19, speaker: "publisher", content: "Usage restrictions — no resale of derivative model weights, no public attribution naming publisher-co as a training source.", timestamp: "2026-05-05T14:29:00Z" },
+  { id: 20, speaker: "lab",       content: "No resale, agreed. On attribution, our model cards use aggregate sourcing categories (e.g. \"licensed news corpora\") rather than per-source names — confirming that satisfies \"no naming.\"", timestamp: "2026-05-05T14:30:00Z" },
+  { id: 21, speaker: "publisher", content: "Compatible. Aggregate-only language is fine.", timestamp: "2026-05-05T14:31:00Z" },
+  { id: 22, speaker: "publisher", content: "Data processing — we'll reference our standard DPA, GDPR-compliant. Linking the latest version.", timestamp: "2026-05-05T14:33:00Z" },
+  { id: 23, speaker: "lab",       content: "DPA reviewed and attached. No deviations from standard.", timestamp: "2026-05-05T14:35:00Z" },
+  { id: 24, speaker: "lab",       content: "Compiling all terms. Sending for sign-off.", timestamp: "2026-05-05T14:37:00Z" },
+  { id: 25, speaker: "publisher", content: "Standing by.", timestamp: "2026-05-05T14:38:00Z" }
+];
+
+const trainingDataQ4HitlGate = {
+  afterTurn: 15,
+  policyBound: "Retraction SLA ceiling: 30 days",
+  prompt: "Publisher requested 7-day purge SLA on retraction — exceeds the agent's policy ceiling. Authorize the agent to negotiate counter-terms, or hold for review.",
+  commitmentRef: "c-tdq4-6"
+};
+
+const trainingDataQ4PostSignoff = [
+  {
+    id: "ps-tdq4-1",
+    kind: "agent2agent" as const,
+    agent: "compliance-agent",
+    deliverable:
+      "stand up 14-day formal-removal + 30-day retraction timers; register publisher-co webhook; emit purge audit log",
+    derivedFromCommitment: "c-tdq4-6"
+  },
+  {
+    id: "ps-tdq4-2",
+    kind: "agent2agent" as const,
+    agent: "billing-agent",
+    deliverable:
+      "schedule $900/mo ACH to publisher-co; quarterly count reconciliation; 24h audit-notice channel",
+    derivedFromCommitment: "c-tdq4-5"
+  },
+  {
+    id: "ps-tdq4-3",
+    kind: "human_signoff" as const,
+    deliverable: "principal sign-off on final agreement (binds the lab to all terms above)",
+    derivedFromCommitment: "c-tdq4-9"
+  }
 ];
 
 const trainingDataQ4Commitments: Commitment[] = [
@@ -90,37 +125,37 @@ const trainingDataQ4Commitments: Commitment[] = [
   {
     id: "c-tdq4-6",
     type: "opt_out_delta",
-    summary: "Honors robots.txt and X-NoArchive at fetch; 7-day purge SLA on retraction request.",
-    derivedFromTurns: [14, 15, 16],
+    summary: "Honors robots.txt and X-NoArchive at fetch; 14-day purge on formal legal removal, 30-day on editorial retraction (audit-logged).",
+    derivedFromTurns: [14, 15, 16, 17, 18],
     status: "accepted",
-    createdAt: "2026-05-05T14:23:30Z",
+    createdAt: "2026-05-05T14:27:30Z",
     references: ["c-tdq4-2"]
   },
   {
     id: "c-tdq4-7",
     type: "usage_restriction",
-    summary: "No resale of derivative model weights; no model-card attribution naming publisher-co.",
-    derivedFromTurns: [17, 18],
+    summary: "No resale of derivative model weights; aggregate-only sourcing language on model card (no publisher-co naming).",
+    derivedFromTurns: [19, 20, 21],
     status: "accepted",
-    createdAt: "2026-05-05T14:26:30Z",
+    createdAt: "2026-05-05T14:31:30Z",
     references: ["c-tdq4-2", "c-tdq4-5"]
   },
   {
     id: "c-tdq4-8",
     type: "dpa_reference",
     summary: "Standard publisher-co GDPR-compliant DPA attached without modification.",
-    derivedFromTurns: [19, 20],
+    derivedFromTurns: [22, 23],
     status: "accepted",
-    createdAt: "2026-05-05T14:30:30Z",
+    createdAt: "2026-05-05T14:35:30Z",
     references: ["c-tdq4-5"]
   },
   {
     id: "c-tdq4-9",
     type: "signoff",
     summary: "Final agreement compiled, awaiting human sign-off.",
-    derivedFromTurns: [21, 22],
+    derivedFromTurns: [24, 25],
     status: "pending",
-    createdAt: "2026-05-05T14:33:30Z",
+    createdAt: "2026-05-05T14:38:30Z",
     references: ["c-tdq4-2", "c-tdq4-3", "c-tdq4-5", "c-tdq4-6", "c-tdq4-7", "c-tdq4-8"]
   }
 ];
@@ -265,7 +300,13 @@ export function fixtureDeliberation(id: string): DeliberationDetail | null {
   const deliberation = deliberations.find((d) => d.id === id);
   if (!deliberation) return null;
   if (id === "training-data-q4") {
-    return { deliberation, turns: trainingDataQ4Turns, commitments: trainingDataQ4Commitments };
+    return {
+      deliberation,
+      turns: trainingDataQ4Turns,
+      commitments: trainingDataQ4Commitments,
+      hitlGate: trainingDataQ4HitlGate,
+      postSignoffTasks: trainingDataQ4PostSignoff
+    };
   }
   // Other deliberations have stub turns/commitments — not navigated to in the demo,
   // but the page still needs to render without crashing.
