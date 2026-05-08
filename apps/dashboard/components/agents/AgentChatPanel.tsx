@@ -46,6 +46,9 @@ export function AgentChatPanel({
 
       {/* message list */}
       <div
+        role="log"
+        aria-live="polite"
+        aria-label="Agent configuration chat"
         style={{
           flex: 1,
           overflowY: "auto",
@@ -97,6 +100,8 @@ export function AgentChatPanel({
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           placeholder="Tell the agent what to change…"
+          aria-label="Message to configure agent"
+          autoComplete="off"
           style={{
             flex: 1,
             height: 32,
@@ -112,6 +117,8 @@ export function AgentChatPanel({
         <button
           type="submit"
           disabled={!draft.trim()}
+          aria-disabled={!draft.trim()}
+          aria-label="Send message"
           style={{
             height: 32,
             padding: "0 14px",
@@ -121,7 +128,7 @@ export function AgentChatPanel({
             borderRadius: "var(--r-pill)",
             fontSize: 12,
             fontWeight: 500,
-            cursor: draft.trim() ? "pointer" : "default",
+            cursor: draft.trim() ? "pointer" : "not-allowed",
             opacity: draft.trim() ? 1 : 0.5
           }}
         >

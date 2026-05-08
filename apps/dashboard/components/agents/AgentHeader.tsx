@@ -36,6 +36,7 @@ export function AgentHeader({ agent }: { agent: AgentDetail }) {
         <div style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
           <span
             className="mono"
+            title={agent.name}
             style={{
               fontSize: 18,
               color: "var(--fg-0)",

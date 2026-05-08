@@ -67,6 +67,7 @@ export function ActionsTable({ actions }: { actions: Action[] }) {
               <TypeLabel type={action.commitment.type} />
               <Link
                 href={`/deliberations/${action.deliberationId}`}
+                title={action.deliberationTitle}
                 style={{
                   color: "var(--fg-0)",
                   overflow: "hidden",

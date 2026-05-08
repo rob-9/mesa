@@ -40,6 +40,7 @@ export function AgentRow({ agent, isLast, gridTemplate }: RowProps) {
       >
         <span
           className="mono"
+          title={agent.name}
           style={{
             color: "var(--fg-0)",
             fontWeight: 500,
@@ -50,11 +51,12 @@ export function AgentRow({ agent, isLast, gridTemplate }: RowProps) {
         >
           {agent.name}
         </span>
-        <span style={{ color: "var(--fg-3)", fontSize: 13 }}>{agent.role}</span>
+        <span title={agent.role} style={{ color: "var(--fg-3)", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{agent.role}</span>
         <span>
           <Pill tone={meta.tone}>{meta.label}</Pill>
         </span>
         <span
+          title={agent.deliberationTitle ?? undefined}
           style={{
             color: agent.deliberationTitle ? "var(--fg-2)" : "var(--fg-5)",
             fontSize: 12,

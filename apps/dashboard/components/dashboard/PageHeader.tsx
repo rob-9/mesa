@@ -39,6 +39,7 @@ export function PageHeader({ counts }: { counts: DashboardData["counts"] }) {
       </div>
       <div style={{ display: "flex", gap: 8 }}>
         <button
+          type="button"
           style={{
             padding: "8px 14px",
             borderRadius: "var(--r-pill)",
@@ -51,6 +52,7 @@ export function PageHeader({ counts }: { counts: DashboardData["counts"] }) {
           Sort
         </button>
         <button
+          type="button"
           style={{
             padding: "8px 14px",
             borderRadius: "var(--r-pill)",

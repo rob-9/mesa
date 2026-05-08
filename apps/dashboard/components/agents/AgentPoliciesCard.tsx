@@ -20,6 +20,7 @@ export function AgentPoliciesCard({ policies }: { policies: AgentPolicy[] }) {
             }}
           >
             <span
+              title={p.label}
               style={{
                 fontSize: 12,
                 color: "var(--fg-1)",

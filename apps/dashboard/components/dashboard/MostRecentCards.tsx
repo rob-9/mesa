@@ -64,6 +64,7 @@ function MostRecentCard({ deliberation: d }: { deliberation: Deliberation }) {
         }}
       >
         <span
+          title={d.title}
           style={{
             fontSize: 13,
             fontWeight: 500,
@@ -97,6 +98,7 @@ function MostRecentCard({ deliberation: d }: { deliberation: Deliberation }) {
         <ProgressDots stage={d.stage} flagged={d.flagged} />
       </div>
       <div
+        title={d.latestSummary}
         style={{
           fontSize: 12,
           color: "var(--fg-4)",

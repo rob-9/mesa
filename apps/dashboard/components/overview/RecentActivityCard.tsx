@@ -9,6 +9,19 @@ export function RecentActivityCard({ items }: { items: RecentActivity[] }) {
   return (
     <Card title="Recent activity" eyebrow={`${items.length} COMMITMENTS`} noPadBody>
       <div style={{ height: "100%", overflowY: "auto", overscrollBehavior: "none" }}>
+        {shown.length === 0 && (
+          <div
+            style={{
+              padding: "28px 16px",
+              fontSize: 12,
+              color: "var(--fg-5)",
+              textAlign: "center",
+              lineHeight: 1.55
+            }}
+          >
+            No recent activity yet today.
+          </div>
+        )}
         {shown.map((item, i) => (
           <Link
             key={item.id}
@@ -29,6 +42,7 @@ export function RecentActivityCard({ items }: { items: RecentActivity[] }) {
             </span>
             <div style={{ minWidth: 0 }}>
               <div
+                title={item.summary}
                 style={{
                   fontSize: 13,
                   color: "var(--fg-1)",

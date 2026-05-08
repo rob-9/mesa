@@ -40,15 +40,16 @@ export function DeliberationRow({ deliberation, isLast, gridTemplate }: RowProps
           fontSize: 13
         }}
       >
-        <span style={{ color: "var(--fg-0)", fontWeight: 500 }}>{d.title}</span>
-        <span style={{ color: "var(--fg-3)", fontSize: 13 }}>{d.counterparty}</span>
+        <span title={d.title} style={{ color: "var(--fg-0)", fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{d.title}</span>
+        <span title={d.counterparty} style={{ color: "var(--fg-3)", fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{d.counterparty}</span>
         <span><ProgressDots stage={d.stage} flagged={d.flagged} /></span>
-        <span className="mono" style={{ fontSize: 12, color: waitingColor }}>{waitingOnLabel}</span>
+        <span className="mono" title={`waiting on ${waitingOnLabel}`} style={{ fontSize: 12, color: waitingColor, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{waitingOnLabel}</span>
         <span className="mono" style={{ textAlign: "right", color: "var(--fg-4)", fontSize: 12 }}>
           {formatRelative(d.lastActivity)}
         </span>
       </div>
       <div
+        title={d.latestSummary}
         style={{
           marginTop: 6,
           fontSize: 12,

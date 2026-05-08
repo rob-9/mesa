@@ -33,6 +33,7 @@ export function AgentActivityCard({ items }: { items: AgentActivityItem[] }) {
           </span>
           <div style={{ minWidth: 0 }}>
             <div
+              title={item.summary}
               style={{
                 fontSize: 13,
                 color: "var(--fg-1)",

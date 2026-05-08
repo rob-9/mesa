@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Action } from "@/lib/types";
 
 export function ActionStrip({ actions }: { actions: Action[] }) {
@@ -54,17 +55,23 @@ export function ActionStrip({ actions }: { actions: Action[] }) {
           </div>
         </div>
       </div>
-      <button
+      <Link
+        href="/deliberations"
+        aria-label={`Review ${actions.length} action${actions.length === 1 ? "" : "s"} waiting`}
         style={{
           padding: "8px 14px",
           borderRadius: "var(--r-pill)",
           background: "var(--surface-2)",
           color: "var(--accent)",
-          fontSize: 12
+          fontSize: 12,
+          textDecoration: "none",
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 4
         }}
       >
         Review →
-      </button>
+      </Link>
     </div>
   );
 }

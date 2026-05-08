@@ -18,7 +18,8 @@ export function TopBar() {
         <SearchBar />
       </div>
       <button
-        aria-label="Notifications"
+        type="button"
+        aria-label="Notifications (1 unread)"
         style={{
           display: "flex",
           alignItems: "center",

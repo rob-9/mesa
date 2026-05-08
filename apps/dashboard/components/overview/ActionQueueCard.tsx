@@ -22,6 +22,19 @@ export function ActionQueueCard({ actions, total }: { actions: Action[]; total: 
       noPadBody
     >
       <div style={{ height: "100%", overflowY: "auto", overscrollBehavior: "none" }}>
+        {top.length === 0 && (
+          <div
+            style={{
+              padding: "28px 16px",
+              fontSize: 12,
+              color: "var(--fg-5)",
+              textAlign: "center",
+              lineHeight: 1.55
+            }}
+          >
+            Nothing waiting. Your agents will queue items here when they need a decision.
+          </div>
+        )}
         {top.map((action, i) => (
           <Link
             key={action.id}

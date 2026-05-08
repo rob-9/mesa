@@ -27,6 +27,9 @@ function ConnectionRow({ c, isLast }: { c: AgentConnection; isLast: boolean }) {
       }}
     >
       <span
+        role="img"
+        aria-label={`status: ${c.status}`}
+        title={c.status}
         style={{
           width: 8,
           height: 8,

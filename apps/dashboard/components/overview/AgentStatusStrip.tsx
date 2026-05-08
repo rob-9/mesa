@@ -71,6 +71,7 @@ export function AgentStatusStrip({ agents }: { agents: AgentStatus[] }) {
                 {agent.deliberationTitle ? (
                   <Link
                     href={`/deliberations/${agent.deliberationId}`}
+                    title={agent.deliberationTitle}
                     style={{
                       fontSize: 11,
                       color: "var(--fg-2)",

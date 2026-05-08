@@ -14,7 +14,7 @@ export default async function OverviewPage() {
         <h1
           style={{
             margin: 0,
-            fontSize: 20,
+            fontSize: 22,
             letterSpacing: "-0.015em",
             lineHeight: 1.15,
             fontWeight: 600,
@@ -23,7 +23,7 @@ export default async function OverviewPage() {
         >
           Overview <span style={{ color: "var(--fg-3)", fontWeight: 400 }}>· X</span>
         </h1>
-        <div style={{ marginTop: 3, fontSize: 12, color: "var(--fg-4)" }}>
+        <div style={{ marginTop: 4, fontSize: 12, color: "var(--fg-4)" }}>
           What your agents have been doing today.
         </div>
       </div>

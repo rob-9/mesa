@@ -30,6 +30,7 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
   return (
     <Link
       href={item.href}
+      aria-current={active ? "page" : undefined}
       className={active ? undefined : "nav-item"}
       style={{
         position: "relative",
@@ -95,6 +96,7 @@ export function Sidebar() {
     >
       <Link
         href="/"
+        aria-label="Mesa — Overview"
         style={{
           display: "flex",
           alignItems: "center",
@@ -143,7 +145,7 @@ export function Sidebar() {
         <span>Deploy Agent</span>
       </Link>
 
-      <nav style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+      <nav aria-label="Primary" style={{ display: "flex", flexDirection: "column", gap: 1 }}>
         {primaryItems.map((item) => (
           <NavLink key={item.href} item={item} active={isActive(pathname, item.href)} />
         ))}
@@ -155,7 +157,7 @@ export function Sidebar() {
 
       <div style={{ flex: 1 }} />
 
-      <nav style={{ display: "flex", flexDirection: "column", gap: 1, marginBottom: 8 }}>
+      <nav aria-label="Settings" style={{ display: "flex", flexDirection: "column", gap: 1, marginBottom: 8 }}>
         <Divider />
         <NavLink item={settingsItem} active={isActive(pathname, settingsItem.href)} />
       </nav>

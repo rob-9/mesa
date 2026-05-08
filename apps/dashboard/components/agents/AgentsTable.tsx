@@ -133,7 +133,7 @@ export function AgentsTable({ agents }: { agents: AgentDetail[] }) {
 
 function Toolbar({ grouped, setGrouped }: { grouped: boolean; setGrouped: (g: boolean) => void }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11 }}>
+    <div role="group" aria-label="Agents view" style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11 }}>
       <span style={{ color: "var(--fg-5)", marginRight: 4 }}>view</span>
       <ToggleButton active={!grouped} onClick={() => setGrouped(false)}>Sort</ToggleButton>
       <ToggleButton active={grouped} onClick={() => setGrouped(true)}>Group by state</ToggleButton>
@@ -154,6 +154,7 @@ function ToggleButton({
     <button
       type="button"
       onClick={onClick}
+      aria-pressed={active}
       style={{
         height: 24,
         padding: "0 10px",
@@ -223,11 +224,22 @@ function HeaderCell({
   align?: "right";
 }) {
   const active = interactive && sortKey === k;
+  const ariaSort: "ascending" | "descending" | "none" = active
+    ? sortDir === "asc"
+      ? "ascending"
+      : "descending"
+    : "none";
   return (
     <button
       type="button"
       onClick={() => onClick(k)}
       disabled={!interactive}
+      aria-sort={ariaSort}
+      aria-label={
+        interactive
+          ? `Sort by ${label.toLowerCase()}${active ? `, currently ${ariaSort}` : ""}`
+          : undefined
+      }
       style={{
         all: "unset",
         cursor: interactive ? "pointer" : "default",

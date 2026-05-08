@@ -36,6 +36,7 @@ export function Tabs({
     >
       {/* tab strip */}
       <div
+        role="tablist"
         style={{
           display: "flex",
           gap: 24,
@@ -49,6 +50,11 @@ export function Tabs({
             <button
               key={t.id}
               type="button"
+              role="tab"
+              id={`tab-${t.id}`}
+              aria-selected={isActive}
+              aria-controls={`tabpanel-${t.id}`}
+              tabIndex={isActive ? 0 : -1}
               onClick={() => setActive(t.id)}
               style={{
                 appearance: "none",
@@ -89,7 +95,12 @@ export function Tabs({
         })}
       </div>
       {/* panel */}
-      <div style={{ minWidth: 0, flex: 1, minHeight: 0, overflowY: "auto" }}>
+      <div
+        role="tabpanel"
+        id={`tabpanel-${current.id}`}
+        aria-labelledby={`tab-${current.id}`}
+        style={{ minWidth: 0, flex: 1, minHeight: 0, overflowY: "auto" }}
+      >
         {current.content}
       </div>
     </div>

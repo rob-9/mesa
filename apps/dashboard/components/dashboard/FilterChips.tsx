@@ -7,12 +7,14 @@ const chips = ["All", "Active", "Awaiting action", "Flagged", "Signed"];
 // v1 inert; chips render visual state only.
 export function FilterChips({ active }: FilterChipsProps) {
   return (
-    <div style={{ display: "flex", gap: 6, marginBottom: 18, flexWrap: "wrap" }}>
+    <div role="group" aria-label="Filter (preview)" style={{ display: "flex", gap: 6, marginBottom: 18, flexWrap: "wrap" }}>
       {chips.map((chip) => {
         const isActive = chip === active;
         return (
           <span
             key={chip}
+            aria-current={isActive ? "true" : undefined}
+            aria-disabled="true"
             style={{
               padding: "5px 12px",
               borderRadius: "var(--r-pill)",
