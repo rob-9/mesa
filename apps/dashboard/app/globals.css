@@ -250,6 +250,43 @@ button {
   animation: summer-fade-up 200ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
+/* HITL banner entrance — clean fade-down, no zoom. Used for both the
+   pending and the brief "authorized" flash. */
+@keyframes hitl-banner-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hitl-banner-in {
+  animation: hitl-banner-in 280ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+@keyframes hitl-banner-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-6px); }
+}
+.hitl-banner-out {
+  animation: hitl-banner-out 220ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
+/* Slack outreach status pulse — soft amber breathing dot, signals
+   "awaiting human" without the loud accent ring. */
+.slack-pulse-dot {
+  animation: slack-pulse 1.6s ease-in-out infinite;
+}
+@keyframes slack-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(200, 145, 96, 0.22); }
+  50%      { box-shadow: 0 0 0 6px rgba(200, 145, 96, 0.10); }
+}
+
+/* Audit-style line in the transcript flow (HITL approvals, system events).
+   Centered, monospace, hairlines on either side. */
+@keyframes summer-audit-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.transcript-audit-in {
+  animation: summer-audit-in 320ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
 /* Three-dot "typing…" pulse used by the live transcript. */
 .typing-dot {
   width: 6px;

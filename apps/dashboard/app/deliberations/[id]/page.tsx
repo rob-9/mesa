@@ -18,7 +18,12 @@ export default async function DeliberationDetailPage({
     <AppShell>
       <DetailHeader deliberation={detail.deliberation} />
       <div style={{ flex: 1, position: "relative", minHeight: 0 }}>
-        <SplitView turns={detail.turns} commitments={detail.commitments} live={live} />
+        <SplitView
+          turns={detail.turns}
+          commitments={detail.commitments}
+          hitlGate={detail.hitlGate}
+          live={live}
+        />
       </div>
     </AppShell>
   );
