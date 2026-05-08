@@ -128,7 +128,7 @@ function TtrCard({ buckets }: { buckets: { label: string; count: number }[] }) {
   const max = Math.max(...buckets.map((b) => b.count), 1);
   return (
     <Card title="Time to resolution" subtitle="Distribution across closed deliberations">
-      <div role="list" aria-label="Time to resolution distribution" style={{ display: "flex", alignItems: "flex-end", gap: 10, height: 100 }}>
+      <div role="list" aria-label="Time to resolution distribution" style={{ display: "flex", alignItems: "stretch", gap: 10, height: 140 }}>
         {buckets.map((b) => {
           const pct = (b.count / max) * 100;
           return (
@@ -138,11 +138,12 @@ function TtrCard({ buckets }: { buckets: { label: string; count: number }[] }) {
               aria-label={`${b.label}: ${b.count}`}
               style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, minWidth: 0 }}
             >
-              <div style={{ flex: 1, display: "flex", alignItems: "flex-end", width: "100%" }}>
+              <div style={{ flex: 1, display: "flex", alignItems: "flex-end", width: "100%", minHeight: 0 }}>
                 <div
                   style={{
                     width: "100%",
                     height: `${pct}%`,
+                    minHeight: 2,
                     background: "var(--accent-soft)",
                     borderTop: "2px solid var(--accent)",
                     borderRadius: "4px 4px 0 0"

@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { Sidebar } from "./Sidebar";
-import { TopBar } from "./TopBar";
 
 export function AppShell({ children }: { children: ReactNode }) {
   return (
@@ -8,13 +7,14 @@ export function AppShell({ children }: { children: ReactNode }) {
       style={{
         display: "grid",
         gridTemplateColumns: "216px minmax(0, 1fr)",
-        height: "100%",
+        height: "100vh",
         overflow: "hidden"
       }}
     >
-      <Sidebar />
-      <div style={{ display: "flex", flexDirection: "column", minWidth: 0, height: "100%" }}>
-        <TopBar />
+      <div style={{ height: "100vh" }}>
+        <Sidebar />
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", minWidth: 0, height: "100vh" }}>
         <main
           style={{
             flex: 1,

@@ -61,17 +61,6 @@ const eventLabel: Record<SignificantEvent["kind"], string> = {
   principal_added: "principal"
 };
 
-const eventTone: Record<
-  SignificantEvent["kind"],
-  Parameters<typeof Pill>[0]["tone"]
-> = {
-  deliberation_signed: "accent",
-  policy_fired: "amber",
-  agent_deployed: "neutral",
-  integration_disconnected: "amber",
-  principal_added: "neutral"
-};
-
 function matchesQuery(haystack: string, q: string): boolean {
   if (!q) return true;
   return haystack.toLowerCase().includes(q.toLowerCase());
@@ -337,7 +326,7 @@ function EventsTab({ events }: { events: SignificantEvent[] }) {
             }}
           >
             <td style={tdBase}>
-              <Pill tone={eventTone[e.kind]}>{eventLabel[e.kind]}</Pill>
+              <Pill tone="soft">{eventLabel[e.kind]}</Pill>
             </td>
             <td style={{ ...tdBase, color: "var(--fg-1)" }}>
               {e.href ? (
@@ -447,7 +436,7 @@ function AllTab({
             return (
               <tr key={`agent-${a.id}`} style={{ borderBottom: border }}>
                 <td style={tdBase}>
-                  <Pill tone={stateMeta[a.state].tone}>agent</Pill>
+                  <Pill tone="soft">agent</Pill>
                 </td>
                 <td style={tdBase}>
                   <Link
@@ -476,7 +465,7 @@ function AllTab({
             return (
               <tr key={`event-${e.id}`} style={{ borderBottom: border }}>
                 <td style={tdBase}>
-                  <Pill tone={eventTone[e.kind]}>{eventLabel[e.kind]}</Pill>
+                  <Pill tone="soft">{eventLabel[e.kind]}</Pill>
                 </td>
                 <td style={{ ...tdBase, color: "var(--fg-1)" }}>
                   {e.href ? (

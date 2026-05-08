@@ -26,7 +26,7 @@ const STATE_TINTS: Record<
   }
 };
 
-function ActivityRing({ pct, color }: { pct: number; color: string }) {
+function ActivityRing({ pct, color, label }: { pct: number; color: string; label: string }) {
   const r = 18;
   const c = 2 * Math.PI * r;
   const offset = c * (1 - pct / 100);
@@ -60,7 +60,7 @@ function ActivityRing({ pct, color }: { pct: number; color: string }) {
         fill="var(--fg-1)"
         fontFamily="var(--font-mono)"
       >
-        {pct}%
+        {label}
       </text>
     </svg>
   );
@@ -106,18 +106,8 @@ export function TopAgentCard({ agent }: { agent: AgentStatus }) {
           >
             {agent.role}
           </div>
-          <div
-            className="mono"
-            style={{
-              fontSize: 10,
-              color: "var(--fg-5)",
-              marginTop: 2
-            }}
-          >
-            {formatRelative(agent.lastActivity)} ago
-          </div>
         </div>
-        <ActivityRing pct={pct} color={tint.ring} />
+        <ActivityRing pct={pct} color={tint.ring} label={formatRelative(agent.lastActivity)} />
       </div>
 
       <div style={{ minWidth: 0 }}>

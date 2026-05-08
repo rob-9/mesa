@@ -51,23 +51,10 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overscroll-behavior: none;
-  height: 100%;
   /* Site-wide overrides for OS-native chrome. */
   caret-color: var(--accent);
   accent-color: var(--accent);
   color-scheme: dark;
-}
-
-/* Global 10% zoom-out for demo density. We expand the logical body box by
-   1/0.9 so that after the zoom transform the body still covers the whole
-   viewport (otherwise zoom leaves a 10% strip on the right and bottom). */
-html {
-  height: 100%;
-}
-body {
-  zoom: 0.9;
-  width: calc(100vw / 0.9);
-  min-height: calc(100vh / 0.9);
 }
 
 /* Themed selection — keeps light-blue OS highlight off the page. */

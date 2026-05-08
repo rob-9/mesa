@@ -188,6 +188,28 @@ const deliberations: Deliberation[] = [
     latestSummary: "Crawl-delay 5s, robots.txt-respecting opt-in. 18-month renewable term."
   },
   {
+    id: "archive-renewal-2026",
+    title: "archive renewal 2026",
+    counterparty: "publisher-co",
+    stage: "signoff",
+    flagged: false,
+    waitingOn: { party: "you" },
+    commitmentCount: 14,
+    lastActivity: ago(28),
+    latestSummary: "Renewal of 2024 archive license; CPI-indexed +6% with terms otherwise preserved."
+  },
+  {
+    id: "clinical-imaging-pilot",
+    title: "clinical imaging pilot",
+    counterparty: "med-corpus",
+    stage: "offer",
+    flagged: false,
+    waitingOn: { party: "counterparty" },
+    commitmentCount: 2,
+    lastActivity: ago(34),
+    latestSummary: "12-month pilot, 50k de-identified DICOM studies, $0.12/study, HIPAA addendum referenced."
+  },
+  {
     id: "image-corpus-rev-share",
     title: "image corpus rev-share",
     counterparty: "zenith",
@@ -199,6 +221,17 @@ const deliberations: Deliberation[] = [
     latestSummary: "12% gross revenue share on derivative model output, capped at $200k/yr."
   },
   {
+    id: "pricing-renegotiation-zenith",
+    title: "zenith pricing renegotiation",
+    counterparty: "zenith",
+    stage: "amendment",
+    flagged: false,
+    waitingOn: { party: "counterparty" },
+    commitmentCount: 8,
+    lastActivity: ago(60 * 3),
+    latestSummary: "Tiered rev-share floor at $40k/yr; counterparty reviewing impact on existing imagery deals."
+  },
+  {
     id: "code-corpus-license",
     title: "code corpus license",
     counterparty: "octostack",
@@ -208,6 +241,17 @@ const deliberations: Deliberation[] = [
     commitmentCount: 3,
     lastActivity: ago(181),
     latestSummary: "Public github repos only, MIT/Apache/BSD licensed code, 3-year term."
+  },
+  {
+    id: "audio-podcasts-license",
+    title: "audio podcasts license",
+    counterparty: "trinity-data",
+    stage: "scope",
+    flagged: false,
+    waitingOn: { party: "agent", agent: "legal-bot" },
+    commitmentCount: 7,
+    lastActivity: ago(60 * 5),
+    latestSummary: "English-language interviews 2020+; speaker consent required for ad-supported tiers."
   },
   {
     id: "video-transcripts",
@@ -230,6 +274,17 @@ const deliberations: Deliberation[] = [
     commitmentCount: 9,
     lastActivity: ago(60 * 24 + 1),
     latestSummary: "Amendment §3: extend coverage to 2024 issues; counterparty reviewing pricing impact."
+  },
+  {
+    id: "news-syndication-eu",
+    title: "news syndication EU",
+    counterparty: "curio-press",
+    stage: "amendment",
+    flagged: true,
+    waitingOn: { party: "you" },
+    commitmentCount: 5,
+    lastActivity: ago(60 * 30),
+    latestSummary: "DSM Article 15 carve-out: counterparty disputes scope of fair-use exemption. Legal escalation."
   }
 ];
 
@@ -279,11 +334,42 @@ const actions: Action[] = [
     deliberationId: "medical-journals-license",
     deliberationTitle: "medical journals license",
     counterparty: "med-corpus"
+  },
+  {
+    id: "a-4",
+    kind: "human_signoff",
+    commitment: {
+      id: "c-arr-pending",
+      type: "signoff",
+      summary: "2026 archive renewal — final agreement awaiting principal signature.",
+      derivedFromTurns: [],
+      status: "pending",
+      createdAt: ago(28)
+    },
+    deliberationId: "archive-renewal-2026",
+    deliberationTitle: "archive renewal 2026",
+    counterparty: "publisher-co"
+  },
+  {
+    id: "a-5",
+    kind: "agent_pending",
+    agent: "legal-bot",
+    commitment: {
+      id: "c-trin-audio-pending",
+      type: "scope_clause",
+      summary: "Speaker-consent clause awaiting legal review (interviewee opt-in vs. host opt-out).",
+      derivedFromTurns: [],
+      status: "pending",
+      createdAt: ago(60 * 5)
+    },
+    deliberationId: "audio-podcasts-license",
+    deliberationTitle: "audio podcasts license",
+    counterparty: "trinity-data"
   }
 ];
 
 const dashboardData: DashboardData = {
-  counts: { active: 12, awaitingAction: 3, signed24h: 7, flagged: 1 },
+  counts: { active: 14, awaitingAction: 5, signed24h: 9, flagged: 2 },
   deliberations,
   actions
 };

@@ -121,9 +121,11 @@ export function Sidebar() {
         flexDirection: "column",
         padding: "12px 12px 10px",
         height: "100%",
-        overflowY: "auto"
+        minHeight: 0,
+        overflow: "hidden"
       }}
     >
+      <div style={{ flexShrink: 0 }}>
       <Link
         href="/"
         aria-label="Mesa — Overview"
@@ -183,8 +185,20 @@ export function Sidebar() {
         <Icon name="plus" size={13} className="deploy-cta-icon" />
         <span>Deploy Agent</span>
       </Link>
+      </div>
 
-      <nav aria-label="Primary" style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+      <nav
+        aria-label="Primary"
+        style={{
+          flex: 1,
+          minHeight: 0,
+          overflowY: "auto",
+          overscrollBehavior: "none",
+          display: "flex",
+          flexDirection: "column",
+          gap: 1
+        }}
+      >
         {navGroups.map((group, gi) => (
           <div key={group.label}>
             {gi === 0 ? (
@@ -202,8 +216,7 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div style={{ flex: 1 }} />
-
+      <div style={{ flexShrink: 0 }}>
       <nav aria-label="Settings" style={{ display: "flex", flexDirection: "column", gap: 1, marginBottom: 8 }}>
         <Divider />
         <NavLink item={settingsItem} active={isActive(pathname, settingsItem.href)} />
@@ -240,6 +253,7 @@ export function Sidebar() {
           <span style={{ color: "var(--fg-1)", fontSize: 12, fontWeight: 500 }}>Robert Ji</span>
           <span style={{ color: "var(--fg-5)", fontSize: 10 }}>Ops · X</span>
         </div>
+      </div>
       </div>
     </aside>
   );
