@@ -4,12 +4,10 @@ import { ConnectivityCard } from "@/components/overview/ConnectivityCard";
 import { FleetNavbar } from "@/components/overview/FleetNavbar";
 import { RiskPulseCard } from "@/components/overview/RiskPulseCard";
 import { SignificantEventsCard } from "@/components/overview/SignificantEventsCard";
-import { SystemPulseStrip } from "@/components/overview/SystemPulseStrip";
 import { getOverview } from "@/lib/api";
 
 export default async function OverviewPage() {
   const data = await getOverview();
-  const pulse = data.pulse;
   const events = data.events;
   const risk = data.risk;
 
@@ -31,10 +29,6 @@ export default async function OverviewPage() {
         <div style={{ marginTop: 4, fontSize: 12, color: "var(--fg-4)" }}>
           Operational health across your agents, integrations, and policies.
         </div>
-      </div>
-
-      <div style={{ marginBottom: 10, flexShrink: 0 }}>
-        <SystemPulseStrip pulse={pulse} />
       </div>
 
       <div

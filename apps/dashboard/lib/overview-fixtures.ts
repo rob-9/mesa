@@ -5,8 +5,7 @@ import type {
   IntegrationStatus,
   OverviewData,
   RiskPulse,
-  SignificantEvent,
-  SystemPulse
+  SignificantEvent
 } from "./types";
 
 function ago(minutes: number): string {
@@ -163,20 +162,6 @@ export function fixtureOverview(): OverviewData {
       e.kind === "policy_fired" &&
       now - new Date(e.timestamp).getTime() < 24 * 60 * 60 * 1000
   ).length;
-  const integrationsConnected = integrations.filter((i) => i.connected).length;
-  const hasBlockedAgent = agents.some((a) => a.state === "blocked");
-  const hasDisconnectedIntegration = integrationsConnected < integrations.length;
-  const health: SystemPulse["health"] =
-    hasBlockedAgent || hasDisconnectedIntegration ? "degraded" : "healthy";
-
-  const pulse: SystemPulse = {
-    deployedAgents: agents.length,
-    integrationsConnected,
-    integrationsTotal: integrations.length,
-    flagged: dashboard.counts.flagged,
-    policyFires24h,
-    health
-  };
 
   const risk: RiskPulse = {
     flaggedOpen: dashboard.counts.flagged,
@@ -185,7 +170,6 @@ export function fixtureOverview(): OverviewData {
   };
 
   return {
-    pulse,
     agents,
     events,
     risk,

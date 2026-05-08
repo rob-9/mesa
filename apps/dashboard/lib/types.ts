@@ -144,17 +144,7 @@ export interface RiskPulse {
   staleOver7d: number;
 }
 
-export interface SystemPulse {
-  deployedAgents: number;
-  integrationsConnected: number;
-  integrationsTotal: number;
-  flagged: number;
-  policyFires24h: number;
-  health: "healthy" | "degraded";
-}
-
 export interface OverviewData {
-  pulse: SystemPulse;
   agents: AgentStatus[];
   events: SignificantEvent[];
   risk: RiskPulse;
