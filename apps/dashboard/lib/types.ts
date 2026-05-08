@@ -79,10 +79,18 @@ export interface DashboardData {
   actions: Action[];
 }
 
+export interface HitlGate {
+  afterTurn: number;          // pause once this turn id has been revealed
+  policyBound: string;        // short label, e.g. "Retraction SLA ceiling: 30 days"
+  prompt: string;             // body shown in the banner
+  commitmentRef?: string;     // optional commitment id to cross-link
+}
+
 export interface DeliberationDetail {
   deliberation: Deliberation;
   turns: Turn[];
   commitments: Commitment[];
+  hitlGate?: HitlGate;
 }
 
 // ─── Overview screen ───────────────────────────────────────────────────────
