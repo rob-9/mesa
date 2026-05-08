@@ -27,13 +27,23 @@ export default async function OverviewPage() {
           What your agents have been doing today.
         </div>
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
+          flex: 1,
+          minHeight: 0
+        }}
+      >
         <OverviewHero stats={data.stats} />
         <div
           style={{
             display: "grid",
             gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1.4fr)",
-            gap: 12
+            gap: 12,
+            flex: 1,
+            minHeight: 0
           }}
         >
           <ActionQueueCard actions={data.actions} total={data.totalActions} />

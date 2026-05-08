@@ -5,10 +5,10 @@ import type { RecentActivity } from "@/lib/types";
 import { Card } from "./Card";
 
 export function RecentActivityCard({ items }: { items: RecentActivity[] }) {
-  const shown = items.slice(0, 4);
+  const shown = items;
   return (
     <Card title="Recent activity" eyebrow={`${items.length} COMMITMENTS`} noPadBody>
-      <div>
+      <div style={{ height: "100%", overflowY: "auto", overscrollBehavior: "none" }}>
         {shown.map((item, i) => (
           <Link
             key={item.id}

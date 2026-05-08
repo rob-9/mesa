@@ -89,7 +89,7 @@ export function Sidebar() {
         display: "flex",
         flexDirection: "column",
         padding: "16px 12px",
-        height: "100vh",
+        height: "100%",
         overflowY: "auto"
       }}
     >

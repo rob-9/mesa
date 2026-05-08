@@ -1,6 +1,5 @@
 import { ActionsTable } from "@/components/dashboard/ActionsTable";
 import { DeliberationsTable } from "@/components/dashboard/DeliberationsTable";
-import { FilterChips } from "@/components/dashboard/FilterChips";
 import { MostRecentCards } from "@/components/dashboard/MostRecentCards";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { AppShell } from "@/components/shell/AppShell";
@@ -12,7 +11,6 @@ export default async function DeliberationsPage() {
   return (
     <AppShell>
       <PageHeader counts={data.counts} />
-      <FilterChips active="All" />
 
       {recentCount > 0 && (
         <>
@@ -24,21 +22,32 @@ export default async function DeliberationsPage() {
         </>
       )}
 
-      <SectionLabel
-        title={`Active deliberations · ${data.deliberations.length}`}
-        subtitle="Click any row to open the transcript and commitment graph."
-      />
-      <DeliberationsTable deliberations={data.deliberations} />
-
-      {data.actions.length > 0 && (
-        <>
+      <div
+        style={{
+          flex: 1,
+          minHeight: 0,
+          display: "grid",
+          gridTemplateColumns: data.actions.length > 0 ? "minmax(0, 1fr) minmax(0, 1fr)" : "1fr",
+          gap: 18
+        }}
+      >
+        <div style={{ minWidth: 0, display: "flex", flexDirection: "column", minHeight: 0 }}>
           <SectionLabel
-            title={`Actions awaiting · ${data.actions.length}`}
-            subtitle="Commitments blocked on a human or internal agent."
+            title={`Active deliberations · ${data.deliberations.length}`}
+            subtitle="Click any row to open."
           />
-          <ActionsTable actions={data.actions} />
-        </>
-      )}
+          <DeliberationsTable deliberations={data.deliberations} />
+        </div>
+        {data.actions.length > 0 && (
+          <div style={{ minWidth: 0, display: "flex", flexDirection: "column", minHeight: 0 }}>
+            <SectionLabel
+              title={`Actions awaiting · ${data.actions.length}`}
+              subtitle="Commitments blocked on a human or agent."
+            />
+            <ActionsTable actions={data.actions} />
+          </div>
+        )}
+      </div>
     </AppShell>
   );
 }
