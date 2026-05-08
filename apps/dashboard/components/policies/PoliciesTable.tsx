@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Pill } from "@/components/primitives/Pill";
 import { Icon } from "@/components/icons/Icon";
 import type { Policy, PolicyAction, PolicyScope } from "@/lib/types";
@@ -76,9 +76,16 @@ export function PoliciesTable({ initial }: { initial: Policy[] }) {
           <span style={{ textAlign: "right" }}>HITS 30D</span>
           <span style={{ textAlign: "right" }}>ON</span>
         </div>
+        {policies.length === 0 && (
+          <div role="status" style={{ padding: "32px 20px", textAlign: "center", color: "var(--fg-4)", fontSize: 13 }}>
+            No policies yet. Click <span style={{ color: "var(--fg-2)" }}>New policy</span> to add the first rule.
+          </div>
+        )}
         {policies.map((p, i) => (
           <div
             key={p.id}
+            onMouseEnter={(ev) => (ev.currentTarget.style.background = "var(--surface-1)")}
+            onMouseLeave={(ev) => (ev.currentTarget.style.background = "transparent")}
             style={{
               display: "grid",
               gridTemplateColumns: GRID,
@@ -87,7 +94,8 @@ export function PoliciesTable({ initial }: { initial: Policy[] }) {
               padding: "12px 20px",
               borderBottom: i === policies.length - 1 ? "none" : "1px solid var(--border-row)",
               fontSize: 13,
-              opacity: p.enabled ? 1 : 0.55
+              opacity: p.enabled ? 1 : 0.55,
+              transition: "background 100ms"
             }}
           >
             <span style={{ color: "var(--fg-0)", fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -104,7 +112,7 @@ export function PoliciesTable({ initial }: { initial: Policy[] }) {
               {p.hits30d}
             </span>
             <span style={{ display: "inline-flex", justifyContent: "flex-end" }}>
-              <ToggleSwitch on={p.enabled} onChange={() => toggle(p.id)} />
+              <ToggleSwitch on={p.enabled} onChange={() => toggle(p.id)} label={`${p.enabled ? "Disable" : "Enable"} policy ${p.name}`} />
             </span>
           </div>
         ))}
@@ -139,13 +147,14 @@ function ActionPill({ action, routeTo }: { action: PolicyAction; routeTo?: strin
   return <Pill tone={tone[action]}>{label}</Pill>;
 }
 
-function ToggleSwitch({ on, onChange }: { on: boolean; onChange: () => void }) {
+function ToggleSwitch({ on, onChange, label }: { on: boolean; onChange: () => void; label?: string }) {
   return (
     <button
       type="button"
       onClick={onChange}
       role="switch"
       aria-checked={on}
+      aria-label={label ?? (on ? "Disable" : "Enable")}
       style={{
         width: 28,
         height: 16,
@@ -186,10 +195,22 @@ function NewPolicyPanel({
   const [condition, setCondition] = useState("");
   const [action, setAction] = useState<PolicyAction>("flag");
   const [routeTo, setRouteTo] = useState("");
+  const firstFieldRef = useRef<HTMLInputElement>(null);
+
+  const canSave = name.trim().length > 0 && condition.trim().length > 0;
+
+  useEffect(() => {
+    firstFieldRef.current?.focus();
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim() || !condition.trim()) return;
+    if (!canSave) return;
     onSave({
       name: name.trim(),
       scope: { kind: "global" },
@@ -215,6 +236,9 @@ function NewPolicyPanel({
       <form
         onClick={(e) => e.stopPropagation()}
         onSubmit={submit}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="new-policy-title"
         style={{
           width: 380,
           height: "100%",
@@ -228,10 +252,11 @@ function NewPolicyPanel({
         }}
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <h2 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: "var(--fg-0)" }}>New policy</h2>
+          <h2 id="new-policy-title" style={{ margin: 0, fontSize: 15, fontWeight: 600, color: "var(--fg-0)" }}>New policy</h2>
           <button
             type="button"
             onClick={onClose}
+            aria-label="Close new policy panel"
             style={{
               appearance: "none",
               background: "transparent",
@@ -246,18 +271,21 @@ function NewPolicyPanel({
         </div>
         <Field label="Name">
           <input
+            ref={firstFieldRef}
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Quarterly review threshold"
+            required
             style={inputStyle}
           />
         </Field>
-        <Field label="Condition (mono)">
+        <Field label="Condition" hint="Expression over typed commitment fields. Mono.">
           <textarea
             value={condition}
             onChange={(e) => setCondition(e.target.value)}
             placeholder="fee_total_usd > 100000"
             rows={3}
+            required
             className="mono"
             style={{ ...inputStyle, fontFamily: "inherit", resize: "vertical" }}
           />
@@ -286,20 +314,32 @@ function NewPolicyPanel({
         <div style={{ flex: 1 }} />
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
           <button type="button" onClick={onClose} style={secondaryBtn}>Cancel</button>
-          <button type="submit" style={primaryBtn}>Save policy</button>
+          <button
+            type="submit"
+            disabled={!canSave}
+            aria-disabled={!canSave}
+            style={{
+              ...primaryBtn,
+              opacity: canSave ? 1 : 0.45,
+              cursor: canSave ? "pointer" : "not-allowed"
+            }}
+          >
+            Save policy
+          </button>
         </div>
       </form>
     </div>
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
     <label style={{ display: "flex", flexDirection: "column", gap: 5 }}>
       <span className="mono" style={{ fontSize: 11, letterSpacing: "0.06em", color: "var(--fg-5)" }}>
         {label.toUpperCase()}
       </span>
       {children}
+      {hint && <span style={{ fontSize: 11, color: "var(--fg-5)" }}>{hint}</span>}
     </label>
   );
 }

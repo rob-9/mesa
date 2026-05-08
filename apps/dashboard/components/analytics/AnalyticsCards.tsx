@@ -60,7 +60,16 @@ function ThroughputCard({ series }: { series: number[] }) {
         </span>
         <span style={{ fontSize: 12, color: "var(--fg-5)" }}>resolved · last 14d</span>
       </div>
-      <svg viewBox={`0 0 ${w} ${h}`} width="100%" height={h} preserveAspectRatio="none" style={{ display: "block" }}>
+      <svg
+        viewBox={`0 0 ${w} ${h}`}
+        width="100%"
+        height={h}
+        preserveAspectRatio="none"
+        role="img"
+        aria-label={`Throughput trend: ${total} resolved over the last 14 days, peak ${max} per day`}
+        style={{ display: "block" }}
+      >
+        <title>{`Throughput · ${total} resolved over 14 days`}</title>
         <polyline
           points={points}
           fill="none"
@@ -92,7 +101,16 @@ function AutoResolveCard({ rate, trend }: { rate: string; trend: number[] }) {
         </span>
         <span style={{ fontSize: 12, color: "var(--fg-5)" }}>14-day rolling</span>
       </div>
-      <svg viewBox={`0 0 ${w} ${h}`} width="100%" height={h} preserveAspectRatio="none" style={{ display: "block" }}>
+      <svg
+        viewBox={`0 0 ${w} ${h}`}
+        width="100%"
+        height={h}
+        preserveAspectRatio="none"
+        role="img"
+        aria-label={`Auto-resolution rate trend, currently ${rate}, 14-day rolling`}
+        style={{ display: "block" }}
+      >
+        <title>{`Auto-resolution rate · ${rate}`}</title>
         <polyline
           points={points}
           fill="none"
@@ -110,11 +128,16 @@ function TtrCard({ buckets }: { buckets: { label: string; count: number }[] }) {
   const max = Math.max(...buckets.map((b) => b.count), 1);
   return (
     <Card title="Time to resolution" subtitle="Distribution across closed deliberations">
-      <div style={{ display: "flex", alignItems: "flex-end", gap: 10, height: 100 }}>
+      <div role="list" aria-label="Time to resolution distribution" style={{ display: "flex", alignItems: "flex-end", gap: 10, height: 100 }}>
         {buckets.map((b) => {
           const pct = (b.count / max) * 100;
           return (
-            <div key={b.label} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, minWidth: 0 }}>
+            <div
+              key={b.label}
+              role="listitem"
+              aria-label={`${b.label}: ${b.count}`}
+              style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, minWidth: 0 }}
+            >
               <div style={{ flex: 1, display: "flex", alignItems: "flex-end", width: "100%" }}>
                 <div
                   style={{

@@ -55,6 +55,8 @@ export function AuditTable({ events }: { events: AuditEvent[] }) {
   return (
     <>
       <div
+        role="search"
+        aria-label="Filter audit events"
         style={{
           display: "flex",
           alignItems: "center",
@@ -64,13 +66,19 @@ export function AuditTable({ events }: { events: AuditEvent[] }) {
         }}
       >
         <Icon name="filter" size={12} />
-        <select value={kindFilter} onChange={(e) => setKindFilter(e.target.value as AuditEventKind | "all")} style={selectStyle}>
+        <select
+          aria-label="Filter by event kind"
+          value={kindFilter}
+          onChange={(e) => setKindFilter(e.target.value as AuditEventKind | "all")}
+          style={selectStyle}
+        >
           <option value="all">all kinds</option>
           {(Object.keys(kindLabel) as AuditEventKind[]).map((k) => (
             <option key={k} value={k}>{kindLabel[k]}</option>
           ))}
         </select>
         <input
+          aria-label="Filter by actor"
           value={actorQuery}
           onChange={(e) => setActorQuery(e.target.value)}
           placeholder="filter actor…"
@@ -80,7 +88,7 @@ export function AuditTable({ events }: { events: AuditEvent[] }) {
         <datalist id="audit-actors">
           {actors.map((a) => <option key={a} value={a} />)}
         </datalist>
-        <span style={{ marginLeft: "auto", fontSize: 11, color: "var(--fg-5)" }}>
+        <span aria-live="polite" style={{ marginLeft: "auto", fontSize: 11, color: "var(--fg-5)" }}>
           {filtered.length} of {events.length} events
         </span>
       </div>
@@ -115,11 +123,21 @@ export function AuditTable({ events }: { events: AuditEvent[] }) {
         </div>
         {filtered.map((e, i) => {
           const open = openIds.has(e.id);
+          const detailsId = `audit-detail-${e.id}`;
           return (
             <div key={e.id} style={{ borderBottom: i === filtered.length - 1 ? "none" : "1px solid var(--border-row)" }}>
               <button
                 type="button"
                 onClick={() => toggle(e.id)}
+                aria-expanded={open}
+                aria-controls={detailsId}
+                aria-label={`${open ? "Collapse" : "Expand"} ${kindLabel[e.kind]} event by ${e.actor}`}
+                onMouseEnter={(ev) => {
+                  if (!open) ev.currentTarget.style.background = "var(--surface-1)";
+                }}
+                onMouseLeave={(ev) => {
+                  if (!open) ev.currentTarget.style.background = "transparent";
+                }}
                 style={{
                   appearance: "none",
                   width: "100%",
@@ -128,7 +146,8 @@ export function AuditTable({ events }: { events: AuditEvent[] }) {
                   padding: "12px 20px",
                   cursor: "pointer",
                   textAlign: "left",
-                  color: "inherit"
+                  color: "inherit",
+                  transition: "background 100ms"
                 }}
               >
                 <div style={{ display: "grid", gridTemplateColumns: GRID, gap: 14, alignItems: "center", fontSize: 12 }}>
@@ -150,6 +169,9 @@ export function AuditTable({ events }: { events: AuditEvent[] }) {
               </button>
               {open && (
                 <div
+                  id={detailsId}
+                  role="region"
+                  aria-label="Event details"
                   style={{
                     padding: "12px 20px 16px",
                     background: "var(--surface-1)",
@@ -191,8 +213,30 @@ export function AuditTable({ events }: { events: AuditEvent[] }) {
           );
         })}
         {filtered.length === 0 && (
-          <div style={{ padding: "32px 20px", textAlign: "center", color: "var(--fg-5)", fontSize: 12 }}>
-            No events match the current filters.
+          <div
+            role="status"
+            style={{ padding: "32px 20px", textAlign: "center", display: "flex", flexDirection: "column", gap: 8 }}
+          >
+            <div style={{ color: "var(--fg-3)", fontSize: 13 }}>No events match the current filters.</div>
+            {(kindFilter !== "all" || actorQuery) && (
+              <button
+                type="button"
+                onClick={() => {
+                  setKindFilter("all");
+                  setActorQuery("");
+                }}
+                style={{
+                  ...selectStyle,
+                  alignSelf: "center",
+                  cursor: "pointer",
+                  color: "var(--accent)",
+                  background: "transparent",
+                  borderColor: "var(--surface-2)"
+                }}
+              >
+                Clear filters
+              </button>
+            )}
           </div>
         )}
       </div>

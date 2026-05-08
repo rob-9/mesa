@@ -61,7 +61,7 @@ function OrganizationTab({ settings }: { settings: OrgSettings }) {
             <div style={{ fontSize: 13, color: "var(--fg-1)" }}>mesa-logo.svg</div>
             <div style={{ fontSize: 11, color: "var(--fg-5)" }}>2.4 KB · uploaded 2025-06-14</div>
           </div>
-          <button type="button" style={secondaryBtn}>Replace</button>
+          <button type="button" aria-label="Replace logo file" style={secondaryBtn}>Replace</button>
         </div>
       </Section>
     </div>
@@ -198,7 +198,12 @@ function IntegrationsTab({ tiles }: { tiles: IntegrationTile[] }) {
             {t.connected && <Pill tone="accent">connected</Pill>}
           </div>
           <div style={{ fontSize: 12, color: "var(--fg-4)" }}>{t.description}</div>
-          <button type="button" onClick={() => toggle(t.id)} style={t.connected ? secondaryBtn : primaryBtn}>
+          <button
+            type="button"
+            onClick={() => toggle(t.id)}
+            aria-label={`${t.connected ? "Disconnect" : "Connect"} ${t.name}`}
+            style={t.connected ? secondaryBtn : primaryBtn}
+          >
             {t.connected ? "Disconnect" : "Connect"}
           </button>
         </div>
