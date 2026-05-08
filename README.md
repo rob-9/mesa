@@ -66,6 +66,10 @@ alembic upgrade head
 uvicorn server.main:app --reload
 ```
 
+## sdk
+
+python client at `sdk/python/` covers `/health`, `/principals`, ed25519 keypair, and signed event envelopes. see [`sdk/python/README.md`](sdk/python/README.md) for a quickstart.
+
 ## status
 
 mvp in progress. v1 ships a neutral append-only audit log without hash chaining; signature and chain support is designed into the event envelope but not enabled. see open issues for the roadmap.
