@@ -696,7 +696,429 @@ const pricingAgent: AgentDetail = {
   ]
 };
 
-const seed: AgentDetail[] = [labBuyer, legalBot, policyAgent, dataCatalogAgent, pricingAgent];
+const redteamAgent: AgentDetail = {
+  id: "ag-6",
+  name: "redteam-agent",
+  role: "adversarial review",
+  state: "negotiating",
+  deliberationId: "image-corpus-rev-share",
+  deliberationTitle: "image corpus rev-share",
+  lastActivity: ago(7),
+  config: {
+    model: "claude-opus-4-7",
+    persona:
+      "Stress-tests proposed terms by exploring failure modes and adversarial counterparty behaviors. Surfaces weaknesses in scope, audit, and termination clauses.",
+    capabilities: ["counter", "amendment", "scope_clause"],
+    owner: "rj@mesa.dev",
+    deployedAt: "2026-04-01T00:00:00Z"
+  },
+  connections: [
+    {
+      id: "c-1",
+      name: "incident-archive",
+      kind: "data_source",
+      description: "pulls past disputes and termination cases for similar deals",
+      status: "connected",
+      scope: "read: incidents"
+    },
+    {
+      id: "c-2",
+      name: "Slack",
+      kind: "messaging",
+      description: "posts adversarial findings to #deal-redteam",
+      status: "connected"
+    },
+    {
+      id: "c-3",
+      name: "Okta",
+      kind: "identity",
+      description: "authenticates as principal redteam.agent@mesa.dev",
+      status: "connected"
+    }
+  ],
+  policies: [
+    {
+      id: "p-1",
+      label: "Review trigger",
+      value: "deals > $100k",
+      rationale: "smaller deals skip adversarial review for throughput"
+    },
+    {
+      id: "p-2",
+      label: "Block authority",
+      value: "advisory only",
+      rationale: "raises concerns; cannot block on its own"
+    }
+  ],
+  activity: [
+    {
+      id: "a-1",
+      commitmentType: "amendment",
+      summary: "Flagged: counterparty audit clause lacks notice window — proposed 14-day notice.",
+      deliberationId: "image-corpus-rev-share",
+      deliberationTitle: "image corpus rev-share",
+      counterparty: "zenith",
+      timestamp: ago(7)
+    },
+    {
+      id: "a-2",
+      commitmentType: "scope_clause",
+      summary: "Tightened scope: excluded user-uploaded content not under counterparty's licensing rights.",
+      deliberationId: "training-data-q4",
+      deliberationTitle: "training-data Q4 license",
+      counterparty: "publisher-co",
+      timestamp: ago(180)
+    }
+  ],
+  reasoning: [
+    {
+      activityId: "a-1",
+      contextPulled: [
+        "incident-archive: 3 prior deals had surprise audits with <48h notice",
+        "zenith counter: audit clause silent on notice window"
+      ],
+      ruleApplied: "any audit clause without explicit notice triggers an amendment proposal",
+      decision: "Proposed 14-day notice to align with industry norm and prevent operational surprise."
+    },
+    {
+      activityId: "a-2",
+      contextPulled: [
+        "incident-archive: 2 publishers later asserted that user-uploaded content was out of scope",
+        "lab-buyer-agent's draft scope read 'all archive content'"
+      ],
+      ruleApplied: "exclude content classes where counterparty rights are ambiguous",
+      decision:
+        "Made the carve-out explicit before signing to prevent post-signoff scope disputes."
+    }
+  ]
+};
+
+const opsRunner: AgentDetail = {
+  id: "ag-7",
+  name: "ops-runner",
+  role: "post-signoff workflow",
+  state: "blocked",
+  deliberationId: "medical-journals-license",
+  deliberationTitle: "medical journals license",
+  lastActivity: ago(38),
+  config: {
+    model: "claude-haiku-4-5-20251001",
+    persona:
+      "Operationalizes signed deals: coordinates kickoff, schedules audits, files renewals. Hands off to billing-agent and compliance-agent on signoff.",
+    capabilities: ["approval", "signoff"],
+    owner: "ops@mesa.dev",
+    deployedAt: "2026-03-08T00:00:00Z"
+  },
+  connections: [
+    {
+      id: "c-1",
+      name: "DocuSign",
+      kind: "tool",
+      description: "archives signed agreements (currently disconnected)",
+      status: "disconnected"
+    },
+    {
+      id: "c-2",
+      name: "Salesforce CRM",
+      kind: "tool",
+      description: "creates post-signoff opportunity records",
+      status: "connected",
+      scope: "write: Opportunity, Contract"
+    },
+    {
+      id: "c-3",
+      name: "Okta",
+      kind: "identity",
+      description: "authenticates as principal ops.runner@mesa.dev",
+      status: "connected"
+    }
+  ],
+  policies: [
+    {
+      id: "p-1",
+      label: "Handoff SLA",
+      value: "4 hours after signoff",
+      rationale: "ensures billing + compliance get spun up promptly"
+    },
+    {
+      id: "p-2",
+      label: "Renewal lookahead",
+      value: "60 days",
+      rationale: "starts renewal workstream 60d before expiry"
+    }
+  ],
+  activity: [
+    {
+      id: "a-1",
+      commitmentType: "approval",
+      summary: "Awaiting DocuSign reconnection before archiving signed med-journals agreement.",
+      deliberationId: "medical-journals-license",
+      deliberationTitle: "medical journals license",
+      counterparty: "med-corpus",
+      timestamp: ago(38)
+    }
+  ],
+  reasoning: [
+    {
+      activityId: "a-1",
+      contextPulled: [
+        "DocuSign integration status: disconnected (token expired)",
+        "Handoff SLA: 4 hours; current age: 38m"
+      ],
+      ruleApplied: "halt archival workstream when destination integration is disconnected",
+      decision:
+        "Blocked pending integration reconnect. Will retry automatically once DocuSign is healthy."
+    }
+  ]
+};
+
+const billingAgent: AgentDetail = {
+  id: "ag-8",
+  name: "billing-agent",
+  role: "ach + invoicing",
+  state: "negotiating",
+  deliberationId: "training-data-q4",
+  deliberationTitle: "training-data Q4 license",
+  lastActivity: ago(45),
+  config: {
+    model: "claude-haiku-4-5-20251001",
+    persona:
+      "Sets up payment terms, invoicing cadence, and ACH metadata at signoff. Negotiates net-terms within finance policy.",
+    capabilities: ["offer", "counter", "amendment"],
+    owner: "finance@mesa.dev",
+    deployedAt: "2026-03-22T00:00:00Z"
+  },
+  connections: [
+    {
+      id: "c-1",
+      name: "stripe-billing",
+      kind: "tool",
+      description: "creates invoices and ACH mandates",
+      status: "connected",
+      scope: "write: invoices"
+    },
+    {
+      id: "c-2",
+      name: "netsuite",
+      kind: "data_source",
+      description: "reads finance approval thresholds",
+      status: "connected",
+      scope: "read: AP policy"
+    },
+    {
+      id: "c-3",
+      name: "Okta",
+      kind: "identity",
+      description: "authenticates as principal billing.agent@mesa.dev",
+      status: "connected"
+    }
+  ],
+  policies: [
+    {
+      id: "p-1",
+      label: "Default terms",
+      value: "Net 30",
+      rationale: "anything looser requires finance signoff"
+    },
+    {
+      id: "p-2",
+      label: "Currency",
+      value: "USD only",
+      rationale: "cross-currency requires legal + finance review"
+    }
+  ],
+  activity: [
+    {
+      id: "a-1",
+      commitmentType: "offer",
+      summary: "Proposed monthly billing in arrears, Net 30, ACH preferred.",
+      deliberationId: "training-data-q4",
+      deliberationTitle: "training-data Q4 license",
+      counterparty: "publisher-co",
+      timestamp: ago(45)
+    }
+  ],
+  reasoning: [
+    {
+      activityId: "a-1",
+      contextPulled: [
+        "netsuite: AP policy default Net 30",
+        "publisher-co prior contracts: ACH preferred over wire"
+      ],
+      ruleApplied: "anchor billing cadence to finance defaults; only deviate on counterparty pushback",
+      decision: "Proposed standard terms; will counter if counterparty pushes for Net 60 or wire."
+    }
+  ]
+};
+
+const complianceAgent: AgentDetail = {
+  id: "ag-9",
+  name: "compliance-agent",
+  role: "SLA timers",
+  state: "idle",
+  lastActivity: ago(420),
+  config: {
+    model: "claude-haiku-4-5-20251001",
+    persona:
+      "Tracks post-signoff SLAs (purge, audit, renewal) and pages on breach. Maintains the chain of evidence for compliance attestations.",
+    capabilities: ["approval"],
+    owner: "compliance@mesa.dev",
+    deployedAt: "2026-02-28T00:00:00Z"
+  },
+  connections: [
+    {
+      id: "c-1",
+      name: "audit-log-archive",
+      kind: "data_source",
+      description: "writes timer events into the immutable audit chain",
+      status: "connected",
+      scope: "write: audit events"
+    },
+    {
+      id: "c-2",
+      name: "PagerDuty",
+      kind: "messaging",
+      description: "pages on-call when SLA timers breach",
+      status: "connected"
+    },
+    {
+      id: "c-3",
+      name: "Okta",
+      kind: "identity",
+      description: "authenticates as principal compliance.agent@mesa.dev",
+      status: "connected"
+    }
+  ],
+  policies: [
+    {
+      id: "p-1",
+      label: "Page threshold",
+      value: "75% of SLA elapsed",
+      rationale: "early warning before breach"
+    },
+    {
+      id: "p-2",
+      label: "Evidence retention",
+      value: "7 years",
+      rationale: "matches our SOC2 + GDPR retention floor"
+    }
+  ],
+  activity: [
+    {
+      id: "a-1",
+      commitmentType: "approval",
+      summary: "Logged: 14-day removal SLA armed for training-data Q4 (publisher-co).",
+      deliberationId: "training-data-q4",
+      deliberationTitle: "training-data Q4 license",
+      counterparty: "publisher-co",
+      timestamp: ago(420)
+    }
+  ],
+  reasoning: [
+    {
+      activityId: "a-1",
+      contextPulled: [
+        "training-data-q4 signed at T-7h",
+        "removal SLA negotiated: 14 days on legal removal, 30 days on retraction"
+      ],
+      ruleApplied: "arm timer with the shortest applicable SLA; page at 75% elapsed",
+      decision:
+        "Armed 14-day timer; page if no removal-handling event by day 10.5."
+    }
+  ]
+};
+
+const intakeAgent: AgentDetail = {
+  id: "ag-10",
+  name: "intake-agent",
+  role: "rfp triage",
+  state: "idle",
+  lastActivity: ago(60 * 9),
+  config: {
+    model: "claude-haiku-4-5-20251001",
+    persona:
+      "Triages incoming RFP messages from counterparties. Classifies intent, routes to the right deliberation agent, and fills boilerplate fields from prior deals.",
+    capabilities: ["participant_joined", "offer"],
+    owner: "rj@mesa.dev",
+    deployedAt: "2026-04-20T00:00:00Z"
+  },
+  connections: [
+    {
+      id: "c-1",
+      name: "Gmail",
+      kind: "messaging",
+      description: "reads incoming RFPs from licensing@mesa.dev",
+      status: "connected",
+      scope: "read: inbox"
+    },
+    {
+      id: "c-2",
+      name: "company-knowledge-graph",
+      kind: "data_source",
+      description: "matches counterparties against existing relationships",
+      status: "connected",
+      scope: "read: counterparties"
+    },
+    {
+      id: "c-3",
+      name: "Okta",
+      kind: "identity",
+      description: "authenticates as principal intake.agent@mesa.dev",
+      status: "connected"
+    }
+  ],
+  policies: [
+    {
+      id: "p-1",
+      label: "Routing rules",
+      value: "by counterparty tier",
+      rationale: "verified counterparties skip human review; watchlist always escalates"
+    },
+    {
+      id: "p-2",
+      label: "Auto-reply",
+      value: "acknowledge within 4h",
+      rationale: "sets expectations even when triage is queued"
+    }
+  ],
+  activity: [
+    {
+      id: "a-1",
+      commitmentType: "participant_joined",
+      summary: "Routed octostack RFP to lab-buyer-agent; matched to existing counterparty record.",
+      deliberationId: "code-corpus-license",
+      deliberationTitle: "code corpus license",
+      counterparty: "octostack",
+      timestamp: ago(60 * 9)
+    }
+  ],
+  reasoning: [
+    {
+      activityId: "a-1",
+      contextPulled: [
+        "Gmail: inbound RFP from lex@octostack.com",
+        "company-knowledge-graph: octostack tagged 'verified' tier",
+        "intent classifier: 'license inquiry — code corpus'"
+      ],
+      ruleApplied: "verified-tier inquiries route directly to the matched deliberation agent",
+      decision:
+        "Routed to lab-buyer-agent with octostack's prior deal as context. No human review needed at this stage."
+    }
+  ]
+};
+
+const seed: AgentDetail[] = [
+  labBuyer,
+  legalBot,
+  policyAgent,
+  dataCatalogAgent,
+  pricingAgent,
+  redteamAgent,
+  opsRunner,
+  billingAgent,
+  complianceAgent,
+  intakeAgent
+];
 setSeed(seed);
 
 // Returns the original seeded agents (templates), unaffected by anything deployed at runtime.
