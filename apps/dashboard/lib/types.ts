@@ -86,11 +86,24 @@ export interface HitlGate {
   commitmentRef?: string;     // optional commitment id to cross-link
 }
 
+// What the originating deliberation agent (e.g. lab-buyer-agent) hands off
+// once the deal is locked in. Two flavors: agent2agent fan-out for the ops
+// work (compliance-agent owns the SLA timers, billing-agent owns the ACH),
+// and a human_signoff for the principal who has to actually sign the deal.
+export interface PostSignoffTask {
+  id: string;
+  kind: "agent2agent" | "human_signoff";
+  agent?: string;             // when kind=agent2agent, the receiving agent id/name
+  deliverable: string;        // one-line description of what's being handed off
+  derivedFromCommitment: string; // commitment id this handoff operationalizes
+}
+
 export interface DeliberationDetail {
   deliberation: Deliberation;
   turns: Turn[];
   commitments: Commitment[];
   hitlGate?: HitlGate;
+  postSignoffTasks?: PostSignoffTask[];
 }
 
 // ─── Overview screen ───────────────────────────────────────────────────────

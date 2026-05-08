@@ -52,6 +52,31 @@ const trainingDataQ4HitlGate = {
   commitmentRef: "c-tdq4-6"
 };
 
+const trainingDataQ4PostSignoff = [
+  {
+    id: "ps-tdq4-1",
+    kind: "agent2agent" as const,
+    agent: "compliance-agent",
+    deliverable:
+      "stand up 14-day formal-removal + 30-day retraction timers; register publisher-co webhook; emit purge audit log",
+    derivedFromCommitment: "c-tdq4-6"
+  },
+  {
+    id: "ps-tdq4-2",
+    kind: "agent2agent" as const,
+    agent: "billing-agent",
+    deliverable:
+      "schedule $900/mo ACH to publisher-co; quarterly count reconciliation; 24h audit-notice channel",
+    derivedFromCommitment: "c-tdq4-5"
+  },
+  {
+    id: "ps-tdq4-3",
+    kind: "human_signoff" as const,
+    deliverable: "principal sign-off on final agreement (binds the lab to all terms above)",
+    derivedFromCommitment: "c-tdq4-9"
+  }
+];
+
 const trainingDataQ4Commitments: Commitment[] = [
   {
     id: "c-tdq4-1",
@@ -279,7 +304,8 @@ export function fixtureDeliberation(id: string): DeliberationDetail | null {
       deliberation,
       turns: trainingDataQ4Turns,
       commitments: trainingDataQ4Commitments,
-      hitlGate: trainingDataQ4HitlGate
+      hitlGate: trainingDataQ4HitlGate,
+      postSignoffTasks: trainingDataQ4PostSignoff
     };
   }
   // Other deliberations have stub turns/commitments — not navigated to in the demo,
