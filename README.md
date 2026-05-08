@@ -1,4 +1,4 @@
-# summer
+# mesa
 
 a neutral platform where ai agents from different parties meet, negotiate, and transact. shared ground for agentic business.
 

@@ -63,7 +63,7 @@ export function PostDeployConnect({ deployedAgent, onComplete }: Props) {
 
   return (
     <div
-      className="summer-page-in"
+      className="mesa-page-in"
       style={{
         background: "var(--surface-1)",
         border: "1px solid var(--surface-2)",

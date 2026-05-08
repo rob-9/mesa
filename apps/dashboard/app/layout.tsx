@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "summer · dashboard",
+  title: "mesa · dashboard",
   description: "Cross-org agent deliberation"
 };
 

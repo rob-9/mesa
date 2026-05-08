@@ -30,7 +30,7 @@ const initial: WizardState = {
   role: "",
   model: "claude-opus-4-7",
   persona: "",
-  owner: "rj@summer.dev",
+  owner: "rj@mesa.dev",
   capabilities: [],
   connections: [],
   policies: []

@@ -20,7 +20,7 @@ export function CommitmentCard({ commitment, selected, onSelect, animateIn = fal
     el.style.animation = "none";
     // Force reflow so the animation re-fires.
     void el.offsetHeight;
-    el.style.animation = "summer-pulse 200ms ease-out";
+    el.style.animation = "mesa-pulse 200ms ease-out";
   }, [selected]);
 
   const isPending = commitment.status === "pending";

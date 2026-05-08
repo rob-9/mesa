@@ -119,7 +119,7 @@ export function Select({ value, onChange, options, placeholder, mono = false, wi
             zIndex: 20,
             maxHeight: 220,
             overflowY: "auto",
-            animation: "summer-popover-in 140ms ease-out"
+            animation: "mesa-popover-in 140ms ease-out"
           }}
         >
           {options.map((opt) => {

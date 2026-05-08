@@ -155,11 +155,11 @@ export function CommitmentGraph({ commitments, selectedId, onSelect }: Commitmen
                 e.selected
                   ? {
                       strokeDasharray: "6 4",
-                      animation: "summer-graph-edge-flow 1.1s linear infinite"
+                      animation: "mesa-graph-edge-flow 1.1s linear infinite"
                     }
                   : {
                       strokeDasharray: `${len} ${len}`,
-                      animation: `summer-graph-edge-in 420ms ease-out ${300 + i * 25}ms backwards`,
+                      animation: `mesa-graph-edge-in 420ms ease-out ${300 + i * 25}ms backwards`,
                       // CSS var consumed by the keyframe so each path computes its own offset.
                       ["--len" as unknown as string]: String(len)
                     }
@@ -191,7 +191,7 @@ export function CommitmentGraph({ commitments, selectedId, onSelect }: Commitmen
                 cursor: "pointer",
                 opacity: dimmed ? 0.45 : 1,
                 transition: "opacity 180ms ease",
-                animation: `summer-graph-node-in 260ms ease-out ${n.layer * 60 + n.indexInLayer * 30}ms backwards`
+                animation: `mesa-graph-node-in 260ms ease-out ${n.layer * 60 + n.indexInLayer * 30}ms backwards`
               }}
               onClick={() => onSelect(c.id)}
             >

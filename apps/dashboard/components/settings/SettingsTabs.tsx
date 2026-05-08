@@ -58,7 +58,7 @@ function OrganizationTab({ settings }: { settings: OrgSettings }) {
             }}
           />
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 13, color: "var(--fg-1)" }}>summer-logo.svg</div>
+            <div style={{ fontSize: 13, color: "var(--fg-1)" }}>mesa-logo.svg</div>
             <div style={{ fontSize: 11, color: "var(--fg-5)" }}>2.4 KB · uploaded 2025-06-14</div>
           </div>
           <button type="button" style={secondaryBtn}>Replace</button>
@@ -78,7 +78,7 @@ function IdentityTab({ principals }: { principals: OrgPrincipal[] }) {
         id,
         name: "New principal",
         role: "—",
-        email: "user@summer.dev",
+        email: "user@mesa.dev",
         keyFingerprint: `ed25519:new${id.slice(-4)}…0000`,
         addedAt: new Date().toISOString()
       }

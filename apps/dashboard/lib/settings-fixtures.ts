@@ -1,15 +1,15 @@
 import type { OrgSettings } from "./types";
 
 const settings: OrgSettings = {
-  name: "Summer Labs",
-  slug: "summer-labs",
+  name: "Mesa Labs",
+  slug: "mesa-labs",
   defaultPack: "core",
   principals: [
     {
       id: "p-rj",
       name: "Robert Ji",
       role: "Ops",
-      email: "rj@summer.dev",
+      email: "rj@mesa.dev",
       keyFingerprint: "ed25519:lab1…aa00",
       addedAt: "2025-06-14T10:00:00Z"
     },
@@ -17,7 +17,7 @@ const settings: OrgSettings = {
       id: "p-mz",
       name: "M. Zhao",
       role: "Legal",
-      email: "mz@summer.dev",
+      email: "mz@mesa.dev",
       keyFingerprint: "ed25519:7fa1…b3c4",
       addedAt: "2026-05-04T11:45:00Z"
     },
@@ -25,7 +25,7 @@ const settings: OrgSettings = {
       id: "p-jr",
       name: "J. Reyes",
       role: "Commercial",
-      email: "jr@summer.dev",
+      email: "jr@mesa.dev",
       keyFingerprint: "ed25519:5b8c…ee31",
       addedAt: "2025-09-02T16:20:00Z"
     }

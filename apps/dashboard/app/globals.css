@@ -122,9 +122,9 @@ main {
 /* Page-mount fade. Each route's <main> remounts on navigation, so this
    replays — kills the "snap" between pages without being showy. */
 main {
-  animation: summer-page-in 220ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation: mesa-page-in 220ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
-@keyframes summer-page-in {
+@keyframes mesa-page-in {
   from { opacity: 0; transform: translateY(4px); }
   to   { opacity: 1; transform: translateY(0); }
 }
@@ -197,14 +197,14 @@ button {
   font-feature-settings: "tnum";
 }
 
-@keyframes summer-pulse {
+@keyframes mesa-pulse {
   0%   { transform: scale(1); }
   50%  { transform: scale(1.015); }
   100% { transform: scale(1); }
 }
 
 /* Popover surface (Select dropdown, future menus). */
-@keyframes summer-popover-in {
+@keyframes mesa-popover-in {
   from { opacity: 0; transform: translateY(-4px); }
   to   { opacity: 1; transform: translateY(0); }
 }
@@ -218,17 +218,17 @@ button {
 }
 
 /* Commitment-graph animations. */
-@keyframes summer-graph-node-in {
+@keyframes mesa-graph-node-in {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes summer-graph-edge-in {
+@keyframes mesa-graph-edge-in {
   from { stroke-dashoffset: var(--len, 200); opacity: 0; }
   to   { stroke-dashoffset: 0; opacity: 1; }
 }
 
-@keyframes summer-graph-edge-flow {
+@keyframes mesa-graph-edge-flow {
   from { stroke-dashoffset: 0; }
   to   { stroke-dashoffset: -20; }
 }
@@ -236,18 +236,18 @@ button {
 /* Live-mode entrance animations: each new turn / commitment fades up as it
    mounts. These run once on mount (CSS animations don't replay on re-render
    when the property string doesn't change), so already-visible items stay put. */
-@keyframes summer-fade-up {
+@keyframes mesa-fade-up {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 .transcript-turn-in {
-  animation: summer-fade-up 320ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation: mesa-fade-up 320ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 .commitment-card-in {
-  animation: summer-fade-up 360ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation: mesa-fade-up 360ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 .typing-indicator-in {
-  animation: summer-fade-up 200ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation: mesa-fade-up 200ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
 /* HITL banner entrance — clean fade-down, no zoom. Used for both the
@@ -279,12 +279,12 @@ button {
 
 /* Audit-style line in the transcript flow (HITL approvals, system events).
    Centered, monospace, hairlines on either side. */
-@keyframes summer-audit-in {
+@keyframes mesa-audit-in {
   from { opacity: 0; transform: translateY(4px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 .transcript-audit-in {
-  animation: summer-audit-in 320ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation: mesa-audit-in 320ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
 /* Post-signoff strip: container fades up once, rows stagger in behind it. */
@@ -310,18 +310,18 @@ button {
   border-radius: 50%;
   background: var(--fg-4);
   display: inline-block;
-  animation: summer-typing-dot 1.05s infinite ease-in-out both;
+  animation: mesa-typing-dot 1.05s infinite ease-in-out both;
 }
-@keyframes summer-typing-dot {
+@keyframes mesa-typing-dot {
   0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
   40%           { opacity: 1;   transform: translateY(-3px); }
 }
 
 /* Live indicator dot in the TRANSCRIPT · LIVE header — soft breathing pulse. */
 .live-pulse-dot {
-  animation: summer-live-pulse 1.6s ease-in-out infinite;
+  animation: mesa-live-pulse 1.6s ease-in-out infinite;
 }
-@keyframes summer-live-pulse {
+@keyframes mesa-live-pulse {
   0%, 100% { box-shadow: 0 0 0 3px rgba(120, 200, 140, 0.22); }
   50%      { box-shadow: 0 0 0 6px rgba(120, 200, 140, 0.10); }
 }

@@ -195,7 +195,7 @@ export interface AgentConfig {
   model: string;         // 'claude-opus-4-7', 'gpt-5-pro', ...
   persona: string;       // short system-prompt synopsis
   capabilities: CommitmentType[]; // commitment types this agent is permitted to emit
-  owner: string;         // 'rj@summer.dev'
+  owner: string;         // 'rj@mesa.dev'
   deployedAt: string;    // ISO-8601
 }
 

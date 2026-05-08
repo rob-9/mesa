@@ -19,7 +19,7 @@ const labBuyer: AgentDetail = {
     persona:
       "Procures licensed training data within budget and policy guardrails. Pushes for non-exclusive terms and short renewal windows.",
     capabilities: ["offer", "counter", "scope_clause", "license_terms", "amendment"],
-    owner: "rj@summer.dev",
+    owner: "rj@mesa.dev",
     deployedAt: "2026-04-12T00:00:00Z"
   },
   connections: [
@@ -58,7 +58,7 @@ const labBuyer: AgentDetail = {
       id: "c-5",
       name: "Okta",
       kind: "identity",
-      description: "authenticates as principal lab.buyer@summer.dev",
+      description: "authenticates as principal lab.buyer@mesa.dev",
       status: "connected"
     }
   ],
@@ -166,7 +166,7 @@ const legalBot: AgentDetail = {
     persona:
       "Reviews counterparty paper for missing DPAs, indemnity gaps, and non-standard liability caps. Blocks signoff until clauses pass checklist.",
     capabilities: ["dpa_reference", "approval", "amendment"],
-    owner: "rj@summer.dev",
+    owner: "rj@mesa.dev",
     deployedAt: "2026-03-21T00:00:00Z"
   },
   connections: [
@@ -197,7 +197,7 @@ const legalBot: AgentDetail = {
       id: "c-4",
       name: "Okta",
       kind: "identity",
-      description: "authenticates as principal legal.bot@summer.dev",
+      description: "authenticates as principal legal.bot@mesa.dev",
       status: "connected"
     }
   ],
@@ -324,7 +324,7 @@ const policyAgent: AgentDetail = {
     persona:
       "Evaluates each commitment against the active policy bundle. Hard-rejects deliberations with EU subjects unless DPA v2.1+ is attached.",
     capabilities: ["approval", "amendment"],
-    owner: "rj@summer.dev",
+    owner: "rj@mesa.dev",
     deployedAt: "2026-02-08T00:00:00Z"
   },
   connections: [
@@ -363,7 +363,7 @@ const policyAgent: AgentDetail = {
       id: "c-5",
       name: "Okta",
       kind: "identity",
-      description: "authenticates as principal policy.agent@summer.dev",
+      description: "authenticates as principal policy.agent@mesa.dev",
       status: "connected"
     }
   ],
@@ -464,7 +464,7 @@ const dataCatalogAgent: AgentDetail = {
     persona:
       "Resolves ambiguous dataset references to canonical catalog entries and surfaces lineage when scope clauses are drafted.",
     capabilities: ["scope_clause"],
-    owner: "rj@summer.dev",
+    owner: "rj@mesa.dev",
     deployedAt: "2026-01-30T00:00:00Z"
   },
   connections: [
@@ -495,7 +495,7 @@ const dataCatalogAgent: AgentDetail = {
       id: "c-4",
       name: "Okta",
       kind: "identity",
-      description: "authenticates as principal catalog.agent@summer.dev",
+      description: "authenticates as principal catalog.agent@mesa.dev",
       status: "connected"
     }
   ],
@@ -575,7 +575,7 @@ const pricingAgent: AgentDetail = {
     persona:
       "Quotes rates against internal rate cards and historical comparables. Suggests counters when offers fall outside the comparable band.",
     capabilities: ["offer", "counter"],
-    owner: "rj@summer.dev",
+    owner: "rj@mesa.dev",
     deployedAt: "2026-02-14T00:00:00Z"
   },
   connections: [
@@ -606,7 +606,7 @@ const pricingAgent: AgentDetail = {
       id: "c-4",
       name: "Okta",
       kind: "identity",
-      description: "authenticates as principal pricing.agent@summer.dev",
+      description: "authenticates as principal pricing.agent@mesa.dev",
       status: "connected"
     }
   ],

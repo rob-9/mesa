@@ -115,7 +115,7 @@ export function Sidebar() {
           }}
         />
         <span style={{ fontWeight: 600, fontSize: 13, color: "var(--fg-0)", letterSpacing: "-0.01em" }}>
-          summer
+          mesa
         </span>
         <span style={{ color: "var(--fg-5)", fontSize: 11, marginLeft: "auto" }}>X</span>
       </Link>

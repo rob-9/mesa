@@ -82,7 +82,7 @@ export function StepIdentity({ state, setState }: Props) {
               type="email"
               value={state.owner}
               onChange={(e) => setState((s) => ({ ...s, owner: e.target.value }))}
-              placeholder="rj@summer.dev"
+              placeholder="rj@mesa.dev"
               style={inputStyle}
             />
           </Field>

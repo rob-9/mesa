@@ -43,10 +43,10 @@ const seeds: Seed[] = [
   { ts: "2026-05-05T14:10:00Z", kind: "commitment_signed", actor: "lab-buyer-agent", target: "c-tdq4-3",
     summary: "Scope amendment: translated articles excluded.",
     payload: { commitment_type: "amendment" } },
-  { ts: "2026-05-05T13:00:00Z", kind: "agent_deployed", actor: "rj@summer.dev", target: "policy-agent",
+  { ts: "2026-05-05T13:00:00Z", kind: "agent_deployed", actor: "rj@mesa.dev", target: "policy-agent",
     summary: "Agent policy-agent deployed (v0.4.2).",
     payload: { model: "claude-opus-4-7", version: "0.4.2" } },
-  { ts: "2026-05-04T11:45:00Z", kind: "principal_added", actor: "rj@summer.dev", target: "principal-mz",
+  { ts: "2026-05-04T11:45:00Z", kind: "principal_added", actor: "rj@mesa.dev", target: "principal-mz",
     summary: "Principal M. Zhao (legal) added with key ed25519:7fa1…b3c4.",
     payload: { fingerprint: "ed25519:7fa1…b3c4" } },
   { ts: "2026-05-04T10:02:00Z", kind: "policy_fired", actor: "policy-agent", target: "pol-3",
@@ -58,7 +58,7 @@ const seeds: Seed[] = [
   { ts: "2026-05-02T09:14:00Z", kind: "transcript_turn", actor: "med-corpus/agent-003", target: "medical-journals-license#turn-44",
     summary: "med-corpus: Counter on §3 pricing impact incoming.",
     payload: { length: 38 } },
-  { ts: "2026-05-01T22:11:00Z", kind: "agent_deployed", actor: "rj@summer.dev", target: "legal-bot",
+  { ts: "2026-05-01T22:11:00Z", kind: "agent_deployed", actor: "rj@mesa.dev", target: "legal-bot",
     summary: "Agent legal-bot redeployed with updated guardrails (v1.1.0).",
     payload: { model: "claude-opus-4-7", version: "1.1.0" } }
 ];
