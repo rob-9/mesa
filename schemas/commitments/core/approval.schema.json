@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://summer.dev/schemas/commitments/core/approval.schema.json",
+  "$id": "https://mesa.dev/schemas/commitments/core/approval.schema.json",
   "title": "Approval",
   "description": "Records a party approving a commitment. Multi-party deliberations may require approvals from several principals before signoff.",
   "type": "object",

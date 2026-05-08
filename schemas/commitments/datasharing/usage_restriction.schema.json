@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://summer.dev/schemas/commitments/datasharing/usage_restriction.schema.json",
+  "$id": "https://mesa.dev/schemas/commitments/datasharing/usage_restriction.schema.json",
   "title": "Usage Restriction",
   "description": "Limits on how the licensee may use the licensed data.",
   "type": "object",

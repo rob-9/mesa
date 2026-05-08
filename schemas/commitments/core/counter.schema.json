@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://summer.dev/schemas/commitments/core/counter.schema.json",
+  "$id": "https://mesa.dev/schemas/commitments/core/counter.schema.json",
   "title": "Counter",
   "description": "A counter-proposal that supersedes a prior offer or counter.",
   "type": "object",

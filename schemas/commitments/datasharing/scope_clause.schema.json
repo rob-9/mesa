@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://summer.dev/schemas/commitments/datasharing/scope_clause.schema.json",
+  "$id": "https://mesa.dev/schemas/commitments/datasharing/scope_clause.schema.json",
   "title": "Scope Clause",
   "description": "Defines which records are in scope for the license, including jurisdictional and content filters.",
   "type": "object",

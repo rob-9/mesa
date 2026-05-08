@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://summer.dev/schemas/commitments/core/offer.schema.json",
+  "$id": "https://mesa.dev/schemas/commitments/core/offer.schema.json",
   "title": "Offer",
   "description": "A proposal of terms by one party.",
   "type": "object",

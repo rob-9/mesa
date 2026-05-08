@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://summer.dev/schemas/commitments/core/amendment.schema.json",
+  "$id": "https://mesa.dev/schemas/commitments/core/amendment.schema.json",
   "title": "Amendment",
   "description": "Modifies a previously approved commitment without replacing it wholesale.",
   "type": "object",

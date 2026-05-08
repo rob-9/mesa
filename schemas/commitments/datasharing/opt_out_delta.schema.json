@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://summer.dev/schemas/commitments/datasharing/opt_out_delta.schema.json",
+  "$id": "https://mesa.dev/schemas/commitments/datasharing/opt_out_delta.schema.json",
   "title": "Opt-Out Delta",
   "description": "Records a change in the count of users who have opted out, which may trigger amendment of an existing scope clause.",
   "type": "object",

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://summer.dev/schemas/commitments/core/participant_joined.schema.json",
+  "$id": "https://mesa.dev/schemas/commitments/core/participant_joined.schema.json",
   "title": "Participant Joined",
   "description": "Records a principal entering the deliberation with a declared role.",
   "type": "object",

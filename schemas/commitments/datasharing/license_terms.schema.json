@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://summer.dev/schemas/commitments/datasharing/license_terms.schema.json",
+  "$id": "https://mesa.dev/schemas/commitments/datasharing/license_terms.schema.json",
   "title": "License Terms",
   "description": "Top-level commercial terms for a data licensing deal between a publisher and a lab.",
   "type": "object",

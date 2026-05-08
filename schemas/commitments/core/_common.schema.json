@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://summer.dev/schemas/commitments/core/_common.schema.json",
+  "$id": "https://mesa.dev/schemas/commitments/core/_common.schema.json",
   "title": "Shared commitment sub-schemas",
   "$defs": {
     "principal_id": {

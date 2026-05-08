@@ -22,7 +22,7 @@ field: `offer.schema.json` defines the body for `type: "offer"`.
 Each schema:
 - uses JSON Schema draft 2020-12
 - has a `$id` of the form
-  `https://summer.dev/schemas/commitments/<pack>/<name>.schema.json`
+  `https://mesa.dev/schemas/commitments/<pack>/<name>.schema.json`
 - defines only the `body` shape; envelope fields (`id`, `actor`,
   `timestamp`, `derived_from`, `type`) live in `_common.schema.json` and
   are enforced by the server, not by per-type schemas

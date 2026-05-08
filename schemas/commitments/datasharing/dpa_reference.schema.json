@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://summer.dev/schemas/commitments/datasharing/dpa_reference.schema.json",
+  "$id": "https://mesa.dev/schemas/commitments/datasharing/dpa_reference.schema.json",
   "title": "DPA Reference",
   "description": "Pointer to the data processing agreement governing this license, including version pin.",
   "type": "object",
