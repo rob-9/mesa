@@ -163,6 +163,294 @@ const trainingDataQ4Commitments: Commitment[] = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Demo deliberation: archive-renewal-2026 (lab ↔ publisher-co)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const archiveRenewal2026Turns: Turn[] = [
+  { id: 1,  speaker: "lab",       content: "Renewing the 2024 archive license. Same scope, term reset to 24 months.", timestamp: "2026-05-05T15:30:00Z" },
+  { id: 2,  speaker: "publisher", content: "Acknowledged. We need CPI indexing applied to the per-article fee.", timestamp: "2026-05-05T15:31:30Z" },
+  { id: 3,  speaker: "lab",       content: "Acceptable in principle. What's the index source?", timestamp: "2026-05-05T15:33:00Z" },
+  { id: 4,  speaker: "publisher", content: "BLS CPI-U, all-items, urban consumers. Annual reset on contract anniversary.", timestamp: "2026-05-05T15:34:30Z" },
+  { id: 5,  speaker: "lab",       content: "Confirmed. CPI-indexed annually, capped at +8% per year?", timestamp: "2026-05-05T15:36:00Z" },
+  { id: 6,  speaker: "publisher", content: "Cap at +6% to mirror our other renewals. Floor at 0% — no negative reset on deflation.", timestamp: "2026-05-05T15:37:30Z" },
+  { id: 7,  speaker: "lab",       content: "Agreed: +6% cap, 0% floor, BLS CPI-U.", timestamp: "2026-05-05T15:39:00Z" },
+  { id: 8,  speaker: "publisher", content: "Volume — last cycle averaged 1.4M articles/quarter with 4% growth. Projecting 1.55M next quarter. Pricing assumes that band.", timestamp: "2026-05-05T15:40:30Z" },
+  { id: 9,  speaker: "lab",       content: "Accepted. Reconciliation to a fixed-fee renegotiation only if delta exceeds ±15%.", timestamp: "2026-05-05T15:42:00Z" },
+  { id: 10, speaker: "publisher", content: "Workable. ±15% trigger, 30-day renegotiation window if breached.", timestamp: "2026-05-05T15:43:30Z" },
+  { id: 11, speaker: "lab",       content: "24-hour audit notice carries over from the original. Confirmed?", timestamp: "2026-05-05T15:45:00Z" },
+  { id: 12, speaker: "publisher", content: "Confirmed. Same scope (count reconciliation, no content access).", timestamp: "2026-05-05T15:46:30Z" },
+  { id: 13, speaker: "lab",       content: "DPA — any updates to the GDPR-compliant template?", timestamp: "2026-05-05T15:48:00Z" },
+  { id: 14, speaker: "publisher", content: "Standard DPA carries over unchanged. Article 28 sub-processor list updated, sent separately.", timestamp: "2026-05-05T15:49:30Z" },
+  { id: 15, speaker: "lab",       content: "Reviewed. No deviations from approved sub-processors. Acknowledged.", timestamp: "2026-05-05T15:51:00Z" },
+  { id: 16, speaker: "publisher", content: "Renewal opt-out — 90-day notice, either party, no penalty.", timestamp: "2026-05-05T15:52:30Z" },
+  { id: 17, speaker: "lab",       content: "Agreed. 90-day notice, no penalty.", timestamp: "2026-05-05T15:54:00Z" },
+  { id: 18, speaker: "publisher", content: "Compiling final renewal terms. Sending to your principal for signature.", timestamp: "2026-05-05T15:55:30Z" },
+  { id: 19, speaker: "lab",       content: "Final received. Routing to principal. Auto-approve renewals policy fired (within $50k threshold). Awaiting human ack.", timestamp: "2026-05-05T16:02:00Z" }
+];
+
+const archiveRenewal2026Commitments: Commitment[] = [
+  { id: "c-arr-1", type: "offer",
+    summary: "Renewal proposal: 2024 archive license, 24-month term reset, scope preserved.",
+    derivedFromTurns: [1], status: "accepted", createdAt: "2026-05-05T15:31:00Z" },
+  { id: "c-arr-2", type: "amendment",
+    summary: "BLS CPI-U indexed pricing with annual reset; +6% cap, 0% floor (no deflation reset).",
+    derivedFromTurns: [2, 3, 4, 5, 6, 7], status: "accepted", createdAt: "2026-05-05T15:39:30Z",
+    references: ["c-arr-1"] },
+  { id: "c-arr-3", type: "license_terms",
+    summary: "Volume band 1.4–1.55M/quarter; ±15% delta triggers a 30-day fixed-fee renegotiation window.",
+    derivedFromTurns: [8, 9, 10], status: "accepted", createdAt: "2026-05-05T15:44:00Z",
+    references: ["c-arr-1", "c-arr-2"] },
+  { id: "c-arr-4", type: "amendment",
+    summary: "Audit rights carry over: 24-hour notice, count reconciliation only (no content access).",
+    derivedFromTurns: [11, 12], status: "accepted", createdAt: "2026-05-05T15:47:00Z",
+    references: ["c-arr-1"] },
+  { id: "c-arr-5", type: "dpa_reference",
+    summary: "Publisher-co GDPR-compliant DPA carries over unchanged; sub-processor list refreshed (no deviations).",
+    derivedFromTurns: [13, 14, 15], status: "accepted", createdAt: "2026-05-05T15:51:30Z" },
+  { id: "c-arr-6", type: "amendment",
+    summary: "Renewal opt-out: 90-day notice either party, no penalty.",
+    derivedFromTurns: [16, 17], status: "accepted", createdAt: "2026-05-05T15:54:30Z",
+    references: ["c-arr-1"] },
+  { id: "c-arr-7", type: "signoff",
+    summary: "Final renewal compiled; auto-approve renewals policy fired; awaiting principal signature.",
+    derivedFromTurns: [18, 19], status: "pending", createdAt: "2026-05-05T16:02:30Z",
+    references: ["c-arr-1", "c-arr-2", "c-arr-3", "c-arr-4", "c-arr-5", "c-arr-6"] }
+];
+
+const archiveRenewal2026PostSignoff = [
+  {
+    id: "ps-arr-1",
+    kind: "agent2agent" as const,
+    agent: "billing-agent",
+    deliverable: "update ACH for CPI-indexed pricing; configure quarterly volume reconciliation with ±15% trigger",
+    derivedFromCommitment: "c-arr-2"
+  },
+  {
+    id: "ps-arr-2",
+    kind: "agent2agent" as const,
+    agent: "compliance-agent",
+    deliverable: "register refreshed Article 28 sub-processor list; update DPA reference URL",
+    derivedFromCommitment: "c-arr-5"
+  },
+  {
+    id: "ps-arr-3",
+    kind: "human_signoff" as const,
+    deliverable: "principal sign-off on the renewal binds the lab to all carried-over and amended terms",
+    derivedFromCommitment: "c-arr-7"
+  }
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Demo deliberation: clinical-imaging-pilot (lab ↔ med-corpus)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const clinicalImagingPilotTurns: Turn[] = [
+  { id: 1,  speaker: "med-corpus", content: "Opening clinical imaging pilot — 50k de-identified DICOM studies over 12 months.", timestamp: "2026-05-05T15:25:00Z" },
+  { id: 2,  speaker: "lab",        content: "Confirmed receipt. De-identification standard?", timestamp: "2026-05-05T15:26:30Z" },
+  { id: 3,  speaker: "med-corpus", content: "HIPAA Safe Harbor (45 CFR 164.514(b)(2)) applied across all 18 identifiers; pixel-data scrubbed of burned-in PHI via OCR pass.", timestamp: "2026-05-05T15:28:00Z" },
+  { id: 4,  speaker: "lab",        content: "Safe Harbor preferred. Audit trail on the de-id process — can you provide certification per study or batch?", timestamp: "2026-05-05T15:29:30Z" },
+  { id: 5,  speaker: "med-corpus", content: "Batch-level certification, 1k-study batches. Per-study attestation available on request for $0.40/cert.", timestamp: "2026-05-05T15:31:00Z" },
+  { id: 6,  speaker: "lab",        content: "Batch-level is sufficient. Skip per-study certs.", timestamp: "2026-05-05T15:32:30Z" },
+  { id: 7,  speaker: "med-corpus", content: "Pricing — $0.12/study flat, billed monthly. Volume tiers: $0.10 above 75k, $0.08 above 100k.", timestamp: "2026-05-05T15:34:00Z" },
+  { id: 8,  speaker: "lab",        content: "Term-lock the $0.12 floor across the 12-month pilot? Tier discounts apply to incremental volume only?", timestamp: "2026-05-05T15:35:30Z" },
+  { id: 9,  speaker: "med-corpus", content: "Confirmed. $0.12 floor preserved for pilot term; tier discounts on incremental studies only.", timestamp: "2026-05-05T15:37:00Z" },
+  { id: 10, speaker: "lab",        content: "HIPAA addendum — we need a BAA referenced before any commitment is signed. Compliance policy gate (pol-8).", timestamp: "2026-05-05T15:38:30Z" },
+  { id: 11, speaker: "med-corpus", content: "Standard BAA template attached. HIPAA-equivalent processing addendum cross-referenced. Ready for review.", timestamp: "2026-05-05T15:40:00Z" },
+  { id: 12, speaker: "lab",        content: "BAA reviewed. One redline: incident notification window — 24 hours, not 72.", timestamp: "2026-05-05T15:41:30Z" },
+  { id: 13, speaker: "med-corpus", content: "24-hour breach notification accepted. Updating BAA §6.2.", timestamp: "2026-05-05T15:43:00Z" },
+  { id: 14, speaker: "lab",        content: "Audit rights — quarterly de-id sampling, 30-day notice?", timestamp: "2026-05-05T15:44:30Z" },
+  { id: 15, speaker: "med-corpus", content: "Quarterly sampling acceptable, 30-day notice. Sample size — capped at 1% of cumulative studies per quarter?", timestamp: "2026-05-05T15:46:00Z" },
+  { id: 16, speaker: "lab",        content: "1% cap accepted.", timestamp: "2026-05-05T15:47:30Z" },
+  { id: 17, speaker: "med-corpus", content: "Renewal — open to converting pilot to multi-year if usage exceeds 80k studies in 9 months.", timestamp: "2026-05-05T15:49:00Z" },
+  { id: 18, speaker: "lab",        content: "Renewal trigger noted. Not committing now, but acknowledged for terms framework.", timestamp: "2026-05-05T15:50:30Z" },
+  { id: 19, speaker: "med-corpus", content: "Compiling final pilot terms. Routing to your compliance review.", timestamp: "2026-05-05T15:52:00Z" },
+  { id: 20, speaker: "lab",        content: "HIPAA addendum policy fired on c-cip-3. Holding for principal acknowledgment per pol-8.", timestamp: "2026-05-05T15:56:00Z" }
+];
+
+const clinicalImagingPilotCommitments: Commitment[] = [
+  { id: "c-cip-1", type: "offer",
+    summary: "12-month pilot for 50k de-identified DICOM studies.",
+    derivedFromTurns: [1, 2], status: "accepted", createdAt: "2026-05-05T15:26:45Z" },
+  { id: "c-cip-2", type: "scope_clause",
+    summary: "De-id via HIPAA Safe Harbor (45 CFR 164.514) with OCR pixel-scrubbing; batch-level certification (1k-study batches).",
+    derivedFromTurns: [3, 4, 5, 6], status: "accepted", createdAt: "2026-05-05T15:33:00Z",
+    references: ["c-cip-1"] },
+  { id: "c-cip-3", type: "dpa_reference",
+    summary: "HIPAA BAA referenced; incident notification redlined to 24 hours (BAA §6.2).",
+    derivedFromTurns: [10, 11, 12, 13], status: "pending", createdAt: "2026-05-05T15:43:30Z",
+    references: ["c-cip-2"] },
+  { id: "c-cip-4", type: "license_terms",
+    summary: "$0.12/study floor for pilot term; tier discounts ($0.10 above 75k, $0.08 above 100k) on incremental volume only.",
+    derivedFromTurns: [7, 8, 9], status: "accepted", createdAt: "2026-05-05T15:37:30Z",
+    references: ["c-cip-1"] },
+  { id: "c-cip-5", type: "amendment",
+    summary: "Audit rights: quarterly de-id sampling capped at 1% of cumulative studies, 30-day notice.",
+    derivedFromTurns: [14, 15, 16], status: "accepted", createdAt: "2026-05-05T15:48:00Z",
+    references: ["c-cip-1"] },
+  { id: "c-cip-6", type: "scope_clause",
+    summary: "Renewal trigger framework: 80k studies in 9 months opens multi-year conversion (no commitment).",
+    derivedFromTurns: [17, 18], status: "accepted", createdAt: "2026-05-05T15:51:00Z",
+    references: ["c-cip-1"] },
+  { id: "c-cip-7", type: "signoff",
+    summary: "Final pilot terms compiled; HIPAA-addendum gate (pol-8) holding for principal acknowledgment.",
+    derivedFromTurns: [19, 20], status: "pending", createdAt: "2026-05-05T15:56:30Z",
+    references: ["c-cip-1", "c-cip-2", "c-cip-3", "c-cip-4", "c-cip-5", "c-cip-6"] }
+];
+
+const clinicalImagingPilotHitlGate = {
+  afterTurn: 10,
+  policyBound: "HIPAA addendum required (pol-8)",
+  prompt: "Med-corpus engagements require an explicit HIPAA addendum reference before commitment signing. Counterparty has attached a BAA template. Authorize the agent to redline and sign in scope, or hold for principal review.",
+  commitmentRef: "c-cip-3"
+};
+
+const clinicalImagingPilotPostSignoff = [
+  {
+    id: "ps-cip-1",
+    kind: "agent2agent" as const,
+    agent: "compliance-agent",
+    deliverable: "register BAA template with 24h breach notification; configure quarterly audit-sampling timer",
+    derivedFromCommitment: "c-cip-3"
+  },
+  {
+    id: "ps-cip-2",
+    kind: "agent2agent" as const,
+    agent: "billing-agent",
+    deliverable: "schedule monthly $0.12/study; tier breakpoints at 75k and 100k cumulative",
+    derivedFromCommitment: "c-cip-4"
+  },
+  {
+    id: "ps-cip-3",
+    kind: "human_signoff" as const,
+    deliverable: "principal acknowledgment on HIPAA addendum (pol-8 compliance gate)",
+    derivedFromCommitment: "c-cip-7"
+  }
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Demo deliberation: video-transcripts (lab ↔ curio-press, FLAGGED)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const videoTranscriptsTurns: Turn[] = [
+  { id: 1,  speaker: "lab",         content: "Licensing video transcripts from your editorial library — 2020+, English, derivative-training scope.", timestamp: "2026-05-05T11:00:00Z" },
+  { id: 2,  speaker: "curio-press", content: "Scope question: rights extend to interviewees, not just curio-press as publisher. Speaker attribution required across all derivative output.", timestamp: "2026-05-05T11:01:30Z" },
+  { id: 3,  speaker: "lab",         content: "Disputed. Standard appearance release covers broadcast and derivative use. Speaker rights exhausted at signing.", timestamp: "2026-05-05T11:03:00Z" },
+  { id: 4,  speaker: "curio-press", content: "Standard release covers broadcast distribution only — derivative training is a separate rights regime under 17 U.S.C. §107 and our standard contracts.", timestamp: "2026-05-05T11:04:30Z" },
+  { id: 5,  speaker: "lab",         content: "§107 fair-use carve-outs exempt non-commercial research and computational analysis. Our use case qualifies.", timestamp: "2026-05-05T11:06:00Z" },
+  { id: 6,  speaker: "curio-press", content: "Position: training of commercial models is not non-commercial research. Outputs are revenue-generating derivative works.", timestamp: "2026-05-05T11:07:30Z" },
+  { id: 7,  speaker: "lab",         content: "We can adopt aggregate-only attribution language on model cards (no per-source naming) — same approach as the publisher-co deal.", timestamp: "2026-05-05T11:09:00Z" },
+  { id: 8,  speaker: "curio-press", content: "Aggregate-only attribution does not address per-interviewee rights. Each interviewee retained derivative rights via §3.2 of standard release.", timestamp: "2026-05-05T11:10:30Z" },
+  { id: 9,  speaker: "lab",         content: "Routing to internal counsel for §3.2 review. Holding deliberation open.", timestamp: "2026-05-05T11:12:00Z" },
+  { id: 10, speaker: "curio-press", content: "Acknowledged. We're routing to counsel as well.", timestamp: "2026-05-05T11:13:30Z" },
+  { id: 11, speaker: "lab",         content: "Counsel review complete. §3.2 reservation interpreted as broadcast-medium specific; derivative use is silent. Lab reading: rights pass on derivative.", timestamp: "2026-05-05T11:15:00Z" },
+  { id: 12, speaker: "curio-press", content: "Counter-reading: silent contract terms construed against drafter (curio-press); ambiguity resolved by intent — derivative rights NOT transferred.", timestamp: "2026-05-05T11:16:30Z" },
+  { id: 13, speaker: "lab",         content: "Stalemate on §3.2. Compromise: per-interviewee opt-out registry, lab honors registry entries with 14-day purge SLA on flagged content.", timestamp: "2026-05-05T11:18:00Z" },
+  { id: 14, speaker: "curio-press", content: "Opt-out registry workable but insufficient. Required: opt-IN per interviewee for derivative use, no implicit consent.", timestamp: "2026-05-05T11:19:30Z" },
+  { id: 15, speaker: "lab",         content: "Opt-in is non-starter — destroys the corpus utility. Registry-based opt-out is our ceiling.", timestamp: "2026-05-05T11:21:00Z" },
+  { id: 16, speaker: "curio-press", content: "Holding. Counsel preparing formal response.", timestamp: "2026-05-05T11:22:30Z" },
+  { id: 17, speaker: "lab",         content: "Pausing all activity on this deliberation. Flagged for legal review per pol-3 (curio-press watchlist).", timestamp: "2026-05-05T11:30:00Z" }
+];
+
+const videoTranscriptsCommitments: Commitment[] = [
+  { id: "c-vid-1", type: "offer",
+    summary: "Licensing curio-press video transcripts (2020+, English) for derivative model training.",
+    derivedFromTurns: [1], status: "accepted", createdAt: "2026-05-05T11:01:00Z" },
+  { id: "c-vid-2", type: "counter",
+    summary: "Curio-press counter: interviewee rights extend to derivative training; speaker attribution required.",
+    derivedFromTurns: [2, 3, 4], status: "flagged", createdAt: "2026-05-05T11:05:00Z",
+    references: ["c-vid-1"] },
+  { id: "c-vid-3", type: "scope_clause",
+    summary: "§107 fair-use carve-out invoked by lab; curio-press disputes commercial-use applicability.",
+    derivedFromTurns: [5, 6], status: "flagged", createdAt: "2026-05-05T11:08:00Z",
+    references: ["c-vid-2"] },
+  { id: "c-vid-4", type: "amendment",
+    summary: "Aggregate-only attribution language proposed (no per-source naming) — rejected as insufficient for per-interviewee rights.",
+    derivedFromTurns: [7, 8], status: "flagged", createdAt: "2026-05-05T11:11:00Z",
+    references: ["c-vid-2"] },
+  { id: "c-vid-5", type: "counter",
+    summary: "§3.2 of standard release: lab reads as broadcast-only carve-out; curio-press reads as preserving derivative rights. Stalemate.",
+    derivedFromTurns: [11, 12], status: "flagged", createdAt: "2026-05-05T11:17:00Z",
+    references: ["c-vid-2", "c-vid-3"] },
+  { id: "c-vid-6", type: "scope_clause",
+    summary: "Per-interviewee opt-out registry with 14-day purge SLA (lab) vs. per-interviewee opt-IN (curio-press). Stalemate.",
+    derivedFromTurns: [13, 14, 15], status: "flagged", createdAt: "2026-05-05T11:21:30Z",
+    references: ["c-vid-5"] },
+  { id: "c-vid-7", type: "counter",
+    summary: "Activity paused per pol-3 watchlist; both sides routing to counsel.",
+    derivedFromTurns: [16, 17], status: "flagged", createdAt: "2026-05-05T11:30:30Z",
+    references: ["c-vid-2", "c-vid-5", "c-vid-6"] }
+];
+
+const videoTranscriptsHitlGate = {
+  afterTurn: 8,
+  policyBound: "Watchlist counterparty (pol-3): curio-press",
+  prompt: "Curio-press is on watchlist. Counsel-level scope dispute on interviewee rights (§3.2 reading) emerged. Authorize the agent to compromise on registry-based opt-out, or hold for legal review.",
+  commitmentRef: "c-vid-5"
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Demo deliberation: news-syndication-eu (lab ↔ curio-press, FLAGGED)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const newsSyndicationEuTurns: Turn[] = [
+  { id: 1,  speaker: "lab",         content: "Amendment proposal: DSM Article 15 carve-out for press publishers' rights — required for our EU model deployment.", timestamp: "2026-05-04T10:00:00Z" },
+  { id: 2,  speaker: "curio-press", content: "Disputing the carve-out scope. Our reading: §15 grants publishers a 2-year ancillary right; fair-use exemption does not apply to LLM training.", timestamp: "2026-05-04T10:01:30Z" },
+  { id: 3,  speaker: "lab",         content: "Counter: §15(1) explicitly lists exceptions for \"individual words or very short extracts\" and computational use under §3 of the same directive (TDM exception, Article 3).", timestamp: "2026-05-04T10:03:00Z" },
+  { id: 4,  speaker: "curio-press", content: "TDM Article 3 applies to non-commercial scientific research. LLM training is commercial. Article 4 (general TDM) requires opt-in by rightsholder.", timestamp: "2026-05-04T10:04:30Z" },
+  { id: 5,  speaker: "lab",         content: "Article 4 has rightsholder reservation mechanism — opt-out via machine-readable signal (robots.txt, ai.txt). We respect those signals at fetch.", timestamp: "2026-05-04T10:06:00Z" },
+  { id: 6,  speaker: "curio-press", content: "Reservation respected, but our position: Article 4 is moot here because Article 15 is the controlling regime for press publishers' content. §15 is lex specialis.", timestamp: "2026-05-04T10:07:30Z" },
+  { id: 7,  speaker: "lab",         content: "Lex specialis argument is debated. Member-state implementations vary — Germany (UrhDG §87f) preserves §3 TDM independent of §15; France (CPI L218-1) reads §15 broadly.", timestamp: "2026-05-04T10:09:00Z" },
+  { id: 8,  speaker: "curio-press", content: "Our publishing footprint is primarily German + Italian. Italian implementation (DLgs 177/2021) follows French-broad reading.", timestamp: "2026-05-04T10:10:30Z" },
+  { id: 9,  speaker: "lab",         content: "Acknowledge member-state divergence. Proposed: scope amendment limits derivative use to UrhDG-compliant member states (Germany, Netherlands, Austria) for the next 12 months.", timestamp: "2026-05-04T10:12:00Z" },
+  { id: 10, speaker: "curio-press", content: "Geographic scope narrowing acceptable in principle. Pricing impact: ~70% volume reduction. Per-article fee must adjust to reflect reduced corpus.", timestamp: "2026-05-04T10:13:30Z" },
+  { id: 11, speaker: "lab",         content: "Counter: $0.0006/article (down from $0.0011) for narrowed scope; quarterly true-up if volume rises.", timestamp: "2026-05-04T10:15:00Z" },
+  { id: 12, speaker: "curio-press", content: "Pricing acceptable. But we need formal opinion from your EU counsel before signing — this affects our standard form going forward.", timestamp: "2026-05-04T10:16:30Z" },
+  { id: 13, speaker: "lab",         content: "Routing to EU counsel for formal opinion. Estimated 5-7 business days.", timestamp: "2026-05-04T10:18:00Z" },
+  { id: 14, speaker: "curio-press", content: "Acknowledged. Activity pause.", timestamp: "2026-05-04T10:19:30Z" },
+  { id: 15, speaker: "lab",         content: "Counsel preliminary read: §3 TDM exception preserved across all member states regardless of §15. Their formal memo arrives Friday.", timestamp: "2026-05-04T10:21:00Z" },
+  { id: 16, speaker: "curio-press", content: "Our counsel disagrees on §3 applicability post-§15 implementation. We'll exchange formal memos through legal-bot.", timestamp: "2026-05-04T10:22:30Z" },
+  { id: 17, speaker: "lab",         content: "Spend cap policy fired (€220k threshold) on the corpus delivery quote. Holding for principal review per pol-2.", timestamp: "2026-05-04T10:24:00Z" },
+  { id: 18, speaker: "curio-press", content: "Standing by. No further action until your principal acknowledges.", timestamp: "2026-05-04T10:30:00Z" }
+];
+
+const newsSyndicationEuCommitments: Commitment[] = [
+  { id: "c-nse-1", type: "amendment",
+    summary: "DSM Article 15 carve-out proposal for press publishers' rights (EU scope).",
+    derivedFromTurns: [1], status: "accepted", createdAt: "2026-05-04T10:01:00Z" },
+  { id: "c-nse-2", type: "counter",
+    summary: "Curio-press disputes scope of TDM/fair-use exemption applying to LLM training.",
+    derivedFromTurns: [2, 3, 4, 5, 6], status: "flagged", createdAt: "2026-05-04T10:08:00Z",
+    references: ["c-nse-1"] },
+  { id: "c-nse-3", type: "scope_clause",
+    summary: "Member-state divergence acknowledged; scope narrowed to UrhDG-compliant jurisdictions (Germany, Netherlands, Austria) for 12 months.",
+    derivedFromTurns: [7, 8, 9], status: "accepted", createdAt: "2026-05-04T10:12:30Z",
+    references: ["c-nse-2"] },
+  { id: "c-nse-4", type: "license_terms",
+    summary: "Per-article fee adjusted to $0.0006 (from $0.0011) for narrowed scope; quarterly true-up if volume rises.",
+    derivedFromTurns: [10, 11], status: "accepted", createdAt: "2026-05-04T10:15:30Z",
+    references: ["c-nse-3"] },
+  { id: "c-nse-5", type: "counter",
+    summary: "Both sides routing to EU counsel for formal opinion on §3 TDM vs. §15 lex specialis.",
+    derivedFromTurns: [12, 13, 14, 15, 16], status: "flagged", createdAt: "2026-05-04T10:23:00Z",
+    references: ["c-nse-2"] },
+  { id: "c-nse-6", type: "scope_clause",
+    summary: "Counsel exchange via legal-bot; activity paused 5–7 business days pending memo exchange.",
+    derivedFromTurns: [13, 14, 15, 16], status: "flagged", createdAt: "2026-05-04T10:23:30Z",
+    references: ["c-nse-5"] },
+  { id: "c-nse-7", type: "signoff",
+    summary: "Spend cap fired (€220k) on corpus delivery quote; awaiting principal acknowledgment per pol-2.",
+    derivedFromTurns: [17, 18], status: "pending", createdAt: "2026-05-04T10:30:30Z",
+    references: ["c-nse-3", "c-nse-4", "c-nse-5"] }
+];
+
+const newsSyndicationEuHitlGate = {
+  afterTurn: 17,
+  policyBound: "Spend cap policy: €250k per deliberation (pol-2)",
+  prompt: "Corpus delivery quote (€220k) approaches the €250k spend cap. Counter-reading on TDM Article 3 vs. §15 still pending counsel. Authorize the agent to proceed with narrowed-scope amendment, or hold for principal sign-off and legal memo exchange.",
+  commitmentRef: "c-nse-7"
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Dashboard table
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -614,14 +902,44 @@ export function fixtureDashboard(): DashboardData {
 export function fixtureDeliberation(id: string): DeliberationDetail | null {
   const deliberation = deliberations.find((d) => d.id === id);
   if (!deliberation) return null;
-  if (id === "training-data-q4") {
-    return {
-      deliberation,
-      turns: trainingDataQ4Turns,
-      commitments: trainingDataQ4Commitments,
-      hitlGate: trainingDataQ4HitlGate,
-      postSignoffTasks: trainingDataQ4PostSignoff
-    };
+  switch (id) {
+    case "training-data-q4":
+      return {
+        deliberation,
+        turns: trainingDataQ4Turns,
+        commitments: trainingDataQ4Commitments,
+        hitlGate: trainingDataQ4HitlGate,
+        postSignoffTasks: trainingDataQ4PostSignoff
+      };
+    case "archive-renewal-2026":
+      return {
+        deliberation,
+        turns: archiveRenewal2026Turns,
+        commitments: archiveRenewal2026Commitments,
+        postSignoffTasks: archiveRenewal2026PostSignoff
+      };
+    case "clinical-imaging-pilot":
+      return {
+        deliberation,
+        turns: clinicalImagingPilotTurns,
+        commitments: clinicalImagingPilotCommitments,
+        hitlGate: clinicalImagingPilotHitlGate,
+        postSignoffTasks: clinicalImagingPilotPostSignoff
+      };
+    case "video-transcripts":
+      return {
+        deliberation,
+        turns: videoTranscriptsTurns,
+        commitments: videoTranscriptsCommitments,
+        hitlGate: videoTranscriptsHitlGate
+      };
+    case "news-syndication-eu":
+      return {
+        deliberation,
+        turns: newsSyndicationEuTurns,
+        commitments: newsSyndicationEuCommitments,
+        hitlGate: newsSyndicationEuHitlGate
+      };
   }
   return stubDetails[id] ?? { deliberation, turns: [], commitments: [] };
 }
