@@ -2,15 +2,19 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/icons/Icon";
 import { AppShell } from "@/components/shell/AppShell";
-import { OverviewHero } from "@/components/overview/OverviewHero";
-import { getOverview } from "@/lib/api";
-import type { OverviewData } from "@/lib/types";
+import { HeroTile, SupportingLine, type LabStats } from "@/components/lab/HeroTile";
 
-type Stats = OverviewData["stats"];
+type Stats = LabStats;
 
-export default async function LabPage() {
-  const data = await getOverview();
-  const s = data.stats;
+export default function LabPage() {
+  const s: Stats = {
+    activeDeliberations: 7,
+    awaitingAction: 3,
+    medianAge: "4.1h",
+    autoResolved: "89%",
+    flagged: 1,
+    deployedAgents: 5
+  };
 
   return (
     <AppShell>
@@ -53,7 +57,27 @@ export default async function LabPage() {
           label="E · Two-up: hero pair (now live on /)"
           note="Two equal hero tiles (Awaiting + Flagged), tiny supporting line under."
         >
-          <OverviewHero stats={s} />
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <HeroTile
+                value={s.awaitingAction}
+                title="awaiting action"
+                subtitle="needs you or an internal agent"
+                tone={s.awaitingAction > 0 ? "accent" : "muted"}
+                href="/deliberations"
+                ctaLabel="Review"
+              />
+              <HeroTile
+                value={s.flagged}
+                title="flagged"
+                subtitle={s.flagged === 0 ? "no policy issues right now" : "policy violations open"}
+                tone={s.flagged > 0 ? "amber" : "muted"}
+                href="/deliberations"
+                ctaLabel="Inspect"
+              />
+            </div>
+            <SupportingLine stats={s} />
+          </div>
         </Variant>
 
         <Variant label="F · Compact strip" note="Six stats in one slim row — too dense to read comfortably.">
