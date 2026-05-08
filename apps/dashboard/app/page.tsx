@@ -1,6 +1,7 @@
 import { AppShell } from "@/components/shell/AppShell";
 import { AgentFleetCard } from "@/components/overview/AgentFleetCard";
 import { ConnectivityCard } from "@/components/overview/ConnectivityCard";
+import { FleetNavbar } from "@/components/overview/FleetNavbar";
 import { RiskPulseCard } from "@/components/overview/RiskPulseCard";
 import { SignificantEventsCard } from "@/components/overview/SignificantEventsCard";
 import { SystemPulseStrip } from "@/components/overview/SystemPulseStrip";
@@ -38,11 +39,24 @@ export default async function OverviewPage() {
 
       <div
         style={{
+          marginBottom: 10,
+          flexShrink: 0,
+          display: "flex",
+          gap: 10,
+          alignItems: "stretch"
+        }}
+      >
+        <FleetNavbar agents={data.agents} />
+        <RiskPulseCard risk={risk} />
+      </div>
+
+      <div
+        style={{
           flex: 1,
           minHeight: 0,
           display: "grid",
           gridTemplateColumns: "minmax(0, 1.6fr) minmax(0, 1fr)",
-          gap: 12
+          gap: 10
         }}
       >
         <div style={{ minHeight: 0, display: "flex", flexDirection: "column" }}>
@@ -59,7 +73,6 @@ export default async function OverviewPage() {
           <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
             <SignificantEventsCard events={events} />
           </div>
-          <RiskPulseCard risk={risk} />
           <ConnectivityCard integrations={data.integrations} />
         </div>
       </div>

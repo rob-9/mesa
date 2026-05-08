@@ -54,6 +54,47 @@ const agents: AgentStatus[] = [
     role: "rate quoting",
     state: "idle",
     lastActivity: ago(330)
+  },
+  {
+    id: "ag-6",
+    name: "redteam-agent",
+    role: "adversarial review",
+    state: "negotiating",
+    deliberationId: "image-corpus-rev-share",
+    deliberationTitle: "image corpus rev-share",
+    lastActivity: ago(7)
+  },
+  {
+    id: "ag-7",
+    name: "ops-runner",
+    role: "post-signoff workflow",
+    state: "blocked",
+    deliberationId: "medical-journals-license",
+    deliberationTitle: "medical journals license",
+    lastActivity: ago(38)
+  },
+  {
+    id: "ag-8",
+    name: "billing-agent",
+    role: "ach + invoicing",
+    state: "negotiating",
+    deliberationId: "training-data-q4",
+    deliberationTitle: "training-data Q4 license",
+    lastActivity: ago(45)
+  },
+  {
+    id: "ag-9",
+    name: "compliance-agent",
+    role: "SLA timers",
+    state: "idle",
+    lastActivity: ago(420)
+  },
+  {
+    id: "ag-10",
+    name: "intake-agent",
+    role: "rfp triage",
+    state: "idle",
+    lastActivity: ago(60 * 9)
   }
 ];
 

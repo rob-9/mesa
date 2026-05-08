@@ -28,44 +28,67 @@ export function RiskPulseCard({ risk }: { risk: RiskPulse }) {
         background: "var(--surface-1)",
         border: "1px solid var(--surface-2)",
         borderRadius: "var(--r-card)",
-        padding: "10px 16px",
-        flexShrink: 0
+        padding: "12px 18px",
+        flex: 1,
+        minWidth: 0,
+        display: "flex",
+        flexDirection: "column",
+        gap: 8
       }}
     >
       <div
         className="mono"
-        style={{
-          fontSize: 10,
-          color: "var(--fg-5)",
-          letterSpacing: "0.06em",
-          marginBottom: 8
-        }}
+        style={{ fontSize: 10, color: "var(--fg-5)", letterSpacing: "0.06em" }}
       >
         RISK PULSE
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr 1fr",
+          gap: 18,
+          alignItems: "end",
+          flex: 1
+        }}
+      >
         {items.map((it) => (
           <Link
             key={it.label}
             href={it.href}
             style={{ textDecoration: "none", display: "block", minWidth: 0 }}
           >
-            <span
-              className="mono"
+            <div
               style={{
-                display: "block",
-                fontSize: 22,
-                fontWeight: 600,
-                lineHeight: 1.05,
-                letterSpacing: "-0.02em",
-                color: it.tone === "amber" ? "var(--amber)" : "var(--fg-1)"
+                display: "flex",
+                alignItems: "baseline",
+                gap: 8,
+                minWidth: 0
               }}
             >
-              {it.value}
-            </span>
-            <span style={{ fontSize: 11, color: "var(--fg-4)", marginTop: 2, display: "block" }}>
-              {it.label}
-            </span>
+              <span
+                className="mono"
+                style={{
+                  fontSize: 24,
+                  fontWeight: 600,
+                  lineHeight: 1,
+                  letterSpacing: "-0.02em",
+                  color: it.tone === "amber" ? "var(--amber)" : "var(--fg-1)"
+                }}
+              >
+                {it.value}
+              </span>
+              <span
+                style={{
+                  fontSize: 11,
+                  color: "var(--fg-4)",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}
+              >
+                {it.label}
+              </span>
+            </div>
           </Link>
         ))}
       </div>

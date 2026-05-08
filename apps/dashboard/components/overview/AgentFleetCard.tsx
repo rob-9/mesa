@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Icon } from "@/components/icons/Icon";
 import { Pill } from "@/components/primitives/Pill";
 import { formatRelative } from "@/lib/format";
 import type { AgentStatus } from "@/lib/types";
@@ -7,11 +6,11 @@ import { Card } from "./Card";
 
 const stateMeta: Record<
   AgentStatus["state"],
-  { label: string; tone: Parameters<typeof Pill>[0]["tone"]; rank: number }
+  { label: string; tone: Parameters<typeof Pill>[0]["tone"]; rank: number; dot: string }
 > = {
-  blocked: { label: "blocked", tone: "amber", rank: 0 },
-  negotiating: { label: "negotiating", tone: "accent", rank: 1 },
-  idle: { label: "idle", tone: "neutral", rank: 2 }
+  blocked: { label: "blocked", tone: "amber", rank: 0, dot: "var(--amber)" },
+  negotiating: { label: "negotiating", tone: "accent", rank: 1, dot: "var(--accent)" },
+  idle: { label: "idle", tone: "neutral", rank: 2, dot: "var(--fg-6)" }
 };
 
 export function AgentFleetCard({ agents }: { agents: AgentStatus[] }) {
@@ -21,26 +20,8 @@ export function AgentFleetCard({ agents }: { agents: AgentStatus[] }) {
     return new Date(b.lastActivity).getTime() - new Date(a.lastActivity).getTime();
   });
   return (
-    <Card
-      title="Agent fleet"
-      eyebrow={`${agents.length} DEPLOYED`}
-      trailing={
-        <Link
-          href="/agents"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 4,
-            fontSize: 12,
-            color: "var(--fg-3)"
-          }}
-        >
-          View all <Icon name="chevron-right" size={12} />
-        </Link>
-      }
-      noPadBody
-    >
-      <div style={{ height: "100%", overflowY: "auto", overscrollBehavior: "none" }}>
+    <Card noPadBody>
+      <div style={{ flex: 1, minHeight: 0, overflowY: "auto", overscrollBehavior: "none" }}>
         {sorted.map((agent, i) => {
           const meta = stateMeta[agent.state];
           const isLast = i === sorted.length - 1;
@@ -49,13 +30,22 @@ export function AgentFleetCard({ agents }: { agents: AgentStatus[] }) {
               key={agent.id}
               style={{
                 display: "grid",
-                gridTemplateColumns: "minmax(0, 1.2fr) minmax(0, 1.2fr) auto",
+                gridTemplateColumns: "8px minmax(0, 1.1fr) minmax(0, 1.2fr) auto",
                 gap: 14,
                 alignItems: "center",
-                padding: "10px 16px",
+                padding: "13px 18px",
                 borderBottom: isLast ? "none" : "1px solid var(--border-row)"
               }}
             >
+              <span
+                aria-hidden
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: "var(--r-pill)",
+                  background: meta.dot
+                }}
+              />
               <div style={{ minWidth: 0 }}>
                 <Link
                   href={`/agents/${agent.id}`}

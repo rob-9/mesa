@@ -4,12 +4,29 @@ import { formatRelative } from "@/lib/format";
 import type { SignificantEvent } from "@/lib/types";
 import { Card } from "./Card";
 
-const kindLabel: Record<SignificantEvent["kind"], { label: string; color: string }> = {
-  deliberation_signed: { label: "signed", color: "var(--accent)" },
-  policy_fired: { label: "policy", color: "var(--amber)" },
-  agent_deployed: { label: "deployed", color: "var(--fg-2)" },
-  integration_disconnected: { label: "disconnected", color: "var(--amber)" },
-  principal_added: { label: "principal", color: "var(--fg-2)" }
+type ChipTone = { fg: string; bg: string };
+
+const kindLabel: Record<SignificantEvent["kind"], { label: string; tone: ChipTone }> = {
+  deliberation_signed: {
+    label: "signed",
+    tone: { fg: "var(--accent)", bg: "var(--accent-soft)" }
+  },
+  policy_fired: {
+    label: "policy",
+    tone: { fg: "var(--amber)", bg: "var(--amber-soft)" }
+  },
+  agent_deployed: {
+    label: "deployed",
+    tone: { fg: "var(--fg-2)", bg: "var(--surface-2)" }
+  },
+  integration_disconnected: {
+    label: "offline",
+    tone: { fg: "var(--amber)", bg: "var(--amber-soft)" }
+  },
+  principal_added: {
+    label: "principal",
+    tone: { fg: "var(--fg-2)", bg: "var(--surface-2)" }
+  }
 };
 
 export function SignificantEventsCard({ events }: { events: SignificantEvent[] }) {
@@ -33,7 +50,7 @@ export function SignificantEventsCard({ events }: { events: SignificantEvent[] }
       }
       noPadBody
     >
-      <div style={{ height: "100%", overflowY: "auto", overscrollBehavior: "none" }}>
+      <div style={{ flex: 1, minHeight: 0, overflowY: "auto", overscrollBehavior: "none" }}>
         {events.length === 0 && (
           <div
             style={{
@@ -54,20 +71,28 @@ export function SignificantEventsCard({ events }: { events: SignificantEvent[] }
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "72px minmax(0, 1fr) 56px",
+                gridTemplateColumns: "92px minmax(0, 1fr) 52px",
                 gap: 12,
                 alignItems: "center",
-                padding: "8px 16px",
+                padding: "11px 16px",
                 borderBottom: isLast ? "none" : "1px solid var(--border-row)"
               }}
             >
               <span
                 className="mono"
                 style={{
-                  fontSize: 11,
-                  color: meta.color,
-                  letterSpacing: "0.04em",
-                  textTransform: "uppercase"
+                  display: "inline-flex",
+                  alignSelf: "center",
+                  justifyContent: "center",
+                  padding: "3px 8px",
+                  borderRadius: "var(--r-pill)",
+                  background: meta.tone.bg,
+                  color: meta.tone.fg,
+                  fontSize: 10,
+                  fontWeight: 500,
+                  letterSpacing: "0.05em",
+                  textTransform: "uppercase",
+                  width: "fit-content"
                 }}
               >
                 {meta.label}
