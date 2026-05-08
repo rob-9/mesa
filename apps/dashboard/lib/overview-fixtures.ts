@@ -4,7 +4,6 @@ import type {
   AgentStatus,
   IntegrationStatus,
   OverviewData,
-  RecentActivity,
   RiskPulse,
   SignificantEvent,
   SystemPulse
@@ -55,54 +54,6 @@ const agents: AgentStatus[] = [
     role: "rate quoting",
     state: "idle",
     lastActivity: ago(330)
-  }
-];
-
-const recent: RecentActivity[] = [
-  {
-    id: "r-1",
-    commitmentType: "scope_clause",
-    summary: "Articles from 2018 onwards, English only, no opinion. 2-year non-exclusive.",
-    deliberationId: "training-data-q4",
-    deliberationTitle: "training-data Q4 license",
-    counterparty: "publisher-co",
-    timestamp: ago(2)
-  },
-  {
-    id: "r-2",
-    commitmentType: "signoff",
-    summary: "Web-archive opt-in agreement signed.",
-    deliberationId: "web-archive-opt-in",
-    deliberationTitle: "web-archive opt-in",
-    counterparty: "trinity-data",
-    timestamp: ago(11)
-  },
-  {
-    id: "r-3",
-    commitmentType: "offer",
-    summary: "Revenue-share proposal: 12% gross, capped at $200k/yr.",
-    deliberationId: "image-corpus-rev-share",
-    deliberationTitle: "image corpus rev-share",
-    counterparty: "zenith",
-    timestamp: ago(64)
-  },
-  {
-    id: "r-4",
-    commitmentType: "amendment",
-    summary: "Translations excluded from training-data scope.",
-    deliberationId: "training-data-q4",
-    deliberationTitle: "training-data Q4 license",
-    counterparty: "publisher-co",
-    timestamp: ago(140)
-  },
-  {
-    id: "r-5",
-    commitmentType: "offer",
-    summary: "Initial license proposal: github public repos, 3-year term.",
-    deliberationId: "code-corpus-license",
-    deliberationTitle: "code corpus license",
-    counterparty: "octostack",
-    timestamp: ago(181)
   }
 ];
 
@@ -193,21 +144,10 @@ export function fixtureOverview(): OverviewData {
   };
 
   return {
-    stats: {
-      activeDeliberations: dashboard.counts.active,
-      awaitingAction: dashboard.counts.awaitingAction,
-      medianAge: "4.1h",
-      autoResolved: "89%",
-      flagged: dashboard.counts.flagged,
-      deployedAgents: agents.length
-    },
-    agents,
-    recent,
-    actions: dashboard.actions,
-    totalActions: dashboard.actions.length,
-    integrations,
     pulse,
+    agents,
     events,
-    risk
+    risk,
+    integrations
   };
 }

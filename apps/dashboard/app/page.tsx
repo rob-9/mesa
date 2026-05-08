@@ -8,10 +8,9 @@ import { getOverview } from "@/lib/api";
 
 export default async function OverviewPage() {
   const data = await getOverview();
-  // The new fields are guaranteed populated by overview-fixtures; assert for typing.
-  const pulse = data.pulse!;
-  const events = data.events!;
-  const risk = data.risk!;
+  const pulse = data.pulse;
+  const events = data.events;
+  const risk = data.risk;
 
   return (
     <AppShell>
