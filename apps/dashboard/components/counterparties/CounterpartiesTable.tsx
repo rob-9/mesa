@@ -23,6 +23,8 @@ export function CounterpartiesTable({
         overflow: "hidden"
       }}
     >
+     <div style={{ overflowX: "auto" }}>
+      <div style={{ minWidth: 820 }}>
       <div
         className="mono"
         style={{
@@ -93,6 +95,8 @@ export function CounterpartiesTable({
           );
         })}
       </div>
+      </div>
+     </div>
     </div>
   );
 }

@@ -56,6 +56,8 @@ export function PoliciesTable({ initial }: { initial: Policy[] }) {
           overflow: "hidden"
         }}
       >
+       <div style={{ overflowX: "auto" }}>
+        <div style={{ minWidth: 760 }}>
         <div
           className="mono"
           style={{
@@ -108,6 +110,8 @@ export function PoliciesTable({ initial }: { initial: Policy[] }) {
             </span>
           </div>
         ))}
+        </div>
+       </div>
       </div>
 
       {panelOpen && (

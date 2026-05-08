@@ -158,29 +158,36 @@ function FormPhase({
 
   return (
     <>
-      {/* Handshake row */}
+      {/* Handshake row — wraps to a stack at narrow widths (e.g. heavy browser zoom-in)
+          so neither card is squeezed below readable. */}
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 64px 1fr",
+          display: "flex",
+          flexWrap: "wrap",
           alignItems: "stretch",
           padding: "16px 18px 0",
-          gap: 0
+          gap: 12
         }}
       >
-        <AgentCard agent={deployedAgent} sideLabel="YOU" />
-        <Connector active={!!cpAgent} />
-        <ThemSelectorCard
-          counterparty={cp}
-          agent={cpAgent}
-          counterpartySlug={counterpartySlug}
-          onCounterpartyChange={onCounterpartyChange}
-          agentId={agentId}
-          setAgentId={setAgentId}
-          cpOptions={cpOptions}
-          cpAgentOptions={cpAgentOptions}
-          cpAgentDisabled={cpAgentDisabled}
-        />
+        <div style={{ flex: "1 1 280px", minWidth: 0 }}>
+          <AgentCard agent={deployedAgent} sideLabel="YOU" />
+        </div>
+        <div style={{ flex: "0 0 64px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <Connector active={!!cpAgent} />
+        </div>
+        <div style={{ flex: "1 1 280px", minWidth: 0 }}>
+          <ThemSelectorCard
+            counterparty={cp}
+            agent={cpAgent}
+            counterpartySlug={counterpartySlug}
+            onCounterpartyChange={onCounterpartyChange}
+            agentId={agentId}
+            setAgentId={setAgentId}
+            cpOptions={cpOptions}
+            cpAgentOptions={cpAgentOptions}
+            cpAgentDisabled={cpAgentDisabled}
+          />
+        </div>
       </div>
 
       {/* Scope + send */}

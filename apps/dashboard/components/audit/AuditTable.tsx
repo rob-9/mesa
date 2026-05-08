@@ -93,6 +93,8 @@ export function AuditTable({ events }: { events: AuditEvent[] }) {
           overflow: "hidden"
         }}
       >
+       <div style={{ overflowX: "auto" }}>
+        <div style={{ minWidth: 800 }}>
         <div
           className="mono"
           style={{
@@ -195,6 +197,8 @@ export function AuditTable({ events }: { events: AuditEvent[] }) {
             No events match the current filters.
           </div>
         )}
+        </div>
+       </div>
       </div>
     </>
   );
