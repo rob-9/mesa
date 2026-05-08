@@ -40,7 +40,7 @@ export function TypingIndicator({ speaker }: TypingIndicatorProps) {
         <span style={{ color: "var(--fg-3)" }}>{speaker}</span>
         <span style={{ color: "var(--fg-5)" }}>·</span>
         <span className="mono" style={{ color: "var(--fg-5)" }}>
-          typing…
+          thinking…
         </span>
       </div>
       <div
