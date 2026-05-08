@@ -88,6 +88,12 @@ export default function DeployAgentPage() {
     }
   };
 
+  // Quick deploy → jump to Review so the user can scan all five sections
+  // before committing. They confirm with the wizard's footer Deploy button.
+  const onQuickDeploy = () => {
+    setStep(STEPS.length - 1);
+  };
+
   const onConnectComplete = () => {
     router.push(`/deliberations/training-data-q4?live=1`);
   };
@@ -147,7 +153,7 @@ export default function DeployAgentPage() {
             </div>
             <button
               type="button"
-              onClick={onDeploy}
+              onClick={onQuickDeploy}
               disabled={templateId === BLANK_TEMPLATE || deploying}
               style={{
                 height: 32,
@@ -168,7 +174,7 @@ export default function DeployAgentPage() {
                 whiteSpace: "nowrap"
               }}
             >
-              {deploying ? "Deploying…" : "Quick deploy"}
+              Quick deploy
             </button>
           </div>
         </div>
