@@ -109,13 +109,22 @@ export function Sidebar() {
         <span
           aria-hidden
           style={{
-            width: 20,
-            height: 20,
-            borderRadius: 6,
-            background: "linear-gradient(135deg, var(--accent), #b25a3f)",
+            width: 32,
+            height: 32,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             flexShrink: 0
           }}
-        />
+        >
+          <img
+            src="/mesa-logo.png"
+            alt=""
+            width={32}
+            height={32}
+            style={{ display: "block", objectFit: "contain" }}
+          />
+        </span>
         <span style={{ fontWeight: 600, fontSize: 13, color: "var(--fg-0)", letterSpacing: "-0.01em" }}>
           mesa
         </span>
