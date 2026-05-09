@@ -49,11 +49,11 @@ const trainingDataQ4Turns: Turn[] = [
 
 const trainingDataQ4PolicyUpdate = {
   afterTurn: 10,
-  label: "Budget cap tightened",
-  before: "$1,200/mo",
-  after: "$950/mo",
-  rationale: "finance · end-of-quarter spend freeze",
-  pushedBy: "finance-bot",
+  label: "PII-handling rule tightened",
+  before: "flag on tag",
+  after: "verified consent metadata required",
+  rationale: "compliance · updated PII handling policy",
+  pushedBy: "compliance-bot",
   timestamp: "14:13"
 };
 

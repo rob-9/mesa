@@ -243,8 +243,8 @@ function PolicyUpdateBanner({
       className={animateIn ? "transcript-audit-in" : undefined}
       style={{
         display: "flex",
-        alignItems: "center",
-        gap: 10,
+        flexDirection: "column",
+        gap: 6,
         margin: "10px 0 18px",
         padding: "10px 12px",
         borderRadius: "var(--r-inner)",
@@ -253,87 +253,114 @@ function PolicyUpdateBanner({
         boxShadow: "inset 2px 0 0 var(--accent)"
       }}
     >
-      <span
-        aria-hidden
+      <div
         style={{
-          width: 18,
-          height: 18,
-          borderRadius: "var(--r-pill)",
-          background: "var(--accent-soft)",
-          color: "var(--accent)",
-          display: "inline-flex",
+          display: "flex",
           alignItems: "center",
-          justifyContent: "center",
-          fontSize: 12,
-          fontWeight: 600,
-          flexShrink: 0,
-          fontFamily:
-            "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
-        }}
-      >
-        Δ
-      </span>
-      <span
-        className="mono"
-        style={{
-          fontSize: 10,
-          padding: "2px 8px",
-          borderRadius: "var(--r-pill)",
-          background: "var(--accent-soft)",
-          color: "var(--accent)",
-          letterSpacing: "0.04em",
-          flexShrink: 0
-        }}
-      >
-        policy-update
-      </span>
-      <span style={{ color: "var(--fg-1)", fontSize: 12, fontWeight: 500, flexShrink: 0 }}>
-        {update.label}
-      </span>
-      <span
-        className="mono"
-        style={{
-          fontSize: 11,
-          color: "var(--fg-3)",
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 6,
-          flexShrink: 0
-        }}
-      >
-        <span style={{ textDecoration: "line-through", color: "var(--fg-5)" }}>
-          {update.before}
-        </span>
-        <span aria-hidden style={{ color: "var(--fg-5)" }}>→</span>
-        <span style={{ color: "var(--accent)", fontWeight: 600 }}>{update.after}</span>
-      </span>
-      <span
-        style={{
-          color: "var(--fg-4)",
-          fontSize: 12,
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
+          gap: 10,
           minWidth: 0
         }}
       >
-        {update.rationale}
-      </span>
-      <span
-        className="mono"
+        <span
+          aria-hidden
+          style={{
+            width: 18,
+            height: 18,
+            borderRadius: "var(--r-pill)",
+            background: "var(--accent-soft)",
+            color: "var(--accent)",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 12,
+            fontWeight: 600,
+            flexShrink: 0,
+            fontFamily:
+              "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+          }}
+        >
+          Δ
+        </span>
+        <span
+          className="mono"
+          style={{
+            fontSize: 10,
+            padding: "2px 8px",
+            borderRadius: "var(--r-pill)",
+            background: "var(--accent-soft)",
+            color: "var(--accent)",
+            letterSpacing: "0.04em",
+            flexShrink: 0
+          }}
+        >
+          policy-update
+        </span>
+        <span
+          style={{
+            color: "var(--fg-1)",
+            fontSize: 12,
+            fontWeight: 500,
+            minWidth: 0,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap"
+          }}
+        >
+          {update.label}
+        </span>
+        <span
+          className="mono"
+          style={{
+            marginLeft: "auto",
+            color: "var(--fg-5)",
+            fontSize: 11,
+            flexShrink: 0,
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8
+          }}
+        >
+          <span>{update.pushedBy}</span>
+          <span>{update.timestamp}</span>
+        </span>
+      </div>
+      <div
         style={{
-          marginLeft: "auto",
-          color: "var(--fg-5)",
-          fontSize: 11,
-          flexShrink: 0,
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 8
+          display: "flex",
+          alignItems: "baseline",
+          flexWrap: "wrap",
+          gap: "4px 10px",
+          paddingLeft: 28
         }}
       >
-        <span>{update.pushedBy}</span>
-        <span>{update.timestamp}</span>
-      </span>
+        <span
+          className="mono"
+          style={{
+            fontSize: 11,
+            color: "var(--fg-3)",
+            display: "inline-flex",
+            alignItems: "baseline",
+            flexWrap: "wrap",
+            gap: 6,
+            minWidth: 0
+          }}
+        >
+          <span style={{ textDecoration: "line-through", color: "var(--fg-5)" }}>
+            {update.before}
+          </span>
+          <span aria-hidden style={{ color: "var(--fg-5)" }}>→</span>
+          <span style={{ color: "var(--accent)", fontWeight: 600 }}>{update.after}</span>
+        </span>
+        <span
+          style={{
+            color: "var(--fg-4)",
+            fontSize: 12,
+            minWidth: 0
+          }}
+        >
+          {update.rationale}
+        </span>
+      </div>
     </div>
   );
 }
