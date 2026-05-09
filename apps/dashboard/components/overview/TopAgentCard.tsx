@@ -58,7 +58,6 @@ function ActivityRing({ pct, color, label }: { pct: number; color: string; label
         textAnchor="middle"
         fontSize={11}
         fill="var(--fg-1)"
-        fontFamily="var(--font-mono)"
       >
         {label}
       </text>
