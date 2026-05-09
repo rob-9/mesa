@@ -29,9 +29,6 @@ const SLACK_APPROVER: SlackApprover = {
   channel: "#agent-approvals",
   pingedAt: "14:24"
 };
-// How long to wait for a "Slack response" before the simulated approver
-// auto-approves. The dashboard operator can short-circuit with Force accept.
-const SLACK_AUTO_APPROVE_MS = 5_000;
 // How long the "Authorized" flash stays before fading out.
 const ACCEPTED_FLASH_MS = 1_500;
 // Stagger between agent2agent pings being kicked off in the post-signoff fan-out.
@@ -170,24 +167,7 @@ export function SplitView({
     };
   }, [live, turns, hitlGate, hitlState, paused]);
 
-  // While pending, simulate the slack approver responding after a delay.
-  useEffect(() => {
-    if (hitlState !== "pending" || !hitlGate) return;
-    const timer = setTimeout(() => {
-      setHitlState((s) => (s === "pending" ? "accepted" : s));
-      setAuditEvent({
-        afterTurn: hitlGate.afterTurn,
-        kind: "hitl_approved",
-        source: "slack",
-        label: "approved via Slack-MCP — counter-terms authorized",
-        actor: `${SLACK_APPROVER.name} · ${SLACK_APPROVER.role}`,
-        timestamp: clockNow()
-      });
-    }, SLACK_AUTO_APPROVE_MS);
-    return () => clearTimeout(timer);
-  }, [hitlState, hitlGate]);
-
-  // Auto-dismiss the "Authorized" flash so the audit line in the transcript
+// Auto-dismiss the "Authorized" flash so the audit line in the transcript
   // becomes the canonical record.
   useEffect(() => {
     if (hitlState !== "accepted" || bannerHidden) return;
