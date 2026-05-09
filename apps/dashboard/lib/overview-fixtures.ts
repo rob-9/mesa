@@ -17,10 +17,8 @@ const agents: AgentStatus[] = [
     id: "ag-1",
     name: "lab-buyer-agent",
     role: "data buyer",
-    state: "negotiating",
-    deliberationId: "training-data-q4",
-    deliberationTitle: "training-data Q4 license",
-    lastActivity: ago(2)
+    state: "idle",
+    lastActivity: ago(1)
   },
   {
     id: "ag-2",
