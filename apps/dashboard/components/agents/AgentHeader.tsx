@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Pill } from "@/components/primitives/Pill";
-import { TypeLabel } from "@/components/primitives/TypeLabel";
 import type { AgentDetail } from "@/lib/types";
 
 const stateMeta: Record<AgentDetail["state"], { label: string; tone: Parameters<typeof Pill>[0]["tone"] }> = {
@@ -119,33 +118,6 @@ export function AgentHeader({ agent }: { agent: AgentDetail }) {
           >
             {agent.config.model}
           </span>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-            <span
-              className="mono"
-              style={{
-                fontSize: 10,
-                color: "var(--fg-5)",
-                letterSpacing: "0.06em",
-                marginRight: 4
-              }}
-            >
-              CAPABILITIES
-            </span>
-            {agent.config.capabilities.map((c) => (
-              <span
-                key={c}
-                style={{
-                  padding: "3px 10px",
-                  background: "var(--surface-1)",
-                  border: "1px solid var(--surface-2)",
-                  borderRadius: "var(--r-pill)",
-                  fontSize: 11
-                }}
-              >
-                <TypeLabel type={c} />
-              </span>
-            ))}
-          </div>
         </div>
         <div style={{ display: "flex", gap: 12, alignItems: "stretch" }}>
           <div

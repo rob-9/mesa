@@ -17,8 +17,6 @@ interface Props {
 // on the Identity step of the deploy wizard.
 export function AgentCard({ agent, sideLabel, density = "compact" }: Props) {
   const letter = (agent.name || "A").trim().charAt(0).toUpperCase() || "A";
-  const caps = agent.capabilities.slice(0, 4);
-  const more = Math.max(0, agent.capabilities.length - caps.length);
   const padding = density === "compact" ? 12 : 16;
   const gap = density === "compact" ? 10 : 12;
 
@@ -80,21 +78,6 @@ export function AgentCard({ agent, sideLabel, density = "compact" }: Props) {
       >
         {agent.persona ? `“${agent.persona}”` : "Persona will appear here as you type."}
       </div>
-
-      <Divider />
-
-      <Section label="CAPABILITIES">
-        {caps.length === 0 ? (
-          <span style={{ fontSize: 11, color: "var(--fg-5)" }}>—</span>
-        ) : (
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
-            {caps.map((c) => (
-              <Pill key={c} label={c} />
-            ))}
-            {more > 0 && <Pill label={`+${more}`} />}
-          </div>
-        )}
-      </Section>
 
       <Divider />
 
@@ -170,27 +153,6 @@ function MicroLabel({ children }: { children: React.ReactNode }) {
       }}
     >
       {children}
-    </span>
-  );
-}
-
-function Pill({ label }: { label: string }) {
-  return (
-    <span
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        height: 18,
-        padding: "0 8px",
-        borderRadius: 9,
-        background: "var(--surface-2)",
-        color: "var(--fg-2)",
-        fontSize: 10,
-        fontWeight: 500,
-        whiteSpace: "nowrap"
-      }}
-    >
-      {label}
     </span>
   );
 }
