@@ -31,15 +31,15 @@ const SLACK_APPROVER: SlackApprover = {
 };
 // How long to wait for a "Slack response" before the simulated approver
 // auto-approves. The dashboard operator can short-circuit with Force accept.
-const SLACK_AUTO_APPROVE_MS = 10_000;
+const SLACK_AUTO_APPROVE_MS = 5_000;
 // How long the "Authorized" flash stays before fading out.
-const ACCEPTED_FLASH_MS = 2_600;
+const ACCEPTED_FLASH_MS = 1_500;
 // Stagger between agent2agent pings being kicked off in the post-signoff fan-out.
-const FANOUT_STAGGER_MS = 700;
+const FANOUT_STAGGER_MS = 350;
 // Per-agent ping latency before resolution lands.
-const AGENT_PING_MS = 1_400;
+const AGENT_PING_MS = 700;
 // Beat after the last turn lands before the strip itself appears.
-const FANOUT_PRELUDE_MS = 800;
+const FANOUT_PRELUDE_MS = 400;
 
 export function SplitView({
   turns,
@@ -130,7 +130,7 @@ export function SplitView({
         return;
       }
       setTypingSpeaker(turns[idx].speaker);
-      const typingDelay = 500 + Math.random() * 700;
+      const typingDelay = 220 + Math.random() * 320;
       schedule(() => {
         if (cancelled) return;
         setTypingSpeaker(null);
@@ -138,20 +138,17 @@ export function SplitView({
         const justRevealedId = turns[idx]?.id;
         const onPolicyBoundary = policyUpdate?.afterTurn === justRevealedId;
         const afterDelay = onPolicyBoundary
-          ? 2800 + Math.random() * 400
-          : 250 + Math.random() * 350;
+          ? 1800 + Math.random() * 300
+          : 110 + Math.random() * 180;
         if (onPolicyBoundary) {
-          // Show the agent re-planning under the new constraint during ~2s of
-          // the pause, then clear ~400ms before the next turn starts typing so
-          // the typing indicator can take over cleanly.
           schedule(() => {
             if (cancelled) return;
             setReplanning(true);
-          }, 600);
+          }, 300);
           schedule(() => {
             if (cancelled) return;
             setReplanning(false);
-          }, afterDelay - 400);
+          }, afterDelay - 300);
         }
         schedule(() => revealNext(idx + 1), afterDelay);
       }, typingDelay);
