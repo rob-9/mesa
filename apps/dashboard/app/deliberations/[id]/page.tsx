@@ -23,6 +23,7 @@ export default async function DeliberationDetailPage({
           commitments={detail.commitments}
           hitlGate={detail.hitlGate}
           postSignoffTasks={detail.postSignoffTasks}
+          policyUpdate={detail.policyUpdate}
           live={live}
         />
       </div>

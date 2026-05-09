@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { Commitment, HitlGate, PostSignoffTask, Turn } from "@/lib/types";
+import type { Commitment, HitlGate, PolicyUpdate, PostSignoffTask, Turn } from "@/lib/types";
 import { CommitmentsPane } from "./CommitmentsPane";
 import { HITLBanner, type HitlState, type SlackApprover } from "./HITLBanner";
 import {
@@ -19,6 +19,7 @@ interface SplitViewProps {
   commitments: Commitment[];
   hitlGate?: HitlGate;
   postSignoffTasks?: PostSignoffTask[];
+  policyUpdate?: PolicyUpdate;
   live?: boolean;
 }
 
@@ -45,6 +46,7 @@ export function SplitView({
   commitments,
   hitlGate,
   postSignoffTasks,
+  policyUpdate,
   live = false
 }: SplitViewProps) {
   const [selectedCommitmentId, setSelectedCommitmentId] = useState<string | null>(null);
@@ -242,6 +244,12 @@ export function SplitView({
     return visibleCount > auditEvent.afterTurn ? auditEvent : null;
   }, [auditEvent, live, visibleCount]);
 
+  const visiblePolicyUpdate = useMemo<PolicyUpdate | null>(() => {
+    if (!policyUpdate) return null;
+    if (!live) return policyUpdate;
+    return visibleCount > policyUpdate.afterTurn ? policyUpdate : null;
+  }, [policyUpdate, live, visibleCount]);
+
   const turnRefs = useRef<Map<number, HTMLDivElement | null>>(new Map());
   const commitmentsRef = useRef(commitments);
   commitmentsRef.current = commitments;
@@ -406,6 +414,7 @@ export function SplitView({
           animateIn={live}
           typingSpeaker={typingSpeaker}
           auditEvent={visibleAuditEvent}
+          policyUpdate={visiblePolicyUpdate}
         />
         <CommitmentsPane
           commitments={visibleCommitments}

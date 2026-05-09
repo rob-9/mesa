@@ -98,12 +98,23 @@ export interface PostSignoffTask {
   derivedFromCommitment: string; // commitment id this handoff operationalizes
 }
 
+export interface PolicyUpdate {
+  afterTurn: number;          // render between this turn and the next
+  label: string;              // headline, e.g. "Budget cap tightened"
+  before: string;             // pre-formatted, e.g. "$1,200/mo"
+  after: string;              // pre-formatted, e.g. "$950/mo"
+  rationale: string;          // one-line, e.g. "finance · end-of-quarter spend freeze"
+  pushedBy: string;           // e.g. "finance-bot"
+  timestamp: string;          // pre-formatted clock, e.g. "14:13"
+}
+
 export interface DeliberationDetail {
   deliberation: Deliberation;
   turns: Turn[];
   commitments: Commitment[];
   hitlGate?: HitlGate;
   postSignoffTasks?: PostSignoffTask[];
+  policyUpdate?: PolicyUpdate;
 }
 
 // ─── Overview screen ───────────────────────────────────────────────────────

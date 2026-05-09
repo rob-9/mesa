@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import type { Turn } from "@/lib/types";
+import type { PolicyUpdate, Turn } from "@/lib/types";
 import { TranscriptTurn } from "./TranscriptTurn";
 import { TypingIndicator } from "./TypingIndicator";
 
@@ -22,6 +22,7 @@ interface TranscriptPaneProps {
   animateIn?: boolean;
   typingSpeaker?: string | null;
   auditEvent?: AuditEvent | null;
+  policyUpdate?: PolicyUpdate | null;
 }
 
 export function TranscriptPane({
@@ -31,7 +32,8 @@ export function TranscriptPane({
   stickToBottom = false,
   animateIn = false,
   typingSpeaker = null,
-  auditEvent = null
+  auditEvent = null,
+  policyUpdate = null
 }: TranscriptPaneProps) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   // Track whether the reader has scrolled away from the tail. While they are
@@ -45,7 +47,7 @@ export function TranscriptPane({
     if (!el) return;
     if (!pinnedToBottomRef.current) return;
     el.scrollTop = el.scrollHeight;
-  }, [stickToBottom, turns.length, typingSpeaker, auditEvent]);
+  }, [stickToBottom, turns.length, typingSpeaker, auditEvent, policyUpdate]);
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const el = e.currentTarget;
@@ -152,6 +154,9 @@ export function TranscriptPane({
             {auditEvent && auditEvent.afterTurn === turn.id && (
               <AuditLine event={auditEvent} animateIn={animateIn} />
             )}
+            {policyUpdate && policyUpdate.afterTurn === turn.id && (
+              <PolicyUpdateBanner update={policyUpdate} animateIn={animateIn} />
+            )}
           </div>
         ))}
         {typingSpeaker && <TypingIndicator speaker={typingSpeaker} />}
@@ -219,6 +224,115 @@ function AuditLine({ event, animateIn }: { event: AuditEvent; animateIn: boolean
         style={{ marginLeft: "auto", color: "var(--fg-5)", fontSize: 11, flexShrink: 0 }}
       >
         {event.timestamp}
+      </span>
+    </div>
+  );
+}
+
+function PolicyUpdateBanner({
+  update,
+  animateIn
+}: {
+  update: PolicyUpdate;
+  animateIn: boolean;
+}) {
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className={animateIn ? "transcript-audit-in" : undefined}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        margin: "10px 0 18px",
+        padding: "10px 12px",
+        borderRadius: "var(--r-inner)",
+        background: "var(--surface-1)",
+        border: "1px solid var(--accent-soft)",
+        boxShadow: "inset 2px 0 0 var(--accent)"
+      }}
+    >
+      <span
+        aria-hidden
+        style={{
+          width: 18,
+          height: 18,
+          borderRadius: "var(--r-pill)",
+          background: "var(--accent-soft)",
+          color: "var(--accent)",
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: 12,
+          fontWeight: 600,
+          flexShrink: 0,
+          fontFamily:
+            "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+        }}
+      >
+        Δ
+      </span>
+      <span
+        className="mono"
+        style={{
+          fontSize: 10,
+          padding: "2px 8px",
+          borderRadius: "var(--r-pill)",
+          background: "var(--accent-soft)",
+          color: "var(--accent)",
+          letterSpacing: "0.04em",
+          flexShrink: 0
+        }}
+      >
+        policy-update
+      </span>
+      <span style={{ color: "var(--fg-1)", fontSize: 12, fontWeight: 500, flexShrink: 0 }}>
+        {update.label}
+      </span>
+      <span
+        className="mono"
+        style={{
+          fontSize: 11,
+          color: "var(--fg-3)",
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 6,
+          flexShrink: 0
+        }}
+      >
+        <span style={{ textDecoration: "line-through", color: "var(--fg-5)" }}>
+          {update.before}
+        </span>
+        <span aria-hidden style={{ color: "var(--fg-5)" }}>→</span>
+        <span style={{ color: "var(--accent)", fontWeight: 600 }}>{update.after}</span>
+      </span>
+      <span
+        style={{
+          color: "var(--fg-4)",
+          fontSize: 12,
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+          minWidth: 0
+        }}
+      >
+        {update.rationale}
+      </span>
+      <span
+        className="mono"
+        style={{
+          marginLeft: "auto",
+          color: "var(--fg-5)",
+          fontSize: 11,
+          flexShrink: 0,
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 8
+        }}
+      >
+        <span>{update.pushedBy}</span>
+        <span>{update.timestamp}</span>
       </span>
     </div>
   );

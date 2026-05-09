@@ -47,6 +47,16 @@ const trainingDataQ4Turns: Turn[] = [
   { id: 25, speaker: "publisher", content: "Standing by.", timestamp: "2026-05-05T14:38:00Z" }
 ];
 
+const trainingDataQ4PolicyUpdate = {
+  afterTurn: 10,
+  label: "Budget cap tightened",
+  before: "$1,200/mo",
+  after: "$950/mo",
+  rationale: "finance · end-of-quarter spend freeze",
+  pushedBy: "finance-bot",
+  timestamp: "14:13"
+};
+
 const trainingDataQ4HitlGate = {
   afterTurn: 15,
   policyBound: "Retraction SLA ceiling: 30 days",
@@ -909,7 +919,8 @@ export function fixtureDeliberation(id: string): DeliberationDetail | null {
         turns: trainingDataQ4Turns,
         commitments: trainingDataQ4Commitments,
         hitlGate: trainingDataQ4HitlGate,
-        postSignoffTasks: trainingDataQ4PostSignoff
+        postSignoffTasks: trainingDataQ4PostSignoff,
+        policyUpdate: trainingDataQ4PolicyUpdate
       };
     case "archive-renewal-2026":
       return {
