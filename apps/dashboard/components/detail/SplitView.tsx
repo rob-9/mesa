@@ -54,6 +54,9 @@ export function SplitView({
   const [visibleCount, setVisibleCount] = useState<number>(live ? 0 : turns.length);
   const [typingSpeaker, setTypingSpeaker] = useState<string | null>(null);
   const [replanning, setReplanning] = useState<boolean>(false);
+  const [paused, setPaused] = useState<boolean>(false);
+  const visibleCountRef = useRef(visibleCount);
+  visibleCountRef.current = visibleCount;
   const [hitlState, setHitlState] = useState<HitlState>(
     hitlGate && !live ? "accepted" : "inactive"
   );
@@ -99,6 +102,11 @@ export function SplitView({
     if (!live) {
       setVisibleCount(turns.length);
       setTypingSpeaker(null);
+      return;
+    }
+    if (paused) {
+      setTypingSpeaker(null);
+      setReplanning(false);
       return;
     }
     if (hitlState === "pending" || hitlState === "declined") {
@@ -150,19 +158,20 @@ export function SplitView({
     };
 
     if (hitlState === "inactive") {
-      setVisibleCount(0);
+      const startIdx = visibleCountRef.current;
       setTypingSpeaker(null);
       setReplanning(false);
-      schedule(() => revealNext(0), 500);
+      schedule(() => revealNext(startIdx), startIdx === 0 ? 500 : 200);
     } else if (hitlState === "accepted" && hitlGate) {
-      schedule(() => revealNext(hitlGate.afterTurn), 600);
+      const startIdx = Math.max(visibleCountRef.current, hitlGate.afterTurn);
+      schedule(() => revealNext(startIdx), 600);
     }
 
     return () => {
       cancelled = true;
       for (const t of timeouts) clearTimeout(t);
     };
-  }, [live, turns, hitlGate, hitlState]);
+  }, [live, turns, hitlGate, hitlState, paused]);
 
   // While pending, simulate the slack approver responding after a delay.
   useEffect(() => {
@@ -442,6 +451,8 @@ export function SplitView({
                 }
               : null
           }
+          paused={live ? paused : null}
+          onTogglePause={live ? () => setPaused((p) => !p) : undefined}
         />
         <CommitmentsPane
           commitments={visibleCommitments}

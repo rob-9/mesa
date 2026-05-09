@@ -24,6 +24,8 @@ interface TranscriptPaneProps {
   auditEvent?: AuditEvent | null;
   policyUpdate?: PolicyUpdate | null;
   replanIndicator?: { agent: string; label: string } | null;
+  paused?: boolean | null;
+  onTogglePause?: () => void;
 }
 
 export function TranscriptPane({
@@ -35,7 +37,9 @@ export function TranscriptPane({
   typingSpeaker = null,
   auditEvent = null,
   policyUpdate = null,
-  replanIndicator = null
+  replanIndicator = null,
+  paused = null,
+  onTogglePause
 }: TranscriptPaneProps) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   // Track whether the reader has scrolled away from the tail. While they are
@@ -113,8 +117,33 @@ export function TranscriptPane({
             letterSpacing: "0.08em"
           }}
         >
-          {stickToBottom ? "TRANSCRIPT · LIVE" : "TRANSCRIPT"}
+          {paused ? "TRANSCRIPT · PAUSED" : stickToBottom ? "TRANSCRIPT · LIVE" : "TRANSCRIPT"}
         </span>
+        {paused !== null && onTogglePause && (
+          <button
+            type="button"
+            onClick={onTogglePause}
+            aria-label={paused ? "Resume deliberation" : "Pause deliberation"}
+            style={{
+              marginLeft: "auto",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "5px 12px",
+              borderRadius: "var(--r-pill)",
+              background: paused ? "var(--accent)" : "var(--surface-1)",
+              color: paused ? "#1a0e08" : "var(--fg-2)",
+              fontSize: 11,
+              fontWeight: 600,
+              border: paused ? "1px solid var(--accent)" : "1px solid var(--surface-3)",
+              cursor: "pointer",
+              letterSpacing: "0.04em"
+            }}
+          >
+            <span aria-hidden style={{ fontSize: 9 }}>{paused ? "▶" : "❚❚"}</span>
+            {paused ? "RESUME" : "PAUSE"}
+          </button>
+        )}
       </div>
       <div style={{ padding: "16px 22px" }}>
         {turns.length === 0 && !typingSpeaker && (
