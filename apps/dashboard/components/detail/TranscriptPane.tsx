@@ -23,6 +23,7 @@ interface TranscriptPaneProps {
   typingSpeaker?: string | null;
   auditEvent?: AuditEvent | null;
   policyUpdate?: PolicyUpdate | null;
+  replanIndicator?: { agent: string; label: string } | null;
 }
 
 export function TranscriptPane({
@@ -33,7 +34,8 @@ export function TranscriptPane({
   animateIn = false,
   typingSpeaker = null,
   auditEvent = null,
-  policyUpdate = null
+  policyUpdate = null,
+  replanIndicator = null
 }: TranscriptPaneProps) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   // Track whether the reader has scrolled away from the tail. While they are
@@ -47,7 +49,7 @@ export function TranscriptPane({
     if (!el) return;
     if (!pinnedToBottomRef.current) return;
     el.scrollTop = el.scrollHeight;
-  }, [stickToBottom, turns.length, typingSpeaker, auditEvent, policyUpdate]);
+  }, [stickToBottom, turns.length, typingSpeaker, auditEvent, policyUpdate, replanIndicator]);
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const el = e.currentTarget;
@@ -159,6 +161,12 @@ export function TranscriptPane({
             )}
           </div>
         ))}
+        {replanIndicator && (
+          <ReplanIndicator
+            agent={replanIndicator.agent}
+            label={replanIndicator.label}
+          />
+        )}
         {typingSpeaker && <TypingIndicator speaker={typingSpeaker} />}
       </div>
     </div>
@@ -225,6 +233,45 @@ function AuditLine({ event, animateIn }: { event: AuditEvent; animateIn: boolean
       >
         {event.timestamp}
       </span>
+    </div>
+  );
+}
+
+function ReplanIndicator({ agent, label }: { agent: string; label: string }) {
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className="transcript-audit-in"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        margin: "2px 0 14px",
+        padding: "6px 10px 6px 12px",
+        borderLeft: "2px solid var(--accent)",
+        background: "transparent",
+        fontSize: 11,
+        color: "var(--fg-3)"
+      }}
+    >
+      <span
+        aria-hidden
+        className="live-pulse-dot"
+        style={{
+          width: 6,
+          height: 6,
+          borderRadius: "var(--r-pill)",
+          background: "var(--accent)",
+          boxShadow: "0 0 0 3px var(--accent-soft)",
+          flexShrink: 0
+        }}
+      />
+      <span className="mono" style={{ color: "var(--fg-3)" }}>
+        {agent}
+      </span>
+      <span style={{ color: "var(--fg-5)" }}>·</span>
+      <span style={{ color: "var(--fg-4)", fontStyle: "italic" }}>{label}</span>
     </div>
   );
 }

@@ -53,6 +53,7 @@ export function SplitView({
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [visibleCount, setVisibleCount] = useState<number>(live ? 0 : turns.length);
   const [typingSpeaker, setTypingSpeaker] = useState<string | null>(null);
+  const [replanning, setReplanning] = useState<boolean>(false);
   const [hitlState, setHitlState] = useState<HitlState>(
     hitlGate && !live ? "accepted" : "inactive"
   );
@@ -131,6 +132,19 @@ export function SplitView({
         const afterDelay = onPolicyBoundary
           ? 2800 + Math.random() * 400
           : 250 + Math.random() * 350;
+        if (onPolicyBoundary) {
+          // Show the agent re-planning under the new constraint during ~2s of
+          // the pause, then clear ~400ms before the next turn starts typing so
+          // the typing indicator can take over cleanly.
+          schedule(() => {
+            if (cancelled) return;
+            setReplanning(true);
+          }, 600);
+          schedule(() => {
+            if (cancelled) return;
+            setReplanning(false);
+          }, afterDelay - 400);
+        }
         schedule(() => revealNext(idx + 1), afterDelay);
       }, typingDelay);
     };
@@ -138,6 +152,7 @@ export function SplitView({
     if (hitlState === "inactive") {
       setVisibleCount(0);
       setTypingSpeaker(null);
+      setReplanning(false);
       schedule(() => revealNext(0), 500);
     } else if (hitlState === "accepted" && hitlGate) {
       schedule(() => revealNext(hitlGate.afterTurn), 600);
@@ -419,6 +434,14 @@ export function SplitView({
           typingSpeaker={typingSpeaker}
           auditEvent={visibleAuditEvent}
           policyUpdate={visiblePolicyUpdate}
+          replanIndicator={
+            live && replanning
+              ? {
+                  agent: "lab-buyer-agent",
+                  label: "re-planning under updated PII rule…"
+                }
+              : null
+          }
         />
         <CommitmentsPane
           commitments={visibleCommitments}
