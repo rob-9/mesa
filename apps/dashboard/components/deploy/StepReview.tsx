@@ -1,7 +1,6 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { TypeLabel } from "@/components/primitives/TypeLabel";
 import type { AgentConnection } from "@/lib/types";
 import type { WizardState } from "./types";
 
@@ -158,31 +157,7 @@ export function StepReview({ state, goToStep }: Props) {
         />
       </Section>
 
-      <Section title="Capabilities" onEdit={() => goToStep(1)}>
-        {state.capabilities.length === 0 ? (
-          <EmptyHint>None selected — agent will not be able to act.</EmptyHint>
-        ) : (
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-            {state.capabilities.map((c) => (
-              <span
-                key={c}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  padding: "3px 8px",
-                  background: "var(--accent-soft)",
-                  border: "1px solid var(--accent)",
-                  borderRadius: "var(--r-pill)"
-                }}
-              >
-                <TypeLabel type={c} selected />
-              </span>
-            ))}
-          </div>
-        )}
-      </Section>
-
-      <Section title="Connections" onEdit={() => goToStep(2)}>
+      <Section title="Connections" onEdit={() => goToStep(1)}>
         {state.connections.length === 0 ? (
           <EmptyHint>No systems wired up — optional.</EmptyHint>
         ) : (
@@ -227,7 +202,7 @@ export function StepReview({ state, goToStep }: Props) {
         )}
       </Section>
 
-      <Section title="Policies" onEdit={() => goToStep(3)}>
+      <Section title="Policies" onEdit={() => goToStep(2)}>
         {state.policies.length === 0 ? (
           <EmptyHint>No guardrails set — optional, but recommended.</EmptyHint>
         ) : (

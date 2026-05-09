@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { PostDeployConnect } from "@/components/deploy/PostDeployConnect";
-import { StepCapabilities } from "@/components/deploy/StepCapabilities";
 import { StepConnections } from "@/components/deploy/StepConnections";
 import { StepIdentity } from "@/components/deploy/StepIdentity";
 import { StepPolicies } from "@/components/deploy/StepPolicies";
@@ -17,7 +16,6 @@ import { findAgentTemplate, listAgentTemplates, templateToWizardState } from "@/
 
 const STEPS = [
   { id: "identity", label: "Identity" },
-  { id: "capabilities", label: "Capabilities" },
   { id: "connections", label: "Connections" },
   { id: "policies", label: "Policies" },
   { id: "review", label: "Review" }
@@ -72,7 +70,6 @@ export default function DeployAgentPage() {
 
   const stepValid = (s: number): boolean => {
     if (s === 0) return state.name.trim().length > 0 && state.role.trim().length > 0;
-    if (s === 1) return state.capabilities.length > 0;
     return true;
   };
 
@@ -160,10 +157,9 @@ export default function DeployAgentPage() {
           nextDisabled={!stepValid(step) || (isLast && deploying)}
         >
           {step === 0 && <StepIdentity state={state} setState={setState} />}
-          {step === 1 && <StepCapabilities state={state} setState={setState} />}
-          {step === 2 && <StepConnections state={state} setState={setState} />}
-          {step === 3 && <StepPolicies state={state} setState={setState} />}
-          {step === 4 && <StepReview state={state} goToStep={setStep} />}
+          {step === 1 && <StepConnections state={state} setState={setState} />}
+          {step === 2 && <StepPolicies state={state} setState={setState} />}
+          {step === 3 && <StepReview state={state} goToStep={setStep} />}
         </WizardShell>
       )}
 

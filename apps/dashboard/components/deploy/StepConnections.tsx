@@ -173,28 +173,49 @@ export function StepConnections({ state, setState }: Props) {
                   <label
                     key={c.id}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = "var(--surface-1)";
+                      if (!checked) e.currentTarget.style.background = "var(--surface-1)";
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.background = "transparent";
+                      if (!checked) e.currentTarget.style.background = "transparent";
                     }}
                     style={{
                       display: "grid",
-                      gridTemplateColumns: "16px minmax(0, 1fr) auto",
+                      gridTemplateColumns: "18px minmax(0, 1fr) auto",
                       gap: 12,
                       alignItems: "center",
                       padding: "10px 16px",
                       borderBottom: isLast ? "none" : "1px solid var(--border-row, var(--surface-2))",
                       cursor: "pointer",
-                      transition: "background 120ms ease"
+                      transition: "background 120ms ease",
+                      background: checked ? "var(--accent-soft)" : "transparent",
+                      boxShadow: checked ? "inset 3px 0 0 var(--accent)" : "none"
                     }}
                   >
                     <input
                       type="checkbox"
                       checked={checked}
                       onChange={() => toggle(c)}
-                      style={{ accentColor: "var(--accent)", margin: 0 }}
+                      style={{ display: "none" }}
                     />
+                    <span
+                      aria-hidden
+                      style={{
+                        width: 16,
+                        height: 16,
+                        borderRadius: 4,
+                        border: checked ? "1px solid var(--accent)" : "1px solid var(--surface-3)",
+                        background: checked ? "var(--accent)" : "var(--surface-0)",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "#1a0e08",
+                        fontSize: 11,
+                        fontWeight: 700,
+                        lineHeight: 1
+                      }}
+                    >
+                      {checked ? "✓" : ""}
+                    </span>
                     <div style={{ minWidth: 0 }}>
                       <div
                         style={{
