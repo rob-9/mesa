@@ -126,7 +126,11 @@ export function SplitView({
         if (cancelled) return;
         setTypingSpeaker(null);
         setVisibleCount(idx + 1);
-        const afterDelay = 250 + Math.random() * 350;
+        const justRevealedId = turns[idx]?.id;
+        const onPolicyBoundary = policyUpdate?.afterTurn === justRevealedId;
+        const afterDelay = onPolicyBoundary
+          ? 2800 + Math.random() * 400
+          : 250 + Math.random() * 350;
         schedule(() => revealNext(idx + 1), afterDelay);
       }, typingDelay);
     };
