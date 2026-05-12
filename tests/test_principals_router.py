@@ -64,3 +64,71 @@ def test_list_principals(client):
     res = client.get("/principals")
     assert res.status_code == 200
     assert len(res.json()) == 2
+
+
+def test_new_principal_has_empty_capabilities(client):
+    created = client.post(
+        "/principals", json={"org": "acme", "public_key": _hex_key()}
+    ).json()
+    assert created["capabilities"] == []
+
+
+def test_set_capabilities_round_trip(client):
+    created = client.post(
+        "/principals", json={"org": "acme", "public_key": _hex_key()}
+    ).json()
+    res = client.put(
+        f"/principals/{created['id']}/capabilities",
+        json={"capabilities": ["offer", "counter"]},
+    )
+    assert res.status_code == 200
+    assert res.json()["capabilities"] == ["offer", "counter"]
+
+    refetched = client.get(f"/principals/{created['id']}").json()
+    assert refetched["capabilities"] == ["offer", "counter"]
+
+
+def test_set_capabilities_replaces_list(client):
+    created = client.post(
+        "/principals", json={"org": "acme", "public_key": _hex_key()}
+    ).json()
+    client.put(
+        f"/principals/{created['id']}/capabilities",
+        json={"capabilities": ["offer"]},
+    )
+    res = client.put(
+        f"/principals/{created['id']}/capabilities",
+        json={"capabilities": ["counter"]},
+    )
+    assert res.json()["capabilities"] == ["counter"]
+
+
+def test_set_capabilities_dedupes_input(client):
+    created = client.post(
+        "/principals", json={"org": "acme", "public_key": _hex_key()}
+    ).json()
+    res = client.put(
+        f"/principals/{created['id']}/capabilities",
+        json={"capabilities": ["offer", "offer", "counter"]},
+    )
+    assert res.json()["capabilities"] == ["offer", "counter"]
+
+
+def test_set_capabilities_rejects_unknown_type(client):
+    created = client.post(
+        "/principals", json={"org": "acme", "public_key": _hex_key()}
+    ).json()
+    res = client.put(
+        f"/principals/{created['id']}/capabilities",
+        json={"capabilities": ["offer", "not_a_real_commitment"]},
+    )
+    assert res.status_code == 422
+    assert "not_a_real_commitment" in res.text
+
+
+def test_set_capabilities_404_for_unknown_principal(client):
+    res = client.put(
+        "/principals/" + "0" * 32 + "/capabilities",
+        json={"capabilities": []},
+    )
+    assert res.status_code == 404

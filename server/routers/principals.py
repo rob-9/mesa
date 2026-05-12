@@ -1,7 +1,12 @@
-"""principals routes: register, get, list.
+"""principals routes: register, get, list, set capabilities.
 registration is currently public and unauthenticated. validates that
 public_key is a real 32-byte ed25519 key at the boundary so downstream
 signature checks fail fast and clearly.
+
+capabilities is the authority surface used by /commitments: the list of
+commitment types this principal is permitted to emit. PUT replaces the
+whole list (idempotent). validated against the known schema types so a
+typo'd capability is caught at write time, not at gate time.
 """
 
 from datetime import datetime
@@ -12,6 +17,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from server import schema as schema_module
 from server.deps import get_db
 from server.models import Principal
 
@@ -46,7 +52,31 @@ class PrincipalRead(BaseModel):
     id: str
     org: str
     public_key: str
+    capabilities: list[str]
     created_at: datetime
+
+
+class CapabilitiesUpdate(BaseModel):
+    capabilities: list[str] = Field(default_factory=list)
+
+    @field_validator("capabilities")
+    @classmethod
+    def _known_types(cls, v: list[str]) -> list[str]:
+        known = set(schema_module.known_types())
+        unknown = [c for c in v if c not in known]
+        if unknown:
+            raise ValueError(
+                f"unknown commitment type(s): {sorted(unknown)}. "
+                f"known types: {sorted(known)}"
+            )
+        # dedupe while preserving order
+        seen: set[str] = set()
+        deduped: list[str] = []
+        for c in v:
+            if c not in seen:
+                seen.add(c)
+                deduped.append(c)
+        return deduped
 
 
 @router.post("", response_model=PrincipalRead, status_code=status.HTTP_201_CREATED)
@@ -76,3 +106,20 @@ def get_principal(principal_id: str, db: Session = Depends(get_db)) -> Principal
 @router.get("", response_model=list[PrincipalRead])
 def list_principals(db: Session = Depends(get_db)) -> list[Principal]:
     return list(db.query(Principal).order_by(Principal.created_at).all())
+
+
+@router.put("/{principal_id}/capabilities", response_model=PrincipalRead)
+def set_capabilities(
+    principal_id: str,
+    payload: CapabilitiesUpdate,
+    db: Session = Depends(get_db),
+) -> Principal:
+    principal = db.get(Principal, principal_id)
+    if principal is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="principal not found"
+        )
+    principal.capabilities = payload.capabilities
+    db.commit()
+    db.refresh(principal)
+    return principal
