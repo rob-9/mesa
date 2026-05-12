@@ -18,7 +18,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from server import schema as schema_module
-from server.deps import get_db
+from server.deps import get_db, require_admin
 from server.models import Principal
 
 router = APIRouter(prefix="/principals", tags=["principals"])
@@ -108,7 +108,11 @@ def list_principals(db: Session = Depends(get_db)) -> list[Principal]:
     return list(db.query(Principal).order_by(Principal.created_at).all())
 
 
-@router.put("/{principal_id}/capabilities", response_model=PrincipalRead)
+@router.put(
+    "/{principal_id}/capabilities",
+    response_model=PrincipalRead,
+    dependencies=[Depends(require_admin)],
+)
 def set_capabilities(
     principal_id: str,
     payload: CapabilitiesUpdate,

@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
 
 from mesa_sdk import MesaClient
-from server.deps import get_db
+from server.deps import get_db, require_admin
 from server.main import app
 from server.models import Base
 
@@ -55,6 +55,7 @@ def sdk_client(db_session) -> Iterator[MesaClient]:
         yield db_session
 
     app.dependency_overrides[get_db] = _override
+    app.dependency_overrides[require_admin] = lambda: None
     try:
         with TestClient(app) as test_client:
             client = MesaClient(http=test_client)
@@ -64,3 +65,4 @@ def sdk_client(db_session) -> Iterator[MesaClient]:
                 client.close()
     finally:
         app.dependency_overrides.pop(get_db, None)
+        app.dependency_overrides.pop(require_admin, None)

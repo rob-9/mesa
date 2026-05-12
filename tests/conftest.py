@@ -13,7 +13,7 @@ from sqlalchemy import create_engine, event
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
 
-from server.deps import get_db
+from server.deps import get_db, require_admin
 from server.main import app
 from server.models import Base
 
@@ -62,6 +62,11 @@ def client(db_session) -> Iterator[TestClient]:
         yield db_session
 
     app.dependency_overrides[get_db] = _override
-    with TestClient(app) as c:
-        yield c
-    app.dependency_overrides.clear()
+    # tests bypass the admin gate; the gate is exercised by its own test file.
+    app.dependency_overrides[require_admin] = lambda: None
+    try:
+        with TestClient(app) as c:
+            yield c
+    finally:
+        app.dependency_overrides.pop(get_db, None)
+        app.dependency_overrides.pop(require_admin, None)
