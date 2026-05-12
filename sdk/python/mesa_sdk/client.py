@@ -14,8 +14,8 @@ from typing import Any
 
 import httpx
 
-from mesa_sdk.errors import _raise_for_status
-from mesa_sdk.models import Principal
+from .errors import _raise_for_status
+from .models import Principal
 
 
 class _PrincipalsAPI:

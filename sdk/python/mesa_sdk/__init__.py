@@ -1,10 +1,10 @@
 """mesa python sdk."""
 
-from mesa_sdk.client import MesaClient
-from mesa_sdk.envelope import Envelope
-from mesa_sdk.errors import BadRequest, Conflict, MesaError, NotFound, Unauthorized
-from mesa_sdk.keys import Keypair
-from mesa_sdk.models import Principal, PrincipalCreate
+from .client import MesaClient
+from .envelope import Envelope
+from .errors import BadRequest, Conflict, MesaError, NotFound, Unauthorized
+from .keys import Keypair
+from .models import Principal, PrincipalCreate
 
 __version__ = "0.1.0"
 

@@ -13,7 +13,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any
 
-from mesa_sdk.keys import Keypair
+from .keys import Keypair
 
 
 def _now_iso() -> str:
