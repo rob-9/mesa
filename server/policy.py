@@ -100,33 +100,61 @@ def evaluate(session: Session, principal: Principal, commitment: Commitment) -> 
 
 
 # ─── built-in predicates ───────────────────────────────────────────────────
+#
+# all predicates fail closed (return False) on unexpected shapes. since
+# `block` is the strongest action, "did not fire" is the safer error mode —
+# a `block` rule that should have triggered but didn't due to a type
+# mismatch is still caught by the type's json schema upstream.
+
+
+def _terms(commitment: Commitment) -> dict[str, Any]:
+    payload = commitment.payload or {}
+    terms = payload.get("terms")
+    return terms if isinstance(terms, dict) else {}
 
 
 def _term_months_over_cap(commitment: Commitment, params: dict[str, Any]) -> bool:
     cap = params.get("cap")
-    term = (commitment.payload or {}).get("terms", {}).get("term_months")
-    return cap is not None and isinstance(term, (int, float)) and term > cap
+    term = _terms(commitment).get("term_months")
+    return (
+        isinstance(cap, (int, float))
+        and isinstance(term, (int, float))
+        and not isinstance(term, bool)
+        and term > cap
+    )
 
 
 def _spend_over_cap(commitment: Commitment, params: dict[str, Any]) -> bool:
     cap = params.get("cap")
-    fee = (commitment.payload or {}).get("terms", {}).get("fee_total_usd")
-    return cap is not None and isinstance(fee, (int, float)) and fee > cap
+    fee = _terms(commitment).get("fee_total_usd")
+    return (
+        isinstance(cap, (int, float))
+        and isinstance(fee, (int, float))
+        and not isinstance(fee, bool)
+        and fee > cap
+    )
 
 
 def _scope_mentions_pii_without_dpa(
     commitment: Commitment, params: dict[str, Any]
 ) -> bool:
-    terms = (commitment.payload or {}).get("terms", {})
-    scope = terms.get("scope") or []
+    terms = _terms(commitment)
+    scope = terms.get("scope")
+    if not isinstance(scope, list):
+        return False
     has_pii = any(isinstance(s, str) and s.upper() == "PII" for s in scope)
     return has_pii and not bool(terms.get("dpa_attached"))
 
 
 def _agent_discount_over_cap(commitment: Commitment, params: dict[str, Any]) -> bool:
     cap = params.get("cap")
-    discount = (commitment.payload or {}).get("terms", {}).get("discount_pct")
-    return cap is not None and isinstance(discount, (int, float)) and discount > cap
+    discount = _terms(commitment).get("discount_pct")
+    return (
+        isinstance(cap, (int, float))
+        and isinstance(discount, (int, float))
+        and not isinstance(discount, bool)
+        and discount > cap
+    )
 
 
 register_predicate("term_months_over_cap", _term_months_over_cap)

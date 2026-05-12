@@ -290,3 +290,95 @@ def test_decision_dataclass_shape():
     d = Decision(action="allow", applied=[])
     assert d.action == "allow"
     assert d.applied == []
+
+
+def test_predicates_fail_closed_on_non_dict_terms(db_session):
+    """if `terms` isn't a dict, predicates must return False (not raise)."""
+    p = _principal()
+    db_session.add(p)
+    db_session.add_all(
+        [
+            Policy(
+                id="po1",
+                name="term cap",
+                scope_kind="global",
+                predicate_name="term_months_over_cap",
+                params={"cap": 12},
+                action="block",
+                enabled=True,
+            ),
+            Policy(
+                id="po2",
+                name="spend cap",
+                scope_kind="global",
+                predicate_name="spend_over_cap",
+                params={"cap": 1000},
+                action="block",
+                enabled=True,
+            ),
+            Policy(
+                id="po3",
+                name="pii",
+                scope_kind="global",
+                predicate_name="scope_mentions_pii_without_dpa",
+                params={},
+                action="block",
+                enabled=True,
+            ),
+            Policy(
+                id="po4",
+                name="discount",
+                scope_kind="global",
+                predicate_name="agent_discount_over_cap",
+                params={"cap": 25},
+                action="block",
+                enabled=True,
+            ),
+        ]
+    )
+    db_session.commit()
+    # terms is a string, not a dict — every predicate should swallow this
+    d = evaluate(db_session, p, _commitment(payload={"terms": "garbage"}))
+    assert d.action == "allow"
+
+
+def test_predicates_fail_closed_on_missing_payload(db_session):
+    p = _principal()
+    db_session.add(p)
+    db_session.add(
+        Policy(
+            id="po1",
+            name="term cap",
+            scope_kind="global",
+            predicate_name="term_months_over_cap",
+            params={"cap": 12},
+            action="flag",
+            enabled=True,
+        )
+    )
+    db_session.commit()
+    # payload is None / missing keys — predicate returns False, allow
+    d = evaluate(db_session, p, _commitment(payload={}))
+    assert d.action == "allow"
+
+
+def test_predicate_rejects_boolean_as_numeric(db_session):
+    """bool is a subclass of int in python — don't let True/False slip past
+    isinstance(int) checks and trigger numeric predicates."""
+    p = _principal()
+    db_session.add(p)
+    db_session.add(
+        Policy(
+            id="po1",
+            name="term cap",
+            scope_kind="global",
+            predicate_name="term_months_over_cap",
+            params={"cap": 0},
+            action="block",
+            enabled=True,
+        )
+    )
+    db_session.commit()
+    # term=True == int(1) > 0 would block if not guarded
+    d = evaluate(db_session, p, _commitment(payload={"terms": {"term_months": True}}))
+    assert d.action == "allow"
