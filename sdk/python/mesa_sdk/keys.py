@@ -17,6 +17,11 @@ class Keypair:
     private_key: bytes
     public_key: bytes
 
+    def __repr__(self) -> str:
+        # never put private_key bytes into a repr — they leak into tracebacks,
+        # pytest assertion output, and any structured logger.
+        return f"Keypair(public_key={self.public_key_hex!r}, private_key=<redacted>)"
+
     @classmethod
     def generate(cls) -> "Keypair":
         sk = SigningKey.generate()

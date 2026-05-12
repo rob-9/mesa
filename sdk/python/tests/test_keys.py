@@ -56,3 +56,12 @@ def test_from_hex_rejects_non_hex():
 def test_from_hex_rejects_wrong_length():
     with pytest.raises(ValueError):
         Keypair.from_hex("ab" * 16)
+
+
+def test_repr_does_not_leak_private_key():
+    kp = Keypair.generate()
+    text = repr(kp)
+    assert "redacted" in text
+    assert kp.private_key_hex not in text
+    assert repr(kp.private_key) not in text
+    assert kp.public_key_hex in text
