@@ -15,7 +15,7 @@ from typing import Any
 import httpx
 
 from .errors import _raise_for_status
-from .models import Principal
+from .models import Commitment, Principal
 
 
 class _PrincipalsAPI:
@@ -37,6 +37,31 @@ class _PrincipalsAPI:
         _raise_for_status(r)
         return [Principal.model_validate(item) for item in r.json()]
 
+    def set_capabilities(self, principal_id: str, capabilities: list[str]) -> Principal:
+        r = self._http.put(
+            f"/principals/{principal_id}/capabilities",
+            json={"capabilities": capabilities},
+        )
+        _raise_for_status(r)
+        return Principal.model_validate(r.json())
+
+
+class _CommitmentsAPI:
+    """authority-gated commitment writes.
+
+    `create` takes the signed envelope dict produced by `Envelope.sign(keypair)`.
+    on the wire, the server runs: signature -> authority -> schema -> policy.
+    raises typed exceptions on failure (Unauthorized / BadRequest / etc).
+    """
+
+    def __init__(self, http: httpx.Client):
+        self._http = http
+
+    def create(self, signed_envelope: dict[str, Any]) -> Commitment:
+        r = self._http.post("/commitments", json=signed_envelope)
+        _raise_for_status(r)
+        return Commitment.model_validate(r.json())
+
 
 class MesaClient:
     def __init__(
@@ -52,6 +77,7 @@ class MesaClient:
             http = httpx.Client(base_url=base_url, timeout=timeout)
         self._http = http
         self.principals = _PrincipalsAPI(self._http)
+        self.commitments = _CommitmentsAPI(self._http)
 
     def health(self) -> dict[str, Any]:
         r = self._http.get("/health")
