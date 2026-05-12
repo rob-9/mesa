@@ -5,18 +5,13 @@ exercises every gate: signature -> authority -> schema -> policy.
 
 from __future__ import annotations
 
-import json
 from typing import Any
 
+# import the production canonicalizer so router tests cannot diverge from
+# the bytes the server actually verifies.
+from server.events.envelope import canonical_bytes
 from server.identity.keys import generate_keypair, sign
 from server.models import Policy, Principal
-
-
-def _canonical(envelope: dict[str, Any]) -> bytes:
-    body = {k: envelope[k] for k in ("id", "parent_id", "timestamp", "type", "emitted_by", "payload")}
-    return json.dumps(
-        body, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False
-    ).encode("utf-8")
 
 
 def _signed_envelope(
@@ -30,7 +25,7 @@ def _signed_envelope(
         "emitted_by": principal_id,
         "payload": payload,
     }
-    env["signature"] = sign(_canonical(env), kp_priv).hex()
+    env["signature"] = sign(canonical_bytes(env), kp_priv).hex()
     return env
 
 

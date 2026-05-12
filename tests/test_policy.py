@@ -259,11 +259,27 @@ def test_decision_carries_applied_policies(db_session):
     assert ids == {"flag1", "flag2"}
 
 
-def test_custom_predicate_registration():
+def test_custom_predicate_runs_through_evaluate(db_session):
+    """register a one-off predicate and prove evaluate() picks it up.
+    the conftest snapshot/restore fixture cleans up after this test."""
     register_predicate("always_true", lambda commitment, params: True)
-    register_predicate("always_false", lambda commitment, params: False)
-    # registry is global; this only proves register doesn't throw.
-    # the integration with evaluate is covered by the named-predicate tests above.
+    p = _principal()
+    db_session.add(p)
+    db_session.add(
+        Policy(
+            id="po1",
+            name="custom",
+            scope_kind="global",
+            predicate_name="always_true",
+            params={},
+            action="flag",
+            enabled=True,
+        )
+    )
+    db_session.commit()
+    d = evaluate(db_session, p, _commitment())
+    assert d.action == "flag"
+    assert d.applied[0]["policy_name"] == "custom"
 
 
 def test_hits_counter_incremented_when_policy_fires(db_session):

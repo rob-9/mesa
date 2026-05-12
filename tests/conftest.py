@@ -13,9 +13,22 @@ from sqlalchemy import create_engine, event
 from sqlalchemy.orm import Session
 from sqlalchemy.pool import StaticPool
 
+from server import policy as policy_module
 from server.deps import get_db, require_admin
 from server.main import app
 from server.models import Base
+
+
+@pytest.fixture(autouse=True)
+def _isolate_predicate_registry():
+    """snapshot/restore the global predicate registry around every test so
+    register_predicate() calls in one test cannot leak into another."""
+    snapshot = dict(policy_module._PREDICATES)
+    try:
+        yield
+    finally:
+        policy_module._PREDICATES.clear()
+        policy_module._PREDICATES.update(snapshot)
 
 
 @pytest.fixture(scope="session")
