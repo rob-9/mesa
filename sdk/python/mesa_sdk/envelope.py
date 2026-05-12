@@ -44,11 +44,14 @@ class Envelope:
         }
 
     def canonical_bytes(self) -> bytes:
+        # allow_nan=False refuses NaN/Infinity — non-standard JSON that
+        # cross-language canonicalizers will reject, producing un-verifiable bytes.
         return json.dumps(
             self.to_dict(),
             sort_keys=True,
             separators=(",", ":"),
             ensure_ascii=False,
+            allow_nan=False,
         ).encode("utf-8")
 
     def sign(self, keypair: Keypair) -> dict[str, Any]:

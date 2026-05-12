@@ -88,3 +88,10 @@ def test_default_id_and_timestamp_are_filled_in():
     e = Envelope(type="t", emitted_by="p", payload={})
     assert e.id
     assert e.timestamp
+
+
+def test_canonical_bytes_refuses_nan_and_infinity():
+    for bad in (float("nan"), float("inf"), float("-inf")):
+        e = Envelope(type="t", emitted_by="p", payload={"x": bad})
+        with pytest.raises(ValueError):
+            e.canonical_bytes()
