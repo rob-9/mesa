@@ -10,7 +10,7 @@ from __future__ import annotations
 import pytest
 
 from mesa_sdk import Commitment, Envelope, Keypair, MesaClient
-from mesa_sdk.errors import BadRequest, Unauthorized
+from mesa_sdk.errors import BadRequest, Forbidden, Unauthorized
 from server.models import Policy
 
 
@@ -50,19 +50,19 @@ def test_commitments_create_raises_unauthorized_on_bad_signature(sdk_client: Mes
         sdk_client.commitments.create(env)
 
 
-def test_commitments_create_raises_bad_request_on_missing_capability(
+def test_commitments_create_raises_forbidden_on_missing_capability(
     sdk_client: MesaClient,
 ):
-    # principal registered with no capabilities -> 403 -> BadRequest in sdk
     kp, principal_id = _register(sdk_client, capabilities=[])
     env = Envelope(
         type="offer",
         emitted_by=principal_id,
         payload={"summary": "x", "terms": {}},
     ).sign(kp)
-    with pytest.raises(BadRequest) as exc:
+    with pytest.raises(Forbidden) as exc:
         sdk_client.commitments.create(env)
     assert exc.value.status_code == 403
+    assert exc.value.code == "authority_denied"
 
 
 def test_commitments_create_raises_bad_request_on_schema_failure(sdk_client: MesaClient):

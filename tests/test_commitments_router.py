@@ -72,7 +72,7 @@ def test_commit_rejects_bad_signature(client, db_session):
     )
     res = client.post("/commitments", json=env)
     assert res.status_code == 401
-    assert "signature" in res.json()["detail"].lower()
+    assert res.json()["detail"]["code"] == "invalid_signature"
 
 
 def test_commit_rejects_unknown_principal(client):
@@ -99,8 +99,8 @@ def test_commit_rejects_when_principal_lacks_capability(client, db_session):
     res = client.post("/commitments", json=env)
     assert res.status_code == 403
     body = res.json()
-    assert body["detail"]["policy"] == "authority"
-    assert "offer" in body["detail"]["reason"]
+    assert body["detail"]["code"] == "authority_denied"
+    assert "offer" in body["detail"]["message"]
 
 
 def test_commit_rejects_invalid_payload(client, db_session):
@@ -150,8 +150,8 @@ def test_commit_blocked_by_policy(client, db_session):
     res = client.post("/commitments", json=env)
     assert res.status_code == 403
     body = res.json()
-    assert body["detail"]["policy"] == "spend cap"
-    assert body["detail"]["action"] == "block"
+    assert body["detail"]["code"] == "policy_blocked"
+    assert body["detail"]["policy_name"] == "spend cap"
 
 
 def test_commit_flagged_but_persisted(client, db_session):

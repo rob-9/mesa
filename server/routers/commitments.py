@@ -72,25 +72,32 @@ def create_commitment(
     if principal is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="unknown principal in emitted_by",
+            detail={"code": "unknown_principal", "message": "unknown principal in emitted_by"},
         )
 
     try:
         env_bytes = canonical_bytes(envelope.model_dump())
     except EnvelopeError as e:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e))
-
-    try:
-        sig_bytes = bytes.fromhex(envelope.signature)
-    except ValueError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="signature is not hex"
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={"code": "malformed_envelope", "message": str(e)},
         )
 
-    pubkey_bytes = bytes.fromhex(principal.public_key)
+    try:
+        pubkey_bytes = bytes.fromhex(principal.public_key)
+        sig_bytes = bytes.fromhex(envelope.signature)
+    except ValueError:
+        # principal.public_key is validated at registration; if it ever became
+        # malformed (manual SQL, broken migration), fail closed rather than 500.
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={"code": "invalid_signature", "message": "signature or pubkey is not hex"},
+        )
+
     if not verify(env_bytes, sig_bytes, pubkey_bytes):
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid signature"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={"code": "invalid_signature", "message": "signature does not verify"},
         )
 
     # 2. authority
@@ -99,12 +106,12 @@ def create_commitment(
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
-                "policy": "authority",
-                "action": "block",
-                "reason": (
+                "code": "authority_denied",
+                "message": (
                     f"principal {principal.id} is not authorized to emit "
                     f"commitments of type '{envelope.type}'"
                 ),
+                "type": envelope.type,
             },
         )
 
@@ -113,7 +120,8 @@ def create_commitment(
         schema_module.validate(envelope.type, envelope.payload)
     except schema_module.SchemaValidationError as e:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e)
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={"code": "schema_invalid", "message": str(e)},
         )
 
     # 4. policy
@@ -136,10 +144,10 @@ def create_commitment(
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
-                "policy": first_block["policy_name"],
+                "code": "policy_blocked",
+                "message": f"blocked by policy '{first_block['policy_name']}'",
                 "policy_id": first_block["policy_id"],
-                "action": "block",
-                "reason": "blocked by policy",
+                "policy_name": first_block["policy_name"],
             },
         )
 

@@ -2,7 +2,7 @@
 
 from .client import MesaClient
 from .envelope import Envelope
-from .errors import BadRequest, Conflict, MesaError, NotFound, Unauthorized
+from .errors import BadRequest, Conflict, Forbidden, MesaError, NotFound, Unauthorized
 from .keys import Keypair
 from .models import Commitment, Decision, Principal, PrincipalCreate
 
@@ -17,6 +17,7 @@ __all__ = [
     "MesaError",
     "BadRequest",
     "Conflict",
+    "Forbidden",
     "NotFound",
     "Unauthorized",
     "Principal",

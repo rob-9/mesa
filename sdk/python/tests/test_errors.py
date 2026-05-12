@@ -11,6 +11,7 @@ import pytest
 from mesa_sdk.errors import (
     BadRequest,
     Conflict,
+    Forbidden,
     MesaError,
     NotFound,
     Unauthorized,
@@ -42,11 +43,22 @@ def test_401_raises_unauthorized():
     assert exc.value.status_code == 401
 
 
-def test_403_falls_through_to_bad_request():
-    # 403 is not specifically mapped; it's a 4xx so it should land on BadRequest.
-    with pytest.raises(BadRequest) as exc:
+def test_403_raises_forbidden():
+    with pytest.raises(Forbidden) as exc:
         _raise_for_status(_response(403, json={"detail": "forbidden"}))
     assert exc.value.status_code == 403
+    # Forbidden is its own type, not a BadRequest subclass.
+    assert not isinstance(exc.value, BadRequest)
+
+
+def test_structured_detail_exposes_code_and_raw_detail():
+    body = {"detail": {"code": "authority_denied", "message": "no caps", "type": "offer"}}
+    with pytest.raises(Forbidden) as exc:
+        _raise_for_status(_response(403, json=body))
+    assert exc.value.code == "authority_denied"
+    assert exc.value.detail == body["detail"]
+    assert "authority_denied" in str(exc.value)
+    assert "no caps" in str(exc.value)
 
 
 def test_404_raises_not_found():
