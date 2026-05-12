@@ -55,10 +55,12 @@ def sdk_client(db_session) -> Iterator[MesaClient]:
         yield db_session
 
     app.dependency_overrides[get_db] = _override
-    with TestClient(app) as test_client:
-        client = MesaClient(http=test_client)
-        try:
-            yield client
-        finally:
-            client.close()
-    app.dependency_overrides.clear()
+    try:
+        with TestClient(app) as test_client:
+            client = MesaClient(http=test_client)
+            try:
+                yield client
+            finally:
+                client.close()
+    finally:
+        app.dependency_overrides.pop(get_db, None)
