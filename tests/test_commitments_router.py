@@ -196,6 +196,35 @@ def test_commit_authority_check_runs_before_schema(client, db_session):
     assert res.status_code == 403
 
 
+def test_commit_hits30d_increments_even_when_blocked(client, db_session):
+    """blocked requests must still bump hits30d — the dashboard counts
+    every time a rule fires, not just when it permits a write."""
+    p, priv = _make_principal(db_session, capabilities=["offer"])
+    pol = Policy(
+        name="spend cap",
+        scope_kind="global",
+        predicate_name="spend_over_cap",
+        params={"cap": 1000},
+        action="block",
+        enabled=True,
+    )
+    db_session.add(pol)
+    db_session.commit()
+    db_session.refresh(pol)
+    before = pol.hits30d
+    env = _signed_envelope(
+        kp_priv=priv,
+        principal_id=p.id,
+        type_="offer",
+        payload={"summary": "big deal", "terms": {"fee_total_usd": 5000}},
+    )
+    res = client.post("/commitments", json=env)
+    assert res.status_code == 403
+    db_session.expire(pol)
+    db_session.refresh(pol)
+    assert pol.hits30d == before + 1
+
+
 def test_commit_hits30d_increments_on_policy_fire(client, db_session):
     p, priv = _make_principal(db_session, capabilities=["offer"])
     pol = Policy(

@@ -127,7 +127,11 @@ def create_commitment(
     decision = policy_module.evaluate(db, principal, commitment)
 
     if decision.action == "block":
-        # do not persist; surface the first blocking rule
+        # do not persist the commitment, but DO commit the hits30d increments
+        # from policy.evaluate so the dashboard reflects the block. without
+        # this commit, the raise rolls back the implicit transaction and the
+        # hit counter silently drops every blocked request.
+        db.commit()
         first_block = next(a for a in decision.applied if a["action"] == "block")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
