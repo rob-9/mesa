@@ -111,3 +111,18 @@ def test_set_capabilities_round_trip(sdk_client: MesaClient):
     assert updated.capabilities == ["offer", "counter"]
     refetched = sdk_client.principals.get(p.id)
     assert refetched.capabilities == ["offer", "counter"]
+
+
+def test_set_capabilities_unknown_principal_raises_not_found(sdk_client: MesaClient):
+    from mesa_sdk.errors import NotFound
+
+    with pytest.raises(NotFound):
+        sdk_client.principals.set_capabilities("does-not-exist", ["offer"])
+
+
+def test_set_capabilities_unknown_type_raises_bad_request(sdk_client: MesaClient):
+    kp = Keypair.generate()
+    p = sdk_client.principals.create(org="acme", public_key=kp.public_key_hex)
+    with pytest.raises(BadRequest) as exc:
+        sdk_client.principals.set_capabilities(p.id, ["not_a_real_type"])
+    assert exc.value.status_code == 422
