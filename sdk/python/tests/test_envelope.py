@@ -53,6 +53,7 @@ def test_sign_returns_dict_with_hex_signature():
         "timestamp",
         "type",
         "emitted_by",
+        "deliberation_id",
         "payload",
         "signature",
     }

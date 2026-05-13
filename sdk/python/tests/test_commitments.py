@@ -24,9 +24,11 @@ def _register(client: MesaClient, capabilities: list[str]) -> tuple[Keypair, str
 
 def test_commitments_create_happy_path(sdk_client: MesaClient):
     kp, principal_id = _register(sdk_client, capabilities=["offer"])
+    d = sdk_client.deliberations.open(title="t")
     env = Envelope(
         type="offer",
         emitted_by=principal_id,
+        deliberation_id=d.id,
         payload={"summary": "first offer", "terms": {}},
     ).sign(kp)
     c = sdk_client.commitments.create(env)
@@ -39,9 +41,11 @@ def test_commitments_create_happy_path(sdk_client: MesaClient):
 
 def test_commitments_create_raises_unauthorized_on_bad_signature(sdk_client: MesaClient):
     kp, principal_id = _register(sdk_client, capabilities=["offer"])
+    d = sdk_client.deliberations.open(title="t")
     env = Envelope(
         type="offer",
         emitted_by=principal_id,
+        deliberation_id=d.id,
         payload={"summary": "x", "terms": {}},
     ).sign(kp)
     # tamper the signature after signing
@@ -54,9 +58,11 @@ def test_commitments_create_raises_forbidden_on_missing_capability(
     sdk_client: MesaClient,
 ):
     kp, principal_id = _register(sdk_client, capabilities=[])
+    d = sdk_client.deliberations.open(title="t")
     env = Envelope(
         type="offer",
         emitted_by=principal_id,
+        deliberation_id=d.id,
         payload={"summary": "x", "terms": {}},
     ).sign(kp)
     with pytest.raises(Forbidden) as exc:
@@ -67,9 +73,11 @@ def test_commitments_create_raises_forbidden_on_missing_capability(
 
 def test_commitments_create_raises_bad_request_on_schema_failure(sdk_client: MesaClient):
     kp, principal_id = _register(sdk_client, capabilities=["offer"])
+    d = sdk_client.deliberations.open(title="t")
     env = Envelope(
         type="offer",
         emitted_by=principal_id,
+        deliberation_id=d.id,
         payload={"terms": {}},  # missing required `summary`
     ).sign(kp)
     with pytest.raises(BadRequest) as exc:
@@ -92,9 +100,11 @@ def test_commitments_create_returns_flagged_when_policy_fires(
     )
     db_session.commit()
     kp, principal_id = _register(sdk_client, capabilities=["offer"])
+    d = sdk_client.deliberations.open(title="t")
     env = Envelope(
         type="offer",
         emitted_by=principal_id,
+        deliberation_id=d.id,
         payload={"summary": "long deal", "terms": {"term_months": 24}},
     ).sign(kp)
     c = sdk_client.commitments.create(env)

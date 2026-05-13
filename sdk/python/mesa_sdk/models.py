@@ -45,3 +45,43 @@ class Commitment(BaseModel):
     principal_id: str
     status: str
     decision: Decision
+
+
+class Turn(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    deliberation_id: str
+    speaker_id: str
+    content: str
+    index: int
+    created_at: datetime
+
+
+class CommitmentRef(BaseModel):
+    """commitment summary as embedded in a deliberation detail response."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    type: str
+    principal_id: str
+    status: str
+    payload: dict[str, Any]
+    created_at: datetime
+
+
+class Deliberation(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    title: str
+    counterparty_slug: str | None
+    stage: str
+    status: str
+    created_at: datetime
+
+
+class DeliberationDetail(Deliberation):
+    turns: list[Turn]
+    commitments: list[CommitmentRef]
