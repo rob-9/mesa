@@ -163,6 +163,34 @@ def test_commit_blocked_by_policy(client, db_session):
     assert body["detail"]["policy_name"] == "spend cap"
 
 
+def test_commit_route_persists_as_flagged_with_route_to(client, db_session):
+    p, priv = _make_principal(db_session, capabilities=["offer"])
+    db_session.add(
+        Policy(
+            name="needs legal",
+            scope_kind="global",
+            predicate_name="term_months_over_cap",
+            params={"cap": 12},
+            action="route",
+            route_to="legal-bot",
+            enabled=True,
+        )
+    )
+    db_session.commit()
+    env = _signed_envelope(
+        kp_priv=priv,
+        principal_id=p.id,
+        type_="offer",
+        payload={"summary": "long deal", "terms": {"term_months": 24}},
+    )
+    res = client.post("/commitments", json=env)
+    assert res.status_code == 201
+    body = res.json()
+    assert body["status"] == "flagged"
+    assert body["decision"]["action"] == "route"
+    assert body["decision"]["applied"][0]["route_to"] == "legal-bot"
+
+
 def test_commit_flagged_but_persisted(client, db_session):
     p, priv = _make_principal(db_session, capabilities=["offer"])
     db_session.add(
