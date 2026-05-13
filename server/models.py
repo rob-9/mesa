@@ -10,6 +10,12 @@ planned (not yet defined):
   deliberation  the atomic negotiation unit; will own turns + commitments
   event         append-only signed audit log (hash-chained in a later pass)
   approval      human-in-the-loop queue for action="route"
+
+note on JSON columns: we use `sa.JSON` for portability (sqlite in tests,
+postgres in prod). this stores values as TEXT in sqlite and JSON in postgres,
+but we give up postgres jsonb operators (`->`, `->>`, GIN indexes). switch
+the relevant columns to `postgresql.JSONB` if/when we need to query into
+`commitment.payload` or `policy.params` server-side.
 """
 
 import uuid
