@@ -407,6 +407,65 @@ def test_predicates_fail_closed_on_missing_payload(db_session):
     assert d.action == "allow"
 
 
+def test_predicate_boundaries_are_strictly_greater(db_session):
+    """all cap predicates use strict `>`; value == cap must not fire."""
+    p = _principal()
+    db_session.add(p)
+    db_session.add_all(
+        [
+            Policy(
+                id="t",
+                name="term",
+                scope_kind="global",
+                predicate_name="term_months_over_cap",
+                params={"cap": 36},
+                action="flag",
+                enabled=True,
+            ),
+            Policy(
+                id="s",
+                name="spend",
+                scope_kind="global",
+                predicate_name="spend_over_cap",
+                params={"cap": 250000},
+                action="flag",
+                enabled=True,
+            ),
+            Policy(
+                id="d",
+                name="discount",
+                scope_kind="agent",
+                scope_ref=p.id,
+                predicate_name="agent_discount_over_cap",
+                params={"cap": 25},
+                action="flag",
+                enabled=True,
+            ),
+        ]
+    )
+    db_session.commit()
+
+    at_caps = evaluate(
+        db_session,
+        p,
+        _commitment(
+            payload={"terms": {"term_months": 36, "fee_total_usd": 250000, "discount_pct": 25}}
+        ),
+    )
+    assert at_caps.action == "allow"
+
+    just_over = evaluate(
+        db_session,
+        p,
+        _commitment(
+            payload={"terms": {"term_months": 37, "fee_total_usd": 250001, "discount_pct": 26}}
+        ),
+    )
+    assert just_over.action == "flag"
+    fired = {a["policy_id"] for a in just_over.applied}
+    assert fired == {"t", "s", "d"}
+
+
 def test_predicate_rejects_boolean_as_numeric(db_session):
     """bool is a subclass of int in python — don't let True/False slip past
     isinstance(int) checks and trigger numeric predicates."""
