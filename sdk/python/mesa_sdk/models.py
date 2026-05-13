@@ -23,7 +23,8 @@ class Principal(BaseModel):
     id: str
     org: str
     public_key: str
-    capabilities: list[str] = Field(default_factory=list)
+    # required — server always sends it; a missing field signals a real drift.
+    capabilities: list[str]
     created_at: datetime
 
 
