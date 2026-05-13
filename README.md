@@ -63,12 +63,29 @@ sqlalchemy, so the core state machine stays testable in isolation.
 docker compose up -d
 pip install -e ".[dev]"
 alembic upgrade head
+export MESA_ADMIN_TOKEN=$(openssl rand -hex 32)
 uvicorn server.main:app --reload
 ```
 
+`MESA_ADMIN_TOKEN` gates capability mutation (`PUT /principals/{id}/capabilities`). without it set, that route refuses every call — there is no default-open mode.
+
+## onboarding flow
+
+mechanical today, no portal yet:
+
+1. **register principal** — `POST /principals` with `{org, public_key}` → get back an `id`. private key never leaves the caller.
+2. **ops grants capabilities** — `PUT /principals/{id}/capabilities` with `X-Admin-Token` header and `{"capabilities": ["offer", "counter", ...]}`. capability strings must match a known commitment type under `schemas/commitments/`.
+3. **agent signs and posts commitments** — `POST /commitments` with a signed envelope (see SDK). the server runs four gates in order:
+   - `signature` → ed25519 verify against the stored pubkey
+   - `authority` → type is in the principal's capabilities
+   - `schema` → payload matches `schemas/commitments/<pack>/<type>.schema.json`
+   - `policy` → enabled rules evaluate; `block > route > flag > allow`
+
+  outcomes: `201` with `{status, decision}`, `401` (signature / unknown principal), `403` (authority denied or policy blocked), or `422` (malformed payload).
+
 ## sdk
 
-python client at `sdk/python/` covers `/health`, `/principals`, ed25519 keypair, and signed event envelopes. see [`sdk/python/README.md`](sdk/python/README.md) for a quickstart.
+python client at `sdk/python/` covers `/health`, `/principals`, `/commitments`, ed25519 keypairs, and signed event envelopes. see [`sdk/python/README.md`](sdk/python/README.md) for the quickstart.
 
 ## status
 
