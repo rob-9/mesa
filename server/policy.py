@@ -18,7 +18,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Callable
 
-from sqlalchemy import or_, select
+from sqlalchemy import and_, or_, select
 from sqlalchemy.orm import Session
 
 from server.models import Commitment, Policy, Principal
@@ -70,7 +70,10 @@ def evaluate(session: Session, principal: Principal, commitment: Commitment) -> 
         .where(
             or_(
                 Policy.scope_kind == "global",
-                (Policy.scope_kind == "agent") & (Policy.scope_ref == principal.id),
+                and_(
+                    Policy.scope_kind == "agent",
+                    Policy.scope_ref == principal.id,
+                ),
                 # counterparty scope is dormant in v0.1
             )
         )
