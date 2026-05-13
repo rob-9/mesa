@@ -407,6 +407,29 @@ def test_predicates_fail_closed_on_missing_payload(db_session):
     assert d.action == "allow"
 
 
+def test_counterparty_scoped_policies_are_dormant(db_session):
+    """v0.1 contract: counterparty scope is stored but never matched.
+    locks the dormant behavior — flipping this on later is a deliberate change."""
+    p = _principal()
+    db_session.add(p)
+    db_session.add(
+        Policy(
+            id="cp1",
+            name="watchlist",
+            scope_kind="counterparty",
+            scope_ref="acme",  # matches principal.org — but scope is dormant
+            predicate_name="term_months_over_cap",
+            params={"cap": 0},  # would otherwise fire on any positive term
+            action="block",
+            enabled=True,
+        )
+    )
+    db_session.commit()
+    d = evaluate(db_session, p, _commitment(payload={"terms": {"term_months": 24}}))
+    assert d.action == "allow"
+    assert d.applied == []
+
+
 def test_predicate_boundaries_are_strictly_greater(db_session):
     """all cap predicates use strict `>`; value == cap must not fire."""
     p = _principal()
