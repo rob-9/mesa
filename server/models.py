@@ -1,12 +1,15 @@
 """sqlalchemy entities. all models live here to avoid circular imports.
 split when it crosses ~800 lines.
 
-planned tables:
-  principal      orgs, users, agents
-  deliberation   the atomic unit
-  event          signed, hash-chained
-  commitment     materialized from accepted proposals
-  approval       human approvals
+current tables:
+  principal     orgs, users, agents — public_key + capabilities
+  commitment    signed, schema-validated, policy-gated actions
+  policy        named-predicate rules: scope, action, route_to, hits30d
+
+planned (not yet defined):
+  deliberation  the atomic negotiation unit; will own turns + commitments
+  event         append-only signed audit log (hash-chained in a later pass)
+  approval      human-in-the-loop queue for action="route"
 """
 
 import uuid
