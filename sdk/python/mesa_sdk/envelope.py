@@ -1,8 +1,31 @@
 """event envelope: id, parent_id, timestamp, type, emitted_by, payload, signature.
 
-canonical byte form is utf-8 json with sorted keys and no whitespace, computed
-over the envelope dict with the `signature` field omitted. signing produces a
-plain dict ready to serialize as the http body.
+## canonical byte form
+
+the bytes that get signed are produced by `Envelope.canonical_bytes()` and
+must be reproducible **byte-for-byte** by any party verifying the signature
+(the python server today, future TS/Go SDKs tomorrow). the contract:
+
+  - utf-8 encoded
+  - json with `sort_keys=True` — recursively sorts nested dicts too
+  - no whitespace: `separators=(",", ":")`
+  - `ensure_ascii=False` — non-ASCII chars emit as raw utf-8 bytes, NOT
+    `\\uXXXX` escapes
+  - `allow_nan=False` — NaN/Infinity refused outright (non-standard json
+    that cross-language canonicalizers reject)
+  - the `signature` field is excluded from the canonicalized dict
+
+## constraints on payloads
+
+  - **no non-finite floats** (NaN, +Inf, -Inf) — they will raise
+  - **no python-native objects** (datetime, UUID, Decimal, Pydantic models):
+    pass primitives only (str, int, float, bool, None, list, dict)
+  - **timestamp is an opaque string** — server-side verifiers must NOT
+    parse + re-emit (`isoformat()` would change `Z` to `+00:00`, breaking
+    verification). store and forward as-is.
+  - **no unicode normalization** (NFC/NFD) — `"caf\\u00e9"` (1 codepoint)
+    and `"cafe\\u0301"` (2 codepoints) sign to different bytes. callers
+    should normalize upstream if they want them treated as equivalent.
 """
 
 from __future__ import annotations
