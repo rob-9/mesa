@@ -63,6 +63,12 @@ def evaluate(session: Session, principal: Principal, commitment: Commitment) -> 
     side effect: increments hits30d on each policy that fires. callers should
     not assume the session is flushed — this function flushes its own writes
     but leaves commit responsibility to the caller.
+
+    perf note: this re-queries every enabled policy on every request. fine
+    while policy counts are small (dozens). once we cross a few hundred or
+    request rates climb, cache the rule set in-process (invalidate on the
+    eventual /policies CRUD endpoints' writes) and only re-hit the DB to
+    increment hits30d.
     """
     rules = session.scalars(
         select(Policy)
