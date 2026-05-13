@@ -28,7 +28,7 @@ from server import schema as schema_module
 from server.deps import get_db
 from server.events.envelope import EnvelopeError, canonical_bytes
 from server.identity.keys import verify
-from server.models import Commitment, Principal
+from server.models import Commitment, Deliberation, Principal
 
 router = APIRouter(prefix="/commitments", tags=["commitments"])
 
@@ -46,6 +46,7 @@ class CommitmentEnvelope(BaseModel):
     timestamp: str = Field(min_length=1)
     type: str = Field(min_length=1)
     emitted_by: str = Field(min_length=1)
+    deliberation_id: str = Field(min_length=1)
     payload: dict[str, Any]
     signature: str = Field(min_length=128, max_length=128)
 
@@ -133,10 +134,30 @@ def create_commitment(
             detail={"code": "schema_invalid", "message": str(e)},
         )
 
+    # 3.5 deliberation must exist and be open
+    deliberation = db.get(Deliberation, envelope.deliberation_id)
+    if deliberation is None:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "code": "unknown_deliberation",
+                "message": f"deliberation {envelope.deliberation_id!r} not found",
+            },
+        )
+    if deliberation.status != "open":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "code": "deliberation_closed",
+                "message": f"deliberation status is {deliberation.status!r}",
+            },
+        )
+
     # 4. policy
     commitment = Commitment(
         type=envelope.type,
         principal_id=principal.id,
+        deliberation_id=deliberation.id,
         payload=envelope.payload,
         signature=envelope.signature,
         status="active",

@@ -170,6 +170,8 @@ def get_deliberation(
 class TurnEnvelope(BaseModel):
     """signed turn envelope; mirrors `mesa_sdk.Envelope.sign()` output.
     `type` must equal "turn"; payload is the turn schema (just `content`).
+    deliberation_id is signed-over but the URL path is authoritative — they
+    must match.
     """
 
     id: str = Field(min_length=1)
@@ -177,6 +179,7 @@ class TurnEnvelope(BaseModel):
     timestamp: str = Field(min_length=1)
     type: str = Field(min_length=1)
     emitted_by: str = Field(min_length=1)
+    deliberation_id: str | None = None
     payload: dict[str, Any]
     signature: str = Field(min_length=128, max_length=128)
 
@@ -251,6 +254,14 @@ def append_turn(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={"code": "not_found", "message": "deliberation not found"},
+        )
+    if envelope.deliberation_id is not None and envelope.deliberation_id != d.id:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "code": "deliberation_mismatch",
+                "message": "envelope.deliberation_id does not match URL path",
+            },
         )
     if d.status != "open":
         raise HTTPException(

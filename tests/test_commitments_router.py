@@ -11,11 +11,17 @@ from typing import Any
 # the bytes the server actually verifies.
 from server.events.envelope import canonical_bytes
 from server.identity.keys import generate_keypair, sign
-from server.models import Policy, Principal
+from server.models import Deliberation, Policy, Principal
 
 
 def _signed_envelope(
-    *, kp_priv: bytes, principal_id: str, type_: str, payload: dict, parent_id: str | None = None
+    *,
+    kp_priv: bytes,
+    principal_id: str,
+    type_: str,
+    payload: dict,
+    deliberation_id: str,
+    parent_id: str | None = None,
 ) -> dict[str, Any]:
     env = {
         "id": "evt_test_1",
@@ -23,6 +29,7 @@ def _signed_envelope(
         "timestamp": "2026-05-12T00:00:00.000000Z",
         "type": type_,
         "emitted_by": principal_id,
+        "deliberation_id": deliberation_id,
         "payload": payload,
     }
     env["signature"] = sign(canonical_bytes(env), kp_priv).hex()
@@ -38,9 +45,19 @@ def _make_principal(db_session, capabilities: list[str] | None = None) -> tuple[
     return p, priv
 
 
+def _make_deliberation(db_session, status: str = "open") -> str:
+    d = Deliberation(title="test deliberation", status=status)
+    db_session.add(d)
+    db_session.commit()
+    db_session.refresh(d)
+    return d.id
+
+
 def test_commit_offer_happy_path(client, db_session):
     p, priv = _make_principal(db_session, capabilities=["offer"])
+    did = _make_deliberation(db_session)
     env = _signed_envelope(
+        deliberation_id=did,
         kp_priv=priv,
         principal_id=p.id,
         type_="offer",
@@ -58,7 +75,9 @@ def test_commit_offer_happy_path(client, db_session):
 
 def test_commit_rejects_non_hex_signature(client, db_session):
     p, priv = _make_principal(db_session, capabilities=["offer"])
+    did = _make_deliberation(db_session)
     env = _signed_envelope(
+        deliberation_id=did,
         kp_priv=priv,
         principal_id=p.id,
         type_="offer",
@@ -72,8 +91,10 @@ def test_commit_rejects_non_hex_signature(client, db_session):
 
 def test_commit_rejects_bad_signature(client, db_session):
     p, _ = _make_principal(db_session, capabilities=["offer"])
+    did = _make_deliberation(db_session)
     _, wrong_priv = generate_keypair()  # signed by the wrong key
     env = _signed_envelope(
+        deliberation_id=did,
         kp_priv=wrong_priv,
         principal_id=p.id,
         type_="offer",
@@ -87,6 +108,7 @@ def test_commit_rejects_bad_signature(client, db_session):
 def test_commit_rejects_unknown_principal(client):
     priv, _ = generate_keypair()
     env = _signed_envelope(
+        deliberation_id="d_sentinel",  # never reached; principal lookup fails first
         kp_priv=priv,
         principal_id="does-not-exist",
         type_="offer",
@@ -99,7 +121,9 @@ def test_commit_rejects_unknown_principal(client):
 def test_commit_rejects_when_principal_lacks_capability(client, db_session):
     # principal has no capabilities; offer should be refused
     p, priv = _make_principal(db_session, capabilities=[])
+    did = _make_deliberation(db_session)
     env = _signed_envelope(
+        deliberation_id=did,
         kp_priv=priv,
         principal_id=p.id,
         type_="offer",
@@ -114,7 +138,9 @@ def test_commit_rejects_when_principal_lacks_capability(client, db_session):
 
 def test_commit_rejects_invalid_payload(client, db_session):
     p, priv = _make_principal(db_session, capabilities=["offer"])
+    did = _make_deliberation(db_session)
     env = _signed_envelope(
+        deliberation_id=did,
         kp_priv=priv,
         principal_id=p.id,
         type_="offer",
@@ -127,7 +153,9 @@ def test_commit_rejects_invalid_payload(client, db_session):
 
 def test_commit_rejects_unknown_commitment_type(client, db_session):
     p, priv = _make_principal(db_session, capabilities=["bogus_type"])
+    did = _make_deliberation(db_session)
     env = _signed_envelope(
+        deliberation_id=did,
         kp_priv=priv,
         principal_id=p.id,
         type_="bogus_type",
@@ -139,6 +167,7 @@ def test_commit_rejects_unknown_commitment_type(client, db_session):
 
 def test_commit_blocked_by_policy(client, db_session):
     p, priv = _make_principal(db_session, capabilities=["offer"])
+    did = _make_deliberation(db_session)
     db_session.add(
         Policy(
             name="spend cap",
@@ -151,6 +180,7 @@ def test_commit_blocked_by_policy(client, db_session):
     )
     db_session.commit()
     env = _signed_envelope(
+        deliberation_id=did,
         kp_priv=priv,
         principal_id=p.id,
         type_="offer",
@@ -165,6 +195,7 @@ def test_commit_blocked_by_policy(client, db_session):
 
 def test_commit_route_persists_as_flagged_with_route_to(client, db_session):
     p, priv = _make_principal(db_session, capabilities=["offer"])
+    did = _make_deliberation(db_session)
     db_session.add(
         Policy(
             name="needs legal",
@@ -178,6 +209,7 @@ def test_commit_route_persists_as_flagged_with_route_to(client, db_session):
     )
     db_session.commit()
     env = _signed_envelope(
+        deliberation_id=did,
         kp_priv=priv,
         principal_id=p.id,
         type_="offer",
@@ -193,6 +225,7 @@ def test_commit_route_persists_as_flagged_with_route_to(client, db_session):
 
 def test_commit_flagged_but_persisted(client, db_session):
     p, priv = _make_principal(db_session, capabilities=["offer"])
+    did = _make_deliberation(db_session)
     db_session.add(
         Policy(
             name="term cap",
@@ -205,6 +238,7 @@ def test_commit_flagged_but_persisted(client, db_session):
     )
     db_session.commit()
     env = _signed_envelope(
+        deliberation_id=did,
         kp_priv=priv,
         principal_id=p.id,
         type_="offer",
@@ -223,7 +257,9 @@ def test_commit_authority_check_runs_before_schema(client, db_session):
     authority is a stricter gate, and the 403 should fire even when the payload
     would have been invalid anyway."""
     p, priv = _make_principal(db_session, capabilities=[])
+    did = _make_deliberation(db_session)
     env = _signed_envelope(
+        deliberation_id=did,
         kp_priv=priv,
         principal_id=p.id,
         type_="offer",
@@ -237,6 +273,7 @@ def test_commit_hits30d_increments_even_when_blocked(client, db_session):
     """blocked requests must still bump hits30d — the dashboard counts
     every time a rule fires, not just when it permits a write."""
     p, priv = _make_principal(db_session, capabilities=["offer"])
+    did = _make_deliberation(db_session)
     pol = Policy(
         name="spend cap",
         scope_kind="global",
@@ -250,6 +287,7 @@ def test_commit_hits30d_increments_even_when_blocked(client, db_session):
     db_session.refresh(pol)
     before = pol.hits30d
     env = _signed_envelope(
+        deliberation_id=did,
         kp_priv=priv,
         principal_id=p.id,
         type_="offer",
@@ -262,8 +300,56 @@ def test_commit_hits30d_increments_even_when_blocked(client, db_session):
     assert pol.hits30d == before + 1
 
 
+def test_commit_rejects_unknown_deliberation(client, db_session):
+    p, priv = _make_principal(db_session, capabilities=["offer"])
+    env = _signed_envelope(
+        deliberation_id="does-not-exist",
+        kp_priv=priv,
+        principal_id=p.id,
+        type_="offer",
+        payload={"summary": "x", "terms": {}},
+    )
+    res = client.post("/commitments", json=env)
+    assert res.status_code == 422
+    assert res.json()["detail"]["code"] == "unknown_deliberation"
+
+
+def test_commit_rejects_closed_deliberation(client, db_session):
+    p, priv = _make_principal(db_session, capabilities=["offer"])
+    did = _make_deliberation(db_session, status="closed")
+    env = _signed_envelope(
+        deliberation_id=did,
+        kp_priv=priv,
+        principal_id=p.id,
+        type_="offer",
+        payload={"summary": "x", "terms": {}},
+    )
+    res = client.post("/commitments", json=env)
+    assert res.status_code == 403
+    assert res.json()["detail"]["code"] == "deliberation_closed"
+
+
+def test_commit_appears_in_deliberation_detail(client, db_session):
+    p, priv = _make_principal(db_session, capabilities=["offer"])
+    did = _make_deliberation(db_session)
+    env = _signed_envelope(
+        deliberation_id=did,
+        kp_priv=priv,
+        principal_id=p.id,
+        type_="offer",
+        payload={"summary": "x", "terms": {}},
+    )
+    res = client.post("/commitments", json=env)
+    assert res.status_code == 201
+
+    detail = client.get(f"/deliberations/{did}").json()
+    assert len(detail["commitments"]) == 1
+    assert detail["commitments"][0]["type"] == "offer"
+
+
 def test_commit_hits30d_increments_on_policy_fire(client, db_session):
     p, priv = _make_principal(db_session, capabilities=["offer"])
+    did = _make_deliberation(db_session)
     pol = Policy(
         name="term cap",
         scope_kind="global",
@@ -277,6 +363,7 @@ def test_commit_hits30d_increments_on_policy_fire(client, db_session):
     db_session.refresh(pol)
     before = pol.hits30d
     env = _signed_envelope(
+        deliberation_id=did,
         kp_priv=priv,
         principal_id=p.id,
         type_="offer",

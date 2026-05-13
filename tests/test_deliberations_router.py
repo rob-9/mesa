@@ -18,13 +18,16 @@ def _principal(db_session, **kw) -> tuple[Principal, bytes]:
     return p, priv
 
 
-def _signed_turn(*, kp_priv: bytes, principal_id: str, content: str) -> dict[str, Any]:
+def _signed_turn(
+    *, kp_priv: bytes, principal_id: str, content: str, deliberation_id: str | None = None
+) -> dict[str, Any]:
     env = {
         "id": "evt_t",
         "parent_id": None,
         "timestamp": "2026-05-13T00:00:00.000000Z",
         "type": "turn",
         "emitted_by": principal_id,
+        "deliberation_id": deliberation_id,
         "payload": {"content": content},
     }
     env["signature"] = sign(canonical_bytes(env), kp_priv).hex()
@@ -118,7 +121,7 @@ def test_create_rejects_blank_title(client):
 def test_append_turn_happy_path(client, db_session):
     p, priv = _principal(db_session)
     d = client.post("/deliberations", json={"title": "x"}).json()
-    env = _signed_turn(kp_priv=priv, principal_id=p.id, content="opening pitch")
+    env = _signed_turn(kp_priv=priv, principal_id=p.id, content="opening pitch", deliberation_id=d['id'])
     res = client.post(f"/deliberations/{d['id']}/turns", json=env)
     assert res.status_code == 201, res.text
     body = res.json()
@@ -131,7 +134,7 @@ def test_append_turn_monotonic_index(client, db_session):
     p, priv = _principal(db_session)
     d = client.post("/deliberations", json={"title": "x"}).json()
     for i, content in enumerate(["a", "b", "c"]):
-        env = _signed_turn(kp_priv=priv, principal_id=p.id, content=content)
+        env = _signed_turn(kp_priv=priv, principal_id=p.id, content=content, deliberation_id=d['id'])
         res = client.post(f"/deliberations/{d['id']}/turns", json=env)
         assert res.status_code == 201
         assert res.json()["index"] == i
@@ -141,15 +144,16 @@ def test_append_turn_rejects_bad_signature(client, db_session):
     p, _ = _principal(db_session)
     _, wrong_priv = generate_keypair()
     d = client.post("/deliberations", json={"title": "x"}).json()
-    env = _signed_turn(kp_priv=wrong_priv, principal_id=p.id, content="x")
+    env = _signed_turn(kp_priv=wrong_priv, principal_id=p.id, content="x", deliberation_id=d['id'])
     res = client.post(f"/deliberations/{d['id']}/turns", json=env)
     assert res.status_code == 401
 
 
 def test_append_turn_rejects_unknown_deliberation(client, db_session):
     p, priv = _principal(db_session)
-    env = _signed_turn(kp_priv=priv, principal_id=p.id, content="x")
-    res = client.post(f"/deliberations/{'0' * 32}/turns", json=env)
+    missing = "0" * 32
+    env = _signed_turn(kp_priv=priv, principal_id=p.id, content="x", deliberation_id=missing)
+    res = client.post(f"/deliberations/{missing}/turns", json=env)
     assert res.status_code == 404
 
 
@@ -157,7 +161,7 @@ def test_append_turn_rejects_closed_deliberation(client, db_session):
     p, priv = _principal(db_session)
     d = client.post("/deliberations", json={"title": "x"}).json()
     client.patch(f"/deliberations/{d['id']}", json={"status": "closed"})
-    env = _signed_turn(kp_priv=priv, principal_id=p.id, content="x")
+    env = _signed_turn(kp_priv=priv, principal_id=p.id, content="x", deliberation_id=d['id'])
     res = client.post(f"/deliberations/{d['id']}/turns", json=env)
     assert res.status_code == 403
     assert res.json()["detail"]["code"] == "deliberation_closed"
@@ -172,6 +176,7 @@ def test_append_turn_rejects_wrong_envelope_type(client, db_session):
         "timestamp": "2026-05-13T00:00:00.000000Z",
         "type": "offer",  # wrong type for /turns
         "emitted_by": p.id,
+        "deliberation_id": d["id"],
         "payload": {"content": "x"},
     }
     env["signature"] = sign(canonical_bytes(env), priv).hex()
@@ -183,7 +188,7 @@ def test_append_turn_rejects_wrong_envelope_type(client, db_session):
 def test_append_turn_rejects_empty_content(client, db_session):
     p, priv = _principal(db_session)
     d = client.post("/deliberations", json={"title": "x"}).json()
-    env = _signed_turn(kp_priv=priv, principal_id=p.id, content="")
+    env = _signed_turn(kp_priv=priv, principal_id=p.id, content="", deliberation_id=d['id'])
     res = client.post(f"/deliberations/{d['id']}/turns", json=env)
     # empty content fails schema validation (minLength: 1)
     assert res.status_code == 422
@@ -193,7 +198,7 @@ def test_get_deliberation_includes_turns_in_index_order(client, db_session):
     p, priv = _principal(db_session)
     d = client.post("/deliberations", json={"title": "x"}).json()
     for content in ["first", "second", "third"]:
-        env = _signed_turn(kp_priv=priv, principal_id=p.id, content=content)
+        env = _signed_turn(kp_priv=priv, principal_id=p.id, content=content, deliberation_id=d['id'])
         client.post(f"/deliberations/{d['id']}/turns", json=env)
     detail = client.get(f"/deliberations/{d['id']}").json()
     assert [t["content"] for t in detail["turns"]] == ["first", "second", "third"]

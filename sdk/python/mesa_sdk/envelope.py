@@ -52,6 +52,7 @@ class Envelope:
     type: str
     emitted_by: str
     payload: dict[str, Any]
+    deliberation_id: str | None = None
     parent_id: str | None = None
     id: str = field(default_factory=_new_id)
     timestamp: str = field(default_factory=_now_iso)
@@ -63,6 +64,7 @@ class Envelope:
             "timestamp": self.timestamp,
             "type": self.type,
             "emitted_by": self.emitted_by,
+            "deliberation_id": self.deliberation_id,
             "payload": self.payload,
         }
 

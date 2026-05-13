@@ -1,4 +1,5 @@
-"""canonical json envelope: id, parent_id, timestamp, type, emitted_by, payload, signature.
+"""canonical json envelope: id, parent_id, timestamp, type, emitted_by,
+deliberation_id, payload, signature.
 
 deterministic byte form for signing and hashing. MUST stay byte-for-byte
 identical to `sdk/python/mesa_sdk/envelope.py::Envelope.canonical_bytes()`,
@@ -9,6 +10,10 @@ contract:
 - utf-8 json, sorted keys at every level, no whitespace, separators=(",", ":")
 - ensure_ascii=False (non-ASCII emitted as raw utf-8 bytes)
 - allow_nan=False (NaN/Infinity refused; cross-language canonicalizers reject them)
+
+deliberation_id is nullable in the canonical bytes — turns scope it via the
+URL path and may omit/repeat it; commitments must include a non-null value
+or the router rejects them at the gate.
 """
 
 from __future__ import annotations
@@ -16,7 +21,15 @@ from __future__ import annotations
 import json
 from typing import Any
 
-ENVELOPE_FIELDS = ("id", "parent_id", "timestamp", "type", "emitted_by", "payload")
+ENVELOPE_FIELDS = (
+    "id",
+    "parent_id",
+    "timestamp",
+    "type",
+    "emitted_by",
+    "deliberation_id",
+    "payload",
+)
 
 
 class EnvelopeError(ValueError):
