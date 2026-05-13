@@ -308,6 +308,35 @@ def test_decision_dataclass_shape():
     assert d.applied == []
 
 
+def test_route_action_requires_route_to(db_session):
+    db_session.add(
+        Policy(
+            name="bad route",
+            scope_kind="global",
+            predicate_name="term_months_over_cap",
+            params={},
+            action="route",
+            route_to=None,
+        )
+    )
+    with pytest.raises(ValueError):
+        db_session.flush()
+
+
+def test_route_action_with_route_to_is_accepted(db_session):
+    db_session.add(
+        Policy(
+            name="ok route",
+            scope_kind="global",
+            predicate_name="term_months_over_cap",
+            params={},
+            action="route",
+            route_to="legal-bot",
+        )
+    )
+    db_session.flush()  # no raise
+
+
 def test_predicates_fail_closed_on_non_dict_terms(db_session):
     """if `terms` isn't a dict, predicates must return False (not raise)."""
     p = _principal()

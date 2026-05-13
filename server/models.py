@@ -13,7 +13,7 @@ import uuid
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, func
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, event, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -93,3 +93,10 @@ class Policy(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+
+
+@event.listens_for(Policy, "before_insert")
+@event.listens_for(Policy, "before_update")
+def _validate_route_to(mapper, connection, policy: Policy) -> None:
+    if policy.action == "route" and not policy.route_to:
+        raise ValueError("Policy action='route' requires a non-empty route_to")
