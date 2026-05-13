@@ -58,6 +58,13 @@ def test_from_hex_rejects_wrong_length():
         Keypair.from_hex("ab" * 16)
 
 
+def test_constructor_rejects_wrong_byte_lengths():
+    with pytest.raises(ValueError):
+        Keypair(private_key=b"short", public_key=b"x" * 32)
+    with pytest.raises(ValueError):
+        Keypair(private_key=b"x" * 32, public_key=b"short")
+
+
 def test_repr_does_not_leak_private_key():
     kp = Keypair.generate()
     text = repr(kp)

@@ -17,6 +17,12 @@ class Keypair:
     private_key: bytes
     public_key: bytes
 
+    def __post_init__(self) -> None:
+        if len(self.private_key) != 32:
+            raise ValueError("private_key must be 32 bytes")
+        if len(self.public_key) != 32:
+            raise ValueError("public_key must be 32 bytes")
+
     def __repr__(self) -> str:
         # never put private_key bytes into a repr — they leak into tracebacks,
         # pytest assertion output, and any structured logger.
