@@ -46,8 +46,12 @@ def test_validate_unknown_type_raises():
 
 
 def test_validate_collects_multiple_errors():
+    # empty payload is missing both required fields (`summary` and `terms`)
     with pytest.raises(SchemaValidationError) as exc:
         validate("offer", {})
     err = exc.value
-    assert len(err.errors) >= 1
     assert err.type == "offer"
+    assert len(err.errors) >= 2
+    fields = {str(e.message) for e in err.errors}
+    assert any("summary" in m for m in fields)
+    assert any("terms" in m for m in fields)
