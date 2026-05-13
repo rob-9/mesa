@@ -20,7 +20,7 @@ from __future__ import annotations
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from sqlalchemy.orm import Session
 
 from server import policy as policy_module
@@ -48,6 +48,15 @@ class CommitmentEnvelope(BaseModel):
     emitted_by: str = Field(min_length=1)
     payload: dict[str, Any]
     signature: str = Field(min_length=128, max_length=128)
+
+    @field_validator("signature")
+    @classmethod
+    def _hex(cls, v: str) -> str:
+        try:
+            bytes.fromhex(v)
+        except ValueError as e:
+            raise ValueError("signature must be hex-encoded") from e
+        return v.lower()
 
 
 class DecisionOut(BaseModel):

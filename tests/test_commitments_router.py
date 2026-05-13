@@ -56,6 +56,20 @@ def test_commit_offer_happy_path(client, db_session):
     assert body["decision"]["applied"] == []
 
 
+def test_commit_rejects_non_hex_signature(client, db_session):
+    p, priv = _make_principal(db_session, capabilities=["offer"])
+    env = _signed_envelope(
+        kp_priv=priv,
+        principal_id=p.id,
+        type_="offer",
+        payload={"summary": "x", "terms": {}},
+    )
+    env["signature"] = "zz" * 64  # right length, not hex
+    res = client.post("/commitments", json=env)
+    # malformed input -> 422 validation, not 401 auth
+    assert res.status_code == 422
+
+
 def test_commit_rejects_bad_signature(client, db_session):
     p, _ = _make_principal(db_session, capabilities=["offer"])
     _, wrong_priv = generate_keypair()  # signed by the wrong key
