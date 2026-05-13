@@ -22,6 +22,11 @@ class Keypair:
             raise ValueError("private_key must be 32 bytes")
         if len(self.public_key) != 32:
             raise ValueError("public_key must be 32 bytes")
+        # cache libsodium key objects — building them runs key expansion,
+        # which we don't want to repeat on every sign/verify call.
+        # frozen dataclass requires object.__setattr__ to bypass immutability.
+        object.__setattr__(self, "_signing", SigningKey(self.private_key))
+        object.__setattr__(self, "_verifying", VerifyKey(self.public_key))
 
     def __repr__(self) -> str:
         # never put private_key bytes into a repr — they leak into tracebacks,
@@ -53,11 +58,11 @@ class Keypair:
         return self.public_key.hex()
 
     def sign(self, message: bytes) -> bytes:
-        return SigningKey(self.private_key).sign(message).signature
+        return self._signing.sign(message).signature
 
     def verify(self, message: bytes, signature: bytes) -> bool:
         try:
-            VerifyKey(self.public_key).verify(message, signature)
+            self._verifying.verify(message, signature)
             return True
         except BadSignatureError:
             return False
